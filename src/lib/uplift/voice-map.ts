@@ -3,28 +3,32 @@
 // https://docs.upliftai.org/voice-agents/assistants/providers-and-models
 //
 // Voice ids stored on agents:
-//   "<uplift voice id>"  -> catalog voice from src/lib/uplift/voices.ts
-//   "uplift:<voiceId>"   -> any Uplift voice (older form, still accepted)
-//   "soniox:<Voice>"     -> Soniox voice speaking Urdu (e.g. soniox:Maya)
-// Anything else (an old English catalog slug, null) falls back to the
-// default Uplift voice.
+//   "soniox:<Voice>"     -> Soniox voice speaking Urdu (the catalog,
+//                           src/lib/soniox-voices.ts; e.g. soniox:Maya)
+//   "<uplift voice id>"  -> Uplift's own voice (early Urdu agents)
+//   "uplift:<voiceId>"   -> same, older form
+// Anything else (an old English catalog slug, null) gets the default
+// Soniox voice.
 
-import { DEFAULT_UPLIFT_VOICE_ID, normalizeUpliftVoiceId } from "@/lib/uplift/voices";
-
-export const DEFAULT_UPLIFT_VOICE = DEFAULT_UPLIFT_VOICE_ID;
+import { DEFAULT_SONIOX_VOICE_ID, SONIOX_TTS_MODEL } from "@/lib/soniox-voices";
+import { normalizeUpliftVoiceId } from "@/lib/uplift/voices";
 
 export type UpliftTtsConfig =
   | { provider: "upliftai"; voiceId: string }
   | { provider: "soniox"; model: string; voiceId: string; language: "ur" };
 
+function soniox(voice: string): UpliftTtsConfig {
+  return { provider: "soniox", model: SONIOX_TTS_MODEL, voiceId: voice, language: "ur" };
+}
+
 export function toUpliftTts(voiceId: string | null | undefined): UpliftTtsConfig {
-  if (voiceId?.startsWith("soniox:")) {
-    return { provider: "soniox", model: "tts-rt-v1", voiceId: voiceId.slice(7), language: "ur" };
-  }
+  if (voiceId?.startsWith("soniox:")) return soniox(voiceId.slice(7));
   if (voiceId?.startsWith("uplift:")) {
     return { provider: "upliftai", voiceId: voiceId.slice(7) };
   }
-  return { provider: "upliftai", voiceId: normalizeUpliftVoiceId(voiceId) ?? DEFAULT_UPLIFT_VOICE };
+  const uplift = normalizeUpliftVoiceId(voiceId);
+  if (uplift) return { provider: "upliftai", voiceId: uplift };
+  return soniox(DEFAULT_SONIOX_VOICE_ID.slice(7));
 }
 
 export type UpliftLlmConfig = { provider: "google" | "openai"; model: string };

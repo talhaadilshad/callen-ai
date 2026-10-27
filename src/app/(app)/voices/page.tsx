@@ -71,8 +71,8 @@ export default function VoicesPage() {
       // No user-cloned voices yet — the "My Voices" tab shows just the empty state.
       list = [];
     } else if (tab === "default") {
-      // Default voices: the Standard-accent Urdu ones, the built-in library.
-      list = VOICES.filter((v) => !v.premium && v.accent === "Standard");
+      // Default voices: the neutral-accent ones, the built-in library.
+      list = VOICES.filter((v) => !v.premium && v.accent === "Neutral");
     }
     if (search) {
       const q = search.toLowerCase();

@@ -1,15 +1,15 @@
 // Voice library — curated catalog for /voices and the Agent editor.
 //
-// Urdu voices from Uplift AI, the runtime every Callen agent runs on.
-// The catalog id IS the Uplift voiceId (see src/lib/uplift/voices.ts),
-// so what you preview is exactly what callers hear. Preview clips are
-// synthesised by Uplift on first request and cached at the edge
-// (GET /api/voices/:id/preview).
+// Soniox voices speaking Urdu, shown under Urdu names (see
+// src/lib/soniox-voices.ts). Calls run on Uplift AI with Soniox as the
+// speaking voice, so what you preview is the voice callers hear.
+// Preview clips are synthesised by Soniox on first request and cached
+// at the edge (GET /api/voices/:voice/preview).
 
-import { UPLIFT_VOICES, DEFAULT_UPLIFT_VOICE_ID, type UpliftAccent } from "@/lib/uplift/voices";
+import { SONIOX_VOICES, DEFAULT_SONIOX_VOICE_ID, type SonioxAccent } from "@/lib/soniox-voices";
 
 export type VoiceLanguage = "Urdu";
-export type VoiceAccent = UpliftAccent;
+export type VoiceAccent = SonioxAccent;
 export type VoiceGender = "Male" | "Female";
 export type VoiceAge = "Young adult" | "Adult" | "Middle aged";
 export type VoiceCategory =
@@ -19,8 +19,8 @@ export type VoiceCategory =
   | "Conversational";
 
 export type Voice = {
-  id: string;             // Uplift voiceId
-  name: string;
+  id: string;             // agents.voice_id, e.g. "soniox:Maya"
+  name: string;           // Urdu display name
   tagline: string;
   edgeVoice: string;      // source provider label (informational only)
   rate?: string;
@@ -40,58 +40,58 @@ export type Voice = {
 
 // Front-desk fit per voice: the first category is the headline one.
 const CATEGORIES: Record<string, VoiceCategory[]> = {
-  "helpdesk-agent":      ["Customer Service", "Receptionist", "Order Taking"],
-  "dha-hostess":         ["Receptionist", "Order Taking", "Conversational"],
-  "college-girl":        ["Order Taking", "Conversational"],
-  "news-reader":         ["Receptionist", "Customer Service"],
-  "memon-organizer":     ["Order Taking", "Customer Service"],
-  "punjabi-masi":        ["Conversational", "Order Taking"],
-  "sindhi-professional": ["Receptionist", "Customer Service"],
-  "broadband-support":   ["Customer Service", "Receptionist"],
-  "shopkeeper":          ["Order Taking", "Conversational"],
-  "biryani-reviewer":    ["Order Taking", "Conversational"],
-  "punjabi-manager":     ["Customer Service", "Order Taking"],
-  "sindhi-networker":    ["Conversational", "Receptionist"],
-  "wholesale-trader":    ["Order Taking", "Customer Service"],
+  Maya:   ["Customer Service", "Receptionist", "Order Taking"],
+  Nina:   ["Order Taking", "Conversational"],
+  Grace:  ["Customer Service", "Receptionist"],
+  Claire: ["Receptionist", "Order Taking"],
+  Emma:   ["Conversational", "Order Taking"],
+  Mina:   ["Customer Service", "Conversational"],
+  Priya:  ["Receptionist", "Order Taking"],
+  Meera:  ["Order Taking", "Customer Service"],
+  Daniel: ["Receptionist", "Customer Service"],
+  Noah:   ["Order Taking", "Conversational"],
+  Jack:   ["Order Taking", "Customer Service"],
+  Adrian: ["Receptionist", "Customer Service"],
+  Owen:   ["Customer Service", "Conversational"],
+  Kenji:  ["Customer Service", "Receptionist"],
+  Arjun:  ["Conversational", "Order Taking"],
+  Rohan:  ["Order Taking", "Conversational"],
 };
 
-const TRENDING = new Set(["helpdesk-agent", "dha-hostess", "shopkeeper", "biryani-reviewer"]);
+const TRENDING = new Set(["Maya", "Nina", "Daniel", "Priya", "Arjun"]);
 
-export const VOICES: Voice[] = UPLIFT_VOICES.map((v) => {
-  const useCases = CATEGORIES[v.id] ?? ["Order Taking"];
+export const VOICES: Voice[] = SONIOX_VOICES.map((s) => {
+  const useCases = CATEGORIES[s.voice] ?? ["Order Taking"];
   return {
-    id: v.id,
-    name: v.name,
-    tagline: v.style,
-    edgeVoice: "Uplift AI",
+    id: s.id,
+    name: s.name,
+    tagline: s.style,
+    edgeVoice: `Soniox · ${s.voice}`,
     language: "Urdu",
-    accent: v.accent,
-    gender: v.gender,
-    age: v.age,
+    accent: s.accent,
+    gender: s.gender,
+    age: s.age,
     category: useCases[0],
     useCases,
-    sample: v.sample,
-    trending: TRENDING.has(v.id),
-    audioSrc: `/api/voices/${v.id}/preview`,
+    sample: s.sample,
+    trending: TRENDING.has(s.voice),
+    audioSrc: `/api/voices/${s.voice}/preview`,
   };
 });
 
-// Accepts the bare id or the older "uplift:<id>" form stored on early
-// Urdu agents.
 export function getVoice(id: string): Voice | undefined {
-  const bare = id.startsWith("uplift:") ? id.slice(7) : id;
-  return VOICES.find((v) => v.id === bare);
+  return VOICES.find((v) => v.id === id);
 }
 
-export const DEFAULT_VOICE_ID = DEFAULT_UPLIFT_VOICE_ID;
+export const DEFAULT_VOICE_ID = DEFAULT_SONIOX_VOICE_ID;
 
 // Template voice assignment: stable, front-desk-appropriate defaults.
 const TEMPLATE_VOICE_OVERRIDES: Record<string, string> = {
-  "tpl-fast-food-orders": "shopkeeper",
-  "tpl-desi-takeaway": "biryani-reviewer",
-  "tpl-reservations": "dha-hostess",
-  "tpl-catering": "punjabi-manager",
-  "tpl-order-support": "helpdesk-agent",
+  "tpl-fast-food-orders": "soniox:Noah",
+  "tpl-desi-takeaway": "soniox:Arjun",
+  "tpl-reservations": "soniox:Claire",
+  "tpl-catering": "soniox:Daniel",
+  "tpl-order-support": "soniox:Grace",
 };
 
 export function voiceForTemplateId(templateId: string): Voice {
@@ -109,7 +109,7 @@ export const LANGUAGE_FILTERS: VoiceLanguage[] = ["Urdu"];
 
 const _activeAccents = new Set(VOICES.map((v) => v.accent));
 export const ACCENT_FILTERS: VoiceAccent[] = (
-  ["Standard", "Burger", "Punjabi", "Sindhi", "Memon"] as VoiceAccent[]
+  ["Neutral", "South Asian"] as VoiceAccent[]
 ).filter((a) => _activeAccents.has(a));
 
 export type UseCaseCard = {
@@ -141,7 +141,7 @@ export const USE_CASE_CARDS: UseCaseCard[] = [
   {
     id: "Conversational",
     title: "Conversational",
-    blurb: "Natural, regional voices that sound like the neighbourhood.",
+    blurb: "Natural, relaxed voices for easy back-and-forth.",
     art: { from: "#c7d2fe", via: "#6366f1", to: "#1e1b4b" },
   },
 ];

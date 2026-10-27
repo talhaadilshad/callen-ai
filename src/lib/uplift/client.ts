@@ -53,25 +53,6 @@ export async function uplift<T = unknown>(
   return json as T;
 }
 
-// For endpoints that answer with audio bytes (text-to-speech).
-export async function upliftAudio(path: string, body: unknown): Promise<ArrayBuffer> {
-  const apiKey = process.env.UPLIFT_API_KEY;
-  if (!apiKey) {
-    throw new Error("UPLIFT_API_KEY is not set. Add it to .env.local.");
-  }
-  const res = await fetch(`${BASE_URL}${path}`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new UpliftError(`Uplift POST ${path} failed (${res.status}): ${text || res.statusText}`, res.status);
-  }
-  return res.arrayBuffer();
-}
-
 function safeJson(text: string): unknown {
   try {
     return JSON.parse(text);

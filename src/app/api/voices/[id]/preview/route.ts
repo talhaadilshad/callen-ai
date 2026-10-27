@@ -1,39 +1,50 @@
-// GET /api/voices/:id/preview — an MP3 of a catalog voice reading its
-// sample line, synthesised by Uplift AI. Only curated voices and their
-// fixed sample text are accepted, and the response is cached at the edge
-// for a year, so each voice costs one synthesis per deployment region.
+// GET /api/voices/:voice/preview — an MP3 of a catalog voice reading its
+// Urdu sample line, synthesised by Soniox (the same model the agents use
+// on calls). Only catalog voices and their fixed sample text are
+// accepted, and the response is cached at the edge for a year, so each
+// voice costs one synthesis per deployment region.
+// https://soniox.com/docs/tts/rest-api/generate-speech
 
 import { NextRequest, NextResponse } from "next/server";
-import { UPLIFT_VOICES } from "@/lib/uplift/voices";
-import { isUpliftConfigured, upliftAudio } from "@/lib/uplift/client";
+import { SONIOX_TTS_MODEL, sonioxVoiceByName } from "@/lib/soniox-voices";
+
+const SONIOX_TTS_URL = "https://tts-rt.soniox.com/tts";
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const voice = UPLIFT_VOICES.find((v) => v.id === id);
+  const voice = sonioxVoiceByName(decodeURIComponent(id));
   if (!voice) {
     return NextResponse.json({ error: "Unknown voice." }, { status: 404 });
   }
-  if (!isUpliftConfigured()) {
-    return NextResponse.json({ error: "Voice previews are not configured." }, { status: 503 });
+  const apiKey = process.env.SONIOX_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json({ error: "Voice previews are not configured (SONIOX_API_KEY missing)." }, { status: 503 });
   }
 
-  try {
-    const audio = await upliftAudio("/synthesis/text-to-speech", {
-      voiceId: voice.id,
+  const res = await fetch(SONIOX_TTS_URL, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: SONIOX_TTS_MODEL,
+      language: "ur",
+      voice: voice.voice,
+      audio_format: "mp3",
       text: voice.sample,
-      outputFormat: "MP3_22050_32",
-    });
-    return new NextResponse(audio, {
-      headers: {
-        "Content-Type": "audio/mpeg",
-        "Cache-Control": "public, max-age=86400, s-maxage=31536000, immutable",
-      },
-    });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Preview failed";
-    return NextResponse.json({ error: message }, { status: 502 });
+    }),
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    return NextResponse.json({ error: `Preview failed (${res.status}): ${detail}` }, { status: 502 });
   }
+
+  return new NextResponse(await res.arrayBuffer(), {
+    headers: {
+      "Content-Type": "audio/mpeg",
+      "Cache-Control": "public, max-age=86400, s-maxage=31536000, immutable",
+    },
+  });
 }

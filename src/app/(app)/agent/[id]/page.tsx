@@ -33,6 +33,7 @@ import {
   CheckCheck,
   MessageCircle,
   UtensilsCrossed,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -138,6 +139,8 @@ function AgentEditor({
 }) {
   const voice = getVoice(agent.voiceId) ?? VOICES[0];
   const regeneratePrompt = useCustomAgentsStore((s) => s.regeneratePromptForAgent);
+  const removeAgent = useCustomAgentsStore((s) => s.removeAgent);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [voiceSheetOpen, setVoiceSheetOpen] = useState(false);
   const [behaviorSheetOpen, setBehaviorSheetOpen] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState(agent.systemPrompt);
@@ -171,6 +174,14 @@ function AgentEditor({
     toast.success("Prompt regenerated", {
       description: "System prompt and first message rebuilt from current config.",
     });
+  }
+
+  // Deletes the agent everywhere: the row, and its assistant on the voice
+  // runtime (DELETE /api/agents/:id via the store).
+  function deleteAgent() {
+    removeAgent(agent.id);
+    toast.success(`${agent.name} deleted`);
+    onBack();
   }
 
   function setLlm(id: string) {
@@ -241,6 +252,26 @@ function AgentEditor({
         >
           {agent.status === "published" ? "Republish" : "Publish"}
         </Button>
+        {confirmDelete ? (
+          <button
+            onClick={deleteAgent}
+            onBlur={() => setConfirmDelete(false)}
+            autoFocus
+            className="inline-flex items-center gap-1.5 rounded-full h-8 px-3 bg-red-600 hover:bg-red-700 text-white text-[12px] font-medium"
+          >
+            <Trash2 className="size-3.5" />
+            Delete agent?
+          </button>
+        ) : (
+          <button
+            onClick={() => setConfirmDelete(true)}
+            aria-label="Delete agent"
+            title="Delete agent"
+            className="size-8 rounded-full hover:bg-red-50 hover:text-red-600 flex items-center justify-center text-neutral-500 transition-colors"
+          >
+            <Trash2 className="size-4" />
+          </button>
+        )}
       </div>
 
       {/* ============= Body ============= */}

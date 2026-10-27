@@ -526,7 +526,7 @@ function VoicePickerRow({
         <div className="mt-1 flex items-center gap-1.5 text-[11px] text-neutral-700">
           <span aria-hidden>🇵🇰</span>
           <span>
-            {voice.gender} · {voice.accent === "Standard" ? "Urdu" : `Urdu, ${voice.accent}`}
+            {voice.gender} · {voice.accent === "Neutral" ? "Urdu" : `Urdu, ${voice.accent} accent`}
           </span>
         </div>
       </div>

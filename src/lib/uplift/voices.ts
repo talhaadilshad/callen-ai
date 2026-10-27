@@ -1,8 +1,8 @@
-// Curated Uplift AI voices for restaurant front-desk agents.
+// Uplift AI's own Urdu voices. No longer offered in the catalog (Soniox
+// voices replaced them, see src/lib/soniox-voices.ts), but agents created
+// with one keep it: voice-map.ts still recognises these ids.
 // Uplift ships 82 Urdu voices (https://docs.upliftai.org/orator_voices);
-// these are the friendly, clear ones that suit taking orders on the
-// phone. Ids are Uplift's own voiceId strings, used as-is in the
-// assistant's tts config and stored as agents.voice_id.
+// these were the friendly, clear ones that suit taking orders.
 //
 // Plain data (no server-only import) so both the dashboard catalog and
 // the server-side sync can use it.
