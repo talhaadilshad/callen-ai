@@ -24,21 +24,33 @@ export async function GET(
     return NextResponse.json({ error: "Voice previews are not configured (SONIOX_API_KEY missing)." }, { status: 503 });
   }
 
-  const res = await fetch(SONIOX_TTS_URL, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: SONIOX_TTS_MODEL,
-      language: "ur",
-      voice: voice.voice,
-      audio_format: "mp3",
-      text: voice.sample,
-    }),
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    const detail = await res.text().catch(() => "");
-    return NextResponse.json({ error: `Preview failed (${res.status}): ${detail}` }, { status: 502 });
+  // Prefer the model calls use; Soniox's REST docs have moved to v2, so
+  // fall back to it if the account or endpoint rejects v1.
+  let res: Response | null = null;
+  let detail = "";
+  for (const model of [SONIOX_TTS_MODEL, "tts-rt-v2"]) {
+    res = await fetch(SONIOX_TTS_URL, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model,
+        language: "ur",
+        voice: voice.voice,
+        audio_format: "mp3",
+        text: voice.sample,
+      }),
+      cache: "no-store",
+    });
+    if (res.ok) break;
+    detail = await res.text().catch(() => "");
+    // Auth or rate-limit problems won't be fixed by another model.
+    if (res.status === 401 || res.status === 403 || res.status === 429) break;
+  }
+  if (!res?.ok) {
+    return NextResponse.json(
+      { error: `Soniox could not generate the preview (${res?.status}): ${detail}` },
+      { status: 502 }
+    );
   }
 
   return new NextResponse(await res.arrayBuffer(), {

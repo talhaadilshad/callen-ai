@@ -10,6 +10,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Play, Pause, Check } from "lucide-react";
 import { motion } from "motion/react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useVoicePlayback } from "@/lib/voice-playback";
 import type { Voice } from "@/lib/voice-library";
@@ -145,6 +146,25 @@ const ORB_PALETTES: VoiceOrbColors[] = [
   },
 ];
 
+// An <audio> element can't read an error body, so when playback fails we
+// ask the preview route once more and surface its message instead of
+// failing silently.
+async function reportPreviewError(voice: Voice) {
+  let reason = "The preview could not be loaded.";
+  try {
+    const res = await fetch(voice.audioSrc);
+    if (!res.ok) {
+      const body = (await res.json().catch(() => null)) as { error?: string } | null;
+      if (body?.error) reason = body.error;
+    } else {
+      reason = "Your browser blocked playback. Click the voice again.";
+    }
+  } catch {
+    // keep the generic reason
+  }
+  toast.error(`Can't play ${voice.name}`, { description: reason });
+}
+
 function hashSeed(id: string): number {
   let h = 2166136261;
   for (let i = 0; i < id.length; i++) {
@@ -216,6 +236,7 @@ export function VoicePreview({
       .catch(() => {
         setLoading(false);
         setCurrent(null);
+        void reportPreviewError(voice);
       });
   }
 
