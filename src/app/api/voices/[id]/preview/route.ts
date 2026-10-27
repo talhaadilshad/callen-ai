@@ -47,10 +47,14 @@ export async function GET(
     if (res.status === 401 || res.status === 403 || res.status === 429) break;
   }
   if (!res?.ok) {
-    return NextResponse.json(
-      { error: `Soniox could not generate the preview (${res?.status}): ${detail}` },
-      { status: 502 }
-    );
+    const status = res?.status;
+    const message =
+      status === 402
+        ? "The Soniox account is out of credit. Add funds in the Soniox console (Billing) to enable previews."
+        : status === 401 || status === 403
+          ? "Soniox rejected the API key. Check SONIOX_API_KEY in Vercel."
+          : `Soniox could not generate the preview (${status}): ${detail}`;
+    return NextResponse.json({ error: message }, { status: 502 });
   }
 
   return new NextResponse(await res.arrayBuffer(), {
