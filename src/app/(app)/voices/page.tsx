@@ -16,11 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   MessageCircle,
-  BookOpen,
-  Drama,
   Smartphone,
-  GraduationCap,
-  Megaphone,
   Languages,
   AudioLines,
   Mic2,
@@ -54,12 +50,8 @@ type Tab = "explore" | "my" | "default";
 const CATEGORY_ICONS: Record<VoiceCategory, React.ComponentType<{ className?: string }>> = {
   Conversational: MessageCircle,
   "Customer Service": Mic2,
-  Sales: Megaphone,
   Receptionist: Smartphone,
   "Order Taking": AudioLines,
-  Healthcare: GraduationCap,
-  Narration: BookOpen,
-  Concierge: Drama,
 };
 
 export default function VoicesPage() {
@@ -79,8 +71,8 @@ export default function VoicesPage() {
       // No user-cloned voices yet — the "My Voices" tab shows just the empty state.
       list = [];
     } else if (tab === "default") {
-      // Default voices are the non-premium English ones — feels like a built-in library.
-      list = VOICES.filter((v) => !v.premium && v.language === "English");
+      // Default voices: the Standard-accent Urdu ones, the built-in library.
+      list = VOICES.filter((v) => !v.premium && v.accent === "Standard");
     }
     if (search) {
       const q = search.toLowerCase();

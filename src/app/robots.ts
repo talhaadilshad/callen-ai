@@ -16,6 +16,7 @@ export default function robots(): MetadataRoute.Robots {
         "/calls",
         "/voices",
         "/knowledge",
+        "/menu",
         "/tools",
         "/integrations",
         "/whatsapp",

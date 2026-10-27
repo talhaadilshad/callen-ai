@@ -86,15 +86,15 @@ const KB: QA[] = [
   {
     keywords: ["knowledge", "kb", "document", "upload", "menu", "faq", "pdf"],
     answer:
-      "Open Knowledge Base. Four quick actions add content: Add URL scrapes a page, Add Files uploads PDF / DOCX / TXT, Create Text writes inline, Create Folder groups items. Everything is chunked and indexed automatically. Pro accounts get 1 MB of RAG storage.",
-    links: [{ label: "Open Knowledge Base", href: "/knowledge" }],
+      "Open Menu & Deals. Add items one by one or paste a whole menu as text. Your agents only quote items and prices from this page, so keep it current and press Update live agents after changes.",
+    links: [{ label: "Open Menu & Deals", href: "/menu" }],
     followups: ["What file types are supported?", "How does retrieval work?"],
   },
   {
     keywords: ["rag", "retrieval", "chunk", "embedding", "vector"],
     answer:
-      "When the agent needs to answer a knowledge question, it searches your indexed chunks by semantic similarity. The top 5 chunks are passed to the LLM as context. Retrieval adds about 80ms to the call. Pro accounts include 1 MB of indexed storage; remove old docs to free space.",
-    links: [{ label: "Open Knowledge Base", href: "/knowledge" }],
+      "Your agent gets your restaurant details and the available items from Menu & Deals as part of its instructions every time it is updated. Items you turn off are left out, so the agent never offers them.",
+    links: [{ label: "Open Menu & Deals", href: "/menu" }],
   },
   {
     keywords: ["tool", "webhook", "mcp", "function", "endpoint"],

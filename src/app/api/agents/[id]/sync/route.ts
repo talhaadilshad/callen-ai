@@ -16,6 +16,8 @@ import {
   deleteFromRuntime,
   type CallenAgentRow,
 } from "@/lib/voice-runtime";
+import { restaurantFactsSection, type RestaurantProfile } from "@/lib/agent-meta";
+import { menuSection } from "@/lib/menu";
 
 export async function POST(
   _request: NextRequest,
@@ -73,6 +75,29 @@ export async function POST(
       });
     }
     agent = { ...agent, provider_agent_id: null, provider_llm_id: null };
+  }
+
+  // Urdu (Uplift) agents get the restaurant details + current menu
+  // appended to their instructions, so saving the menu and re-syncing
+  // is all it takes to update what the agent knows.
+  if (runtime === "uplift") {
+    const { data: menu, error: menuError } = await admin
+      .from("menu_items")
+      .select("kind, category, name, description, price_pkr, available, sort")
+      .eq("workspace_id", agent.workspace_id);
+    if (menuError) {
+      return NextResponse.json({ error: `Could not load the menu: ${menuError.message}` }, { status: 500 });
+    }
+    agent = {
+      ...agent,
+      knowledge: [
+        restaurantFactsSection(
+          agent.settings?.restaurant as Partial<RestaurantProfile> | undefined,
+          agent.settings?.website as string | undefined
+        ),
+        menuSection(menu ?? []),
+      ].join("\n\n"),
+    };
   }
 
   let result;

@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import {
   Home,
   Plus,
-  BookOpen,
+  UtensilsCrossed,
   Wrench,
   Mic,
   Boxes,
@@ -57,7 +57,7 @@ const SECTIONS: NavSection[] = [
   {
     label: "Configure",
     items: [
-      { href: "/knowledge",     label: "Knowledge Base", icon: BookOpen },
+      { href: "/menu",          label: "Menu & Deals",   icon: UtensilsCrossed },
       { href: "/tools",         label: "Tools",          icon: Wrench },
       { href: "/voices",        label: "Voices",         icon: Mic },
       { href: "/integrations",  label: "Integrations",   icon: Boxes, badge: "alpha" },

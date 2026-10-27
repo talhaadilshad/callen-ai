@@ -109,10 +109,10 @@ const DOCS: Category[] = [
     articles: [
       {
         id: "kb-1",
-        title: "Adding documents the agent can quote",
-        body: "Open Knowledge Base in the sidebar. The four quick actions add content four ways: Add URL scrapes a page, Add Files uploads PDF/DOCX/TXT, Create Text writes inline, Create Folder groups items. Everything is automatically chunked and indexed for retrieval during calls.",
-        href: "/knowledge",
-        hrefLabel: "Open Knowledge Base",
+        title: "Adding your menu and deals",
+        body: "Open Menu & Deals in the sidebar. Add items one by one, or use Paste menu to import a whole menu as text. Turn an item off when it runs out, then press Update live agents so callers hear the change.",
+        href: "/menu",
+        hrefLabel: "Open Menu & Deals",
       },
       {
         id: "kb-2",

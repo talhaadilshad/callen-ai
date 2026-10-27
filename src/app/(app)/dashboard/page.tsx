@@ -519,7 +519,7 @@ function QuickActions() {
   const actions: Array<{ icon: LucideIcon; title: string; body: string; href: string }> = [
     { icon: Mic,      title: "Talk to your agent", body: "Try the live preview orb",   href: "/agent" },
     { icon: Radio,    title: "Watch live calls",   body: "Listen in on active calls",  href: "/calls/live" },
-    { icon: BookOpen, title: "Manage knowledge",   body: "Upload menus and FAQs",      href: "/knowledge" },
+    { icon: BookOpen, title: "Update your menu",   body: "Items, prices and deals",    href: "/menu" },
     { icon: Phone,    title: "Buy a phone number", body: "Pakistani +92 numbers",      href: "/phone-numbers" },
   ];
   return (

@@ -23,7 +23,7 @@ function assistantBody(agent: CallenAgentRow) {
     public: false,
     config: {
       agent: {
-        instructions: agent.system_prompt,
+        instructions: [agent.system_prompt, agent.knowledge].filter(Boolean).join("\n\n"),
         initialGreeting: Boolean(greeting),
         ...(greeting
           ? { greetingInstructions: `Open the call by saying exactly this greeting: "${greeting}"` }

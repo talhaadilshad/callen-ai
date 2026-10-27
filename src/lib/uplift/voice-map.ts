@@ -2,13 +2,16 @@
 // config blocks. Provider and model strings come from
 // https://docs.upliftai.org/voice-agents/assistants/providers-and-models
 //
-// Voice ids stored on Urdu agents:
-//   "uplift:<voiceId>"  -> Uplift voice (e.g. uplift:helpdesk-agent)
-//   "soniox:<Voice>"    -> Soniox voice speaking Urdu (e.g. soniox:Maya)
-// Anything else (an English catalog slug, null) falls back to the
-// default Uplift voice. Swap DEFAULT_UPLIFT_VOICE after the portal test.
+// Voice ids stored on agents:
+//   "<uplift voice id>"  -> catalog voice from src/lib/uplift/voices.ts
+//   "uplift:<voiceId>"   -> any Uplift voice (older form, still accepted)
+//   "soniox:<Voice>"     -> Soniox voice speaking Urdu (e.g. soniox:Maya)
+// Anything else (an old English catalog slug, null) falls back to the
+// default Uplift voice.
 
-export const DEFAULT_UPLIFT_VOICE = "helpdesk-agent";
+import { DEFAULT_UPLIFT_VOICE_ID, normalizeUpliftVoiceId } from "@/lib/uplift/voices";
+
+export const DEFAULT_UPLIFT_VOICE = DEFAULT_UPLIFT_VOICE_ID;
 
 export type UpliftTtsConfig =
   | { provider: "upliftai"; voiceId: string }
@@ -21,7 +24,7 @@ export function toUpliftTts(voiceId: string | null | undefined): UpliftTtsConfig
   if (voiceId?.startsWith("uplift:")) {
     return { provider: "upliftai", voiceId: voiceId.slice(7) };
   }
-  return { provider: "upliftai", voiceId: DEFAULT_UPLIFT_VOICE };
+  return { provider: "upliftai", voiceId: normalizeUpliftVoiceId(voiceId) ?? DEFAULT_UPLIFT_VOICE };
 }
 
 export type UpliftLlmConfig = { provider: "google" | "openai"; model: string };

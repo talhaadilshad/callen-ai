@@ -22,6 +22,9 @@ export type CallenAgentRow = {
   provider_agent_id: string | null;
   provider_llm_id: string | null;
   settings: Record<string, unknown>;
+  // Restaurant details + menu, appended after system_prompt by the sync
+  // route. Kept separate so the editable prompt never has to hold them.
+  knowledge?: string;
 };
 
 export type AgentSyncResult = {

@@ -48,7 +48,7 @@ export function pickBrowserVoice(
 ): SpeechSynthesisVoice | null {
   if (available.length === 0) return null;
 
-  const wantsUrdu = prefs.language !== "English";
+  const wantsUrdu = String(prefs.language) !== "English";
   const isFemale = prefs.gender === "Female";
 
   // ----- Tier 1: Exact Urdu Microsoft voice for our gender -----

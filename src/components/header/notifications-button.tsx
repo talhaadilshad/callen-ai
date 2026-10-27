@@ -87,9 +87,9 @@ const SEED: Notification[] = [
   {
     id: "n4",
     kind: "kb_indexed",
-    title: "Knowledge base indexed",
-    body: "Promotions_May2026.pdf finished embedding. 9 chunks added.",
-    href: "/knowledge",
+    title: "Menu updated",
+    body: "3 new deals added. Update live agents so callers hear them.",
+    href: "/menu",
     minutesAgo: 64,
     read: false,
   },

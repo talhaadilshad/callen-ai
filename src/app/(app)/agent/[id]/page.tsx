@@ -9,6 +9,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -31,6 +32,7 @@ import {
   Copy,
   CheckCheck,
   MessageCircle,
+  UtensilsCrossed,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -43,14 +45,16 @@ import {
 import { useTTS } from "@/lib/use-tts";
 import {
   LLM_MODELS,
+  LLM_PROVIDERS,
   llmById,
   BEHAVIOR_TRAITS,
-  type LlmProvider,
+  type RestaurantProfile,
 } from "@/lib/agent-meta";
 import { getVoice, VOICES, type Voice } from "@/lib/voice-library";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 import { SiriOrb } from "@/components/ui/siri-orb";
 import { LiveCallPanel } from "@/components/agent/live-call-panel";
 import {
@@ -335,7 +339,7 @@ function AgentEditor({
 
         {/* ---------------- Column 2: config cards ---------------- */}
         <div className="border-r border-neutral-200 bg-white p-5 overflow-y-auto thin-scrollbar space-y-5">
-          <ConfigSection title="Voice" subtitle="The neural voice the agent uses on calls.">
+          <ConfigSection title="Voice" subtitle="The Urdu voice callers hear (Uplift AI).">
             {/* div + role/keyboard handler instead of <button>: VoicePreview
                 renders its own <button> for the inline play action, so
                 wrapping it in another <button> would cause the
@@ -364,6 +368,27 @@ function AgentEditor({
             </div>
           </ConfigSection>
 
+          <ConfigSection
+            title="Restaurant details"
+            subtitle="What callers ask about. Sent to the agent with your menu."
+          >
+            {/* key: remount with fresh values when switching agents */}
+            <RestaurantDetailsCard
+              key={agent.id}
+              initial={agent.restaurant}
+              onSave={(restaurant) => {
+                onPatch({ restaurant });
+                toast.success("Restaurant details saved", {
+                  description:
+                    agent.status === "published"
+                      ? "Pushed to the live agent."
+                      : "Publish the agent to use them on calls.",
+                });
+              }}
+            />
+          </ConfigSection>
+
+          {agent.defaultLanguage !== "Urdu" && (
           <ConfigSection title="Voice tuning" subtitle="Adjust the mood and timing of the agent's voice. Applied live on the next call.">
             <div className="space-y-4">
               <MoodSlider
@@ -420,6 +445,7 @@ function AgentEditor({
               </label>
             </div>
           </ConfigSection>
+          )}
 
           <ConfigSection title="LLM" subtitle="Provider and model that powers the agent's reasoning.">
             <DropdownMenu>
@@ -438,7 +464,7 @@ function AgentEditor({
                 <ChevronRight className="size-4 text-neutral-400 shrink-0" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-[300px]">
-                {(["Google", "OpenAI", "Anthropic"] as LlmProvider[]).map((provider, gi) => (
+                {LLM_PROVIDERS.map((provider, gi) => (
                   <div key={provider}>
                     {gi > 0 && <DropdownMenuSeparator />}
                     <div className="px-2 py-1.5 text-[10px] uppercase tracking-wider text-neutral-500 font-semibold">
@@ -1064,6 +1090,84 @@ function VoicePickerSheet({
 // =============================================================
 // Small helpers
 // =============================================================
+
+// =============================================================
+// Restaurant details
+// =============================================================
+
+const RESTAURANT_FIELDS: {
+  key: Exclude<keyof RestaurantProfile, "reservations">;
+  label: string;
+  placeholder: string;
+}[] = [
+  { key: "city",          label: "City",            placeholder: "Islamabad" },
+  { key: "branches",      label: "Branches",        placeholder: "F-7 Markaz, G-11 Markaz" },
+  { key: "hours",         label: "Opening hours",   placeholder: "12 pm to 2 am, every day" },
+  { key: "deliveryAreas", label: "Delivery areas",  placeholder: "F-6, F-7, F-8, G-9, G-10" },
+  { key: "deliveryTime",  label: "Delivery time",   placeholder: "35 to 45 minutes" },
+  { key: "minOrder",      label: "Minimum order",   placeholder: "Rs 800" },
+  { key: "deliveryFee",   label: "Delivery fee",    placeholder: "Free above Rs 1,500" },
+  { key: "payment",       label: "Payment methods", placeholder: "Cash on delivery, JazzCash" },
+];
+
+function RestaurantDetailsCard({
+  initial,
+  onSave,
+}: {
+  initial: RestaurantProfile;
+  onSave: (r: RestaurantProfile) => void;
+}) {
+  const [draft, setDraft] = useState<RestaurantProfile>(initial);
+  const [saved, setSaved] = useState<RestaurantProfile>(initial);
+  const dirty = JSON.stringify(draft) !== JSON.stringify(saved);
+
+  function patch(p: Partial<RestaurantProfile>) {
+    setDraft((d) => ({ ...d, ...p }));
+  }
+
+  return (
+    <div className="space-y-2.5">
+      {RESTAURANT_FIELDS.map((f) => (
+        <label key={f.key} className="block">
+          <span className="block text-[11px] font-medium text-neutral-600 mb-1">{f.label}</span>
+          <Input
+            value={draft[f.key]}
+            onChange={(e) => patch({ [f.key]: e.target.value })}
+            placeholder={f.placeholder}
+            className="h-9 rounded-xl text-[12.5px]"
+          />
+        </label>
+      ))}
+      <label className="flex items-center justify-between gap-3 pt-1">
+        <span className="text-[13px] font-medium">Takes table reservations</span>
+        <Switch
+          checked={draft.reservations}
+          onCheckedChange={(reservations) => patch({ reservations })}
+        />
+      </label>
+      <div className="flex items-center gap-2 pt-1">
+        <Button
+          size="sm"
+          disabled={!dirty}
+          onClick={() => {
+            onSave(draft);
+            setSaved(draft);
+          }}
+          className="rounded-full h-8 px-4"
+        >
+          Save details
+        </Button>
+        <Link
+          href="/menu"
+          className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 hover:border-neutral-300 h-8 px-3 text-[12px] font-medium text-neutral-800"
+        >
+          <UtensilsCrossed className="size-3.5" />
+          Edit menu & deals
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 function ConfigSection({
   title,

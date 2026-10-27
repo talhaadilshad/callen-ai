@@ -11,8 +11,8 @@
 //
 // DB mapping: name/system_prompt/greeting/voice_id/status live in their
 // own columns; wizard-specific fields (type, industry, useCase, website,
-// mainGoal, chatOnly, llm, languages, behaviorTraits, voice tuning) ride
-// in the settings jsonb. Runtime ids (provider, provider_agent_id,
+// mainGoal, chatOnly, llm, languages, behaviorTraits, voice tuning,
+// restaurant details) ride in the settings jsonb. Runtime ids (provider, provider_agent_id,
 // provider_llm_id) are server-owned: members cannot write them.
 
 import { create } from "zustand";
@@ -23,7 +23,10 @@ import {
   buildSystemPrompt,
   buildFirstMessage,
   DEFAULT_LLM_ID,
+  EMPTY_RESTAURANT,
+  type RestaurantProfile,
 } from "./agent-meta";
+import { DEFAULT_VOICE_ID } from "./voice-library";
 
 export type CustomAgentType = "personal" | "business" | "blank";
 export type CustomAgentStatus = "draft" | "published";
@@ -51,17 +54,18 @@ export type CustomAgent = {
   type: CustomAgentType | null;
   industry: string | null;
   useCase: string | null;
-  voiceId: string;             // -> Voice in voice-library (real Retell id)
+  voiceId: string;             // -> Voice in voice-library (Uplift voice id)
   website: string;
   mainGoal: string;
   chatOnly: boolean;
   systemPrompt: string;
   firstMessage: string;
-  llm: string;                 // LlmModel.id (real Retell model id)
+  llm: string;                 // LlmModel.id (model Uplift hosts)
   defaultLanguage: string;
   additionalLanguages: string[];
   behaviorTraits: string[];
   voiceTuning: VoiceTuning;
+  restaurant: RestaurantProfile;
   createdAt: string;
   status: CustomAgentStatus;
 };
@@ -81,6 +85,7 @@ type AddInput = {
   defaultLanguage?: string;
   additionalLanguages?: string[];
   behaviorTraits?: string[];
+  restaurant?: RestaurantProfile;
 };
 
 type Store = {
@@ -118,7 +123,7 @@ function rowToAgent(row: AgentRow): CustomAgent {
     type: (s.type as CustomAgentType) ?? null,
     industry: (s.industry as string) ?? null,
     useCase: (s.useCase as string) ?? null,
-    voiceId: row.voice_id ?? "eryn",
+    voiceId: row.voice_id ?? DEFAULT_VOICE_ID,
     website: (s.website as string) ?? "",
     mainGoal: (s.mainGoal as string) ?? "",
     chatOnly: Boolean(s.chatOnly),
@@ -129,6 +134,7 @@ function rowToAgent(row: AgentRow): CustomAgent {
     additionalLanguages: [],
     behaviorTraits: (s.behaviorTraits as string[]) ?? [],
     voiceTuning: { ...DEFAULT_VOICE_TUNING, ...((s.voiceTuning as VoiceTuning) ?? {}) },
+    restaurant: { ...EMPTY_RESTAURANT, ...((s.restaurant as Partial<RestaurantProfile>) ?? {}) },
     createdAt: row.created_at,
     status: row.status === "active" ? "published" : "draft",
   };
@@ -163,13 +169,14 @@ function agentToRow(a: CustomAgent) {
       model: a.llm,
       behaviorTraits: a.behaviorTraits,
       voiceTuning: a.voiceTuning,
+      restaurant: a.restaurant,
     },
   };
 }
 
 // Resolve (and cache) the signed-in user's workspace id.
 let workspaceIdPromise: Promise<string | null> | null = null;
-function getWorkspaceId(): Promise<string | null> {
+export function getWorkspaceId(): Promise<string | null> {
   workspaceIdPromise ??= (async () => {
     const { data } = await supabase
       .from("workspace_members")
@@ -210,6 +217,7 @@ export const useCustomAgentsStore = create<Store>()((set, get) => ({
     const id = crypto.randomUUID();
     const now = new Date().toISOString();
     const behaviorTraits = input.behaviorTraits ?? ["respectful", "patient", "warm"];
+    const restaurant = { ...EMPTY_RESTAURANT, ...(input.restaurant ?? {}) };
 
     const generated = buildSystemPrompt({
       name: input.name,
@@ -217,9 +225,10 @@ export const useCustomAgentsStore = create<Store>()((set, get) => ({
       useCase: input.useCase,
       website: input.website,
       mainGoal: input.mainGoal,
-      defaultLanguage: "English",
+      defaultLanguage: "Urdu",
       additionalLanguages: [],
       behaviorTraits,
+      restaurant,
     });
 
     const firstMessage =
@@ -239,10 +248,12 @@ export const useCustomAgentsStore = create<Store>()((set, get) => ({
       systemPrompt: input.systemPrompt ?? generated,
       firstMessage,
       llm: input.llm ?? DEFAULT_LLM_ID,
-      defaultLanguage: "English",
+      // Every new agent is an Urdu agent, which runs on Uplift.
+      defaultLanguage: "Urdu",
       additionalLanguages: [],
       behaviorTraits,
       voiceTuning: { ...DEFAULT_VOICE_TUNING },
+      restaurant,
       createdAt: now,
       status: "draft",
     };
@@ -304,9 +315,10 @@ export const useCustomAgentsStore = create<Store>()((set, get) => ({
       useCase: agent.useCase,
       website: agent.website,
       mainGoal: agent.mainGoal,
-      defaultLanguage: "English",
+      defaultLanguage: agent.defaultLanguage,
       additionalLanguages: [],
       behaviorTraits: agent.behaviorTraits,
+      restaurant: agent.restaurant,
     });
     const firstMessage = buildFirstMessage({
       name: agent.name,

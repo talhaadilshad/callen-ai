@@ -3,34 +3,19 @@
 // all draw from one source of truth.
 
 import {
-  ShoppingBag,
-  HeartPulse,
-  Landmark,
-  Home,
-  GraduationCap,
-  Plane,
-  Car,
-  Briefcase,
-  Cpu,
-  Building2,
+  Pizza,
+  Flame,
+  Soup,
+  Coffee,
+  ChefHat,
+  Store,
+  CakeSlice,
   UtensilsCrossed,
-  Factory,
-  HeartHandshake,
-  Scale,
-  HandHeart,
-  Tv,
-  HelpCircle,
-  Headphones,
-  TrendingUp,
-  BookOpen,
-  Calendar,
-  Users,
-  Phone,
+  Utensils,
   ShoppingCart,
   CalendarCheck,
   Star,
-  Truck,
-  Heart,
+  Headphones,
   Hourglass,
   Scissors,
   Sun,
@@ -41,35 +26,26 @@ import {
   AlertCircle,
   Target,
   Search,
-  Sparkles,
-  Wind,
+  Heart,
+  HandHeart,
   type LucideIcon,
 } from "lucide-react";
 
 // =============================================================
-// Industries
+// Restaurant types (the "industry" field, restaurant-only now)
 // =============================================================
 
 export type IndustryOption = { id: string; label: string; icon: LucideIcon };
 
 export const INDUSTRIES: IndustryOption[] = [
-  { id: "retail",        label: "Retail & E-commerce",   icon: ShoppingBag },
-  { id: "healthcare",    label: "Healthcare & Medical",   icon: HeartPulse },
-  { id: "finance",       label: "Finance & Banking",      icon: Landmark },
-  { id: "real-estate",   label: "Real Estate",            icon: Home },
-  { id: "education",     label: "Education & Training",   icon: GraduationCap },
-  { id: "hospitality",   label: "Hospitality & Travel",   icon: Plane },
-  { id: "automotive",    label: "Automotive",             icon: Car },
-  { id: "professional",  label: "Professional Services",  icon: Briefcase },
-  { id: "technology",    label: "Technology & Software",  icon: Cpu },
-  { id: "government",    label: "Government & Public",    icon: Building2 },
-  { id: "food",          label: "Food & Beverage",        icon: UtensilsCrossed },
-  { id: "manufacturing", label: "Manufacturing",          icon: Factory },
-  { id: "fitness",       label: "Fitness & Wellness",     icon: HeartHandshake },
-  { id: "legal",         label: "Legal Services",         icon: Scale },
-  { id: "nonprofit",     label: "Non-Profit",             icon: HandHeart },
-  { id: "media",         label: "Media & Entertainment",  icon: Tv },
-  { id: "other",         label: "Other",                  icon: HelpCircle },
+  { id: "fast-food",     label: "Fast food & pizza", icon: Pizza },
+  { id: "desi-bbq",      label: "Desi & BBQ",        icon: Flame },
+  { id: "chinese",       label: "Chinese & Asian",   icon: Soup },
+  { id: "cafe-bakery",   label: "Cafe & bakery",     icon: Coffee },
+  { id: "fine-dining",   label: "Fine dining",       icon: ChefHat },
+  { id: "cloud-kitchen", label: "Cloud kitchen",     icon: Store },
+  { id: "dessert",       label: "Desserts & shakes", icon: CakeSlice },
+  { id: "other",         label: "Other restaurant",  icon: UtensilsCrossed },
 ];
 
 export function industryLabel(id: string | null | undefined): string {
@@ -84,19 +60,11 @@ export function industryLabel(id: string | null | undefined): string {
 export type UseCaseOption = { id: string; label: string; icon: LucideIcon };
 
 export const USE_CASES: UseCaseOption[] = [
-  { id: "customer-support",  label: "Customer Support",       icon: Headphones },
-  { id: "outbound-sales",    label: "Outbound Sales",         icon: TrendingUp },
-  { id: "learning",          label: "Learning and Development", icon: BookOpen },
-  { id: "scheduling",        label: "Scheduling",             icon: Calendar },
-  { id: "lead-qualification",label: "Lead Qualification",     icon: Users },
-  { id: "answering",         label: "Answering Service",      icon: Phone },
-  { id: "order-taking",      label: "Order Taking",           icon: ShoppingCart },
-  { id: "reservation",       label: "Reservation Management", icon: CalendarCheck },
-  { id: "menu-rec",          label: "Menu Recommendations",   icon: Star },
-  { id: "delivery",          label: "Delivery Tracking",      icon: Truck },
-  { id: "loyalty",           label: "Loyalty Programs",       icon: Heart },
-  { id: "nutrition",         label: "Nutritional Information",icon: Heart },
-  { id: "other",             label: "Other",                  icon: HelpCircle },
+  { id: "order-taking",     label: "Takeaway & delivery orders", icon: ShoppingCart },
+  { id: "reservation",      label: "Table reservations",         icon: CalendarCheck },
+  { id: "menu-rec",         label: "Menu & deals questions",     icon: Star },
+  { id: "catering",         label: "Catering & bulk orders",     icon: Utensils },
+  { id: "customer-support", label: "Order status & complaints",  icon: Headphones },
 ];
 
 export function useCaseLabel(id: string | null | undefined): string {
@@ -108,7 +76,7 @@ export function useCaseLabel(id: string | null | undefined): string {
 // LLM models (3 per provider)
 // =============================================================
 
-export type LlmProvider = "Google" | "OpenAI" | "Anthropic";
+export type LlmProvider = "Google" | "OpenAI";
 
 export type LlmModel = {
   id: string;
@@ -117,22 +85,21 @@ export type LlmModel = {
   description: string;
 };
 
-// Every id below is a REAL Retell runtime model id (see retell-sdk
-// LlmCreateParams.model) — what the user picks here is exactly what
-// runs on the call.
+// Every id below is a model Uplift AI hosts for voice agents (see
+// src/lib/uplift/voice-map.ts). What the user picks here is exactly
+// what runs on the call.
 export const LLM_MODELS: LlmModel[] = [
-  { id: "gemini-3.0-flash",      provider: "Google",    label: "Gemini 3.0 Flash",      description: "Fast + cheap · the default for voice agents" },
-  { id: "gemini-3.1-flash-lite", provider: "Google",    label: "Gemini 3.1 Flash Lite", description: "Newest lite · lowest cost" },
-  { id: "gemini-2.5-flash-lite", provider: "Google",    label: "Gemini 2.5 Flash Lite", description: "Previous-gen lite · budget fallback" },
-  { id: "gpt-5.1",               provider: "OpenAI",    label: "GPT-5.1",               description: "Flagship reasoning · strong tool use" },
-  { id: "gpt-5-mini",            provider: "OpenAI",    label: "GPT-5 Mini",            description: "Fast + cheap · solid for simple flows" },
-  { id: "gpt-4.1",               provider: "OpenAI",    label: "GPT-4.1",               description: "Classic strong reasoning · long context" },
-  { id: "claude-4.6-sonnet",     provider: "Anthropic", label: "Claude Sonnet 4.6",     description: "Balanced workhorse · best at nuance" },
-  { id: "claude-4.5-sonnet",     provider: "Anthropic", label: "Claude Sonnet 4.5",     description: "Previous-gen sonnet · proven in production" },
-  { id: "claude-4.5-haiku",      provider: "Anthropic", label: "Claude Haiku 4.5",      description: "Fastest · ideal for tight latency budgets" },
+  { id: "gemini-2.5-flash",      provider: "Google", label: "Gemini 2.5 Flash",      description: "Fastest replies · the default for phone calls" },
+  { id: "gemini-3.5-flash",      provider: "Google", label: "Gemini 3.5 Flash",      description: "Smarter · good balance of speed and quality" },
+  { id: "gemini-3.1-flash-lite", provider: "Google", label: "Gemini 3.1 Flash Lite", description: "Lowest cost · simple order taking" },
+  { id: "gpt-5.4-mini",          provider: "OpenAI", label: "GPT-5.4 Mini",          description: "Strong reasoning · handles tricky orders" },
+  { id: "gpt-5.4-nano",          provider: "OpenAI", label: "GPT-5.4 Nano",          description: "Fast + cheap" },
+  { id: "gpt-4o-mini",           provider: "OpenAI", label: "GPT-4o Mini",           description: "Proven with Urdu speech" },
 ];
 
-export const DEFAULT_LLM_ID = "gemini-3.0-flash";
+export const LLM_PROVIDERS: LlmProvider[] = ["Google", "OpenAI"];
+
+export const DEFAULT_LLM_ID = "gemini-2.5-flash";
 
 export function llmById(id: string | null | undefined): LlmModel | undefined {
   if (!id) return undefined;
@@ -260,10 +227,10 @@ export type LanguageOption = {
   flag: string;       // emoji flag for UI only (identity surface)
 };
 
-// English only — the product targets US business telephony. Expand when
-// the voice library grows (es-ES is the obvious second for US SMBs).
+// Urdu only: Callen is a Pakistani restaurant front desk. The agents
+// still understand English words mixed into Urdu and reply naturally.
 export const LANGUAGES: LanguageOption[] = [
-  { id: "English", label: "English", flag: "🇺🇸" },
+  { id: "Urdu", label: "Urdu", flag: "🇵🇰" },
 ];
 
 export function languageFor(id: string | undefined | null): LanguageOption | undefined {
@@ -275,6 +242,33 @@ export function languageFor(id: string | undefined | null): LanguageOption | und
 // Smart system-prompt + first-message generators
 // =============================================================
 
+// What the agent needs to know about the restaurant. Saved on the agent
+// (settings.restaurant). The menu and deals come from the Menu & Deals
+// page and are appended at sync time, so they are not part of this.
+export type RestaurantProfile = {
+  city: string;
+  branches: string;       // e.g. "F-7 Markaz, G-11 Markaz"
+  hours: string;          // e.g. "12 pm to 2 am, every day"
+  deliveryAreas: string;  // e.g. "F-6, F-7, F-8, G-9, G-10, G-11"
+  deliveryTime: string;   // e.g. "35 to 45 minutes"
+  minOrder: string;       // e.g. "Rs 800"
+  deliveryFee: string;    // e.g. "Free above Rs 1,500, otherwise Rs 150"
+  payment: string;        // e.g. "Cash on delivery, JazzCash, card on delivery"
+  reservations: boolean;
+};
+
+export const EMPTY_RESTAURANT: RestaurantProfile = {
+  city: "",
+  branches: "",
+  hours: "",
+  deliveryAreas: "",
+  deliveryTime: "",
+  minOrder: "",
+  deliveryFee: "",
+  payment: "Cash on delivery",
+  reservations: false,
+};
+
 export interface PromptInput {
   name: string;
   industry: string | null;
@@ -284,108 +278,109 @@ export interface PromptInput {
   defaultLanguage: string;
   additionalLanguages: string[];
   behaviorTraits: string[];
+  restaurant?: RestaurantProfile;
 }
 
+// System prompt for an Urdu restaurant front-desk agent. Instructions are
+// in English (models follow them best), replies are in Urdu script. The
+// call flow is Callen's voice convention: greet, confirm each item, offer
+// one deal, verify address, restate the order with total + payment + ETA.
+// Restaurant details and the menu are NOT baked in here: the runtime sync
+// appends them (restaurantFactsSection + the Menu & Deals page), so
+// editing hours or prices never overwrites hand edits to this prompt.
 export function buildSystemPrompt(input: PromptInput): string {
-  const persona = input.name.trim() || "the agent";
-  const industry = industryLabel(input.industry);
-  const useCase = useCaseLabel(input.useCase);
-  const goal = input.mainGoal.trim() || "Help every caller reach a clear resolution in one call.";
-
-  const allLanguages = [
-    input.defaultLanguage,
-    ...input.additionalLanguages.filter((l) => l !== input.defaultLanguage),
-  ];
-
+  const restaurant = input.name.trim() || "the restaurant";
+  const kind = industryLabel(input.industry);
+  const r = { ...EMPTY_RESTAURANT, ...(input.restaurant ?? {}) };
+  const goal = input.mainGoal.trim();
   const traitLines = traitsToPromptLines(input.behaviorTraits);
 
   const sections: string[] = [];
 
-  // -------- Personality --------
   sections.push(
     [
-      "# Personality",
-      `You are ${persona}, a professional voice agent answering inbound business calls in the United States.${
-        industry ? ` You represent a ${industry.toLowerCase()} business.` : ""
-      }`,
-      `You speak ${allLanguages.join(" and ")} with a natural, conversational American register.`,
+      "# Role",
+      `You are the phone receptionist for ${restaurant}${kind ? `, a ${kind.toLowerCase()} restaurant` : ""}${
+        r.city ? ` in ${r.city}` : " in Pakistan"
+      }. Customers call to place takeaway or delivery orders, ask about the menu and deals, check their order, or book a table.`,
+      "Always reply in Urdu, written in Urdu (Nastaliq) script. Callers mix English words into Urdu (pizza, deal, order, delivery); understand them and use the same words naturally. If a caller speaks only English, reply in simple English.",
     ].join("\n")
   );
 
-  // -------- Goal --------
-  sections.push(["# Goal", goal].join("\n"));
+  if (goal) sections.push(["# Goal", goal].join("\n"));
 
-  // -------- Use case --------
-  if (useCase) {
-    sections.push(
-      [
-        "# Primary use case",
-        `You specialise in ${useCase.toLowerCase()}. Stay within this scope and escalate anything outside to a human agent.`,
-      ].join("\n")
-    );
-  }
-
-  // -------- Knowledge --------
-  const knowledgeBits: string[] = [];
-  if (input.website.trim()) {
-    knowledgeBits.push(
-      `Reference ${input.website.trim()} for product, pricing, and policy details. Quote it when relevant.`
-    );
-  }
-  knowledgeBits.push(
-    "Use the connected knowledge base for menus, pricing, hours, FAQs, and SOPs. Never invent details that are not in your sources."
-  );
-  sections.push(["# Knowledge", knowledgeBits.join(" ")].join("\n"));
-
-  // -------- Style --------
-  const baseStyle = [
-    "Greet warmly and naturally: 'hi', 'hello', or 'good morning'.",
-    "Ask one question at a time.",
-    "Confirm each detail back to the caller.",
-    "Restate the full order or action before closing the call.",
-    "Sound like a capable human receptionist, never like a phone tree.",
-    "Keep each response under 25 words.",
-  ];
-  const styleLines = [...baseStyle, ...traitLines];
-  sections.push(
-    ["# Style", styleLines.map((l) => `- ${l}`).join("\n")].join("\n")
-  );
-
-  // -------- Limits --------
   sections.push(
     [
-      "# Limits",
-      "- Never invent prices, hours, or policies. If unknown, say so and offer to take a message or escalate.",
-      "- Never share another customer's information.",
-      "- Transfer to a human for refunds over $100, legal questions, or repeated complaints.",
-      "- If the caller asks whether you are an AI, answer honestly and continue helping.",
+      "# Taking an order",
+      "1. Greet warmly (assalam o alaikum, khush amdeed) and ask what they would like.",
+      "2. Take items one by one. Confirm each item back with size, quantity and flavour.",
+      "3. Suggest one relevant deal from the menu, once. Never push.",
+      "4. Ask takeaway or delivery. For delivery, take the full address and check it is in a delivery area.",
+      "5. Take the caller's name and phone number.",
+      "6. Restate the full order, the total in rupees, the payment method and when it will be ready or delivered. Ask them to confirm.",
+      "7. Thank them warmly and close.",
+    ].join("\n")
+  );
+
+  const style = [
+    "Keep every reply short: one or two sentences, under 25 words.",
+    "Ask one question at a time.",
+    "Say prices and numbers as Urdu words.",
+    "Sound like a friendly, capable person at the counter, never like a phone menu.",
+    ...traitLines,
+  ];
+  sections.push(["# Style", ...style.map((l) => `- ${l}`)].join("\n"));
+
+  sections.push(
+    [
+      "# Rules",
+      "- Use the Restaurant details and Menu sections below as your only source of facts.",
+      "- Only offer items, deals and prices from the menu. Never invent an item, a price or a deal.",
+      "- If something is not on the menu or you do not know, say so politely and offer to take a message for the manager.",
+      "- Do not take delivery orders outside the delivery areas; offer takeaway instead.",
+      "- For complaints, apologise once, take the order details and phone number, and promise a call back from the manager.",
+      "- If the caller asks whether you are an AI, answer honestly and keep helping.",
     ].join("\n")
   );
 
   return sections.join("\n\n");
 }
 
+// The facts block the runtime sync appends after the system prompt.
+export function restaurantFactsSection(
+  profile: Partial<RestaurantProfile> | null | undefined,
+  website?: string | null
+): string {
+  const r = { ...EMPTY_RESTAURANT, ...(profile ?? {}) };
+  const facts: string[] = [];
+  if (r.city) facts.push(`City: ${r.city}`);
+  if (r.branches) facts.push(`Branches: ${r.branches}`);
+  if (r.hours) facts.push(`Opening hours: ${r.hours}`);
+  if (r.deliveryAreas) facts.push(`Delivery areas: ${r.deliveryAreas}`);
+  if (r.deliveryTime) facts.push(`Delivery time: ${r.deliveryTime}`);
+  if (r.minOrder) facts.push(`Minimum order for delivery: ${r.minOrder}`);
+  if (r.deliveryFee) facts.push(`Delivery fee: ${r.deliveryFee}`);
+  if (r.payment) facts.push(`Payment methods: ${r.payment}`);
+  facts.push(
+    r.reservations
+      ? "Table reservations: yes. Take name, phone number, date, time and number of guests."
+      : "Table reservations: not taken by phone."
+  );
+  if (website?.trim()) facts.push(`Website: ${website.trim()}`);
+  return ["# Restaurant details", ...facts.map((f) => `- ${f}`)].join("\n");
+}
+
 export function buildFirstMessage(input: {
   name: string;
   useCase: string | null;
-  defaultLanguage?: string; // kept for call-site compatibility; English only
+  defaultLanguage?: string;
 }): string {
-  const useCase = (input.useCase ?? "").trim();
-  const name = input.name.trim() || "this Callen line";
-
-  // Use-case-specific openers
-  const openers: Record<string, string> = {
-    "order-taking": `[warmly] Welcome to ${name}. What can I get started for you today?`,
-    scheduling: `[warmly] Hi, you've reached ${name}. Would you like to book or change an appointment?`,
-    "customer-support": `[warmly] Hi, you've reached ${name} support. How can I help today?`,
-    "lead-qualification": `[warmly] Hi, this is ${name}. Could you tell me a bit about what you're looking for?`,
-    answering: `[warmly] Hello, you've reached ${name}. How can I help?`,
-    reservation: `[warmly] Hi, ${name} here. Would you like to make a reservation?`,
-    "outbound-sales": `[warmly] Hi, this is ${name}. Do you have a couple of minutes to chat?`,
-    delivery: `[warmly] Hi, ${name} here. Could you share your order number?`,
-  };
-
-  return openers[useCase] ?? `[warmly] Hi, this is ${name}. How can I help you today?`;
+  const name = input.name.trim();
+  const welcome = name ? `${name} میں خوش آمدید` : "خوش آمدید";
+  if (input.useCase === "reservation") {
+    return `السلام علیکم! ${welcome}۔ ٹیبل بک کرنی ہے یا آرڈر دینا ہے؟`;
+  }
+  return `السلام علیکم! ${welcome}۔ آج آپ کیا آرڈر کرنا چاہیں گے؟`;
 }
 
 // Note exported here so the wizard and editor render the icons by id.
