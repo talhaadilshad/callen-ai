@@ -6,32 +6,11 @@ import "server-only";
 import { retell } from "@/lib/retell/client";
 import { toRetellVoiceId } from "@/lib/retell/voice-map";
 import { SITE_URL } from "@/lib/site-url";
+import type { CallenAgentRow, AgentSyncResult, RuntimeIds } from "@/lib/voice-runtime";
 
 // Cheapest strong tool-calling default; override per-agent via
 // agents.settings.model.
 const DEFAULT_MODEL = "gemini-3.0-flash" as const;
-
-export type CallenAgentRow = {
-  id: string;
-  workspace_id: string;
-  name: string;
-  system_prompt: string;
-  greeting: string | null;
-  voice_id: string | null;
-  language: string;
-  provider_agent_id: string | null;
-  provider_llm_id: string | null;
-  settings: Record<string, unknown>;
-};
-
-export type AgentSyncResult = {
-  providerAgentId: string;
-  providerLlmId: string;
-  // Which ids this call created (vs updated), so the caller can roll
-  // them back if persisting them fails.
-  createdAgent: boolean;
-  createdLlm: boolean;
-};
 
 // Voice tuning saved by the dashboard's mood controls (settings.voiceTuning).
 type VoiceTuning = {
@@ -95,10 +74,7 @@ export async function syncAgentToRetell(agent: CallenAgentRow): Promise<AgentSyn
 }
 
 // Best-effort removal of runtime resources (rollback + agent deletion).
-export async function deleteRetellAgent(ids: {
-  providerAgentId?: string | null;
-  providerLlmId?: string | null;
-}) {
+export async function deleteRetellAgent(ids: RuntimeIds) {
   const client = retell();
   if (ids.providerAgentId) await client.agent.delete(ids.providerAgentId).catch(() => {});
   if (ids.providerLlmId) await client.llm.delete(ids.providerLlmId).catch(() => {});

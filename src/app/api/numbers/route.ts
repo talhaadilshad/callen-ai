@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
   const { data: agent, error } = await supabase
     .from("agents")
-    .select("id, workspace_id, name, provider_agent_id")
+    .select("id, workspace_id, name, provider, provider_agent_id")
     .eq("id", body.agentId)
     .single();
 
@@ -63,6 +63,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (agent.provider === "uplift") {
+    return NextResponse.json(
+      { error: "Urdu agents get their Pakistani number from Uplift AI on request. It can't be bought here yet." },
+      { status: 409 }
+    );
+  }
   if (!agent.provider_agent_id) {
     return NextResponse.json(
       { error: "Agent has not been synced to the voice runtime yet. Save the agent first." },
