@@ -65,7 +65,8 @@ Build one Urdu agent by hand in the Uplift Calling portal and talk to it in the 
 - Rate limits via the new `voice_sessions` table (migration `20261028000002`): one start per user per 30 seconds, 30 per workspace per day.
 - `src/components/agent/live-call-panel.tsx`: replaces the browser-TTS preview for Urdu agents. Joins with `livekit-client` 2.22.4, plays the agent's audio, mic mute, live captions from the `lk.transcription` text stream (if Uplift publishes them), hangs up after 10 minutes.
 - The agent store now keeps `agents.language` (it used to force `en-US`), so an Urdu agent survives saves.
-- Not tested against real Uplift yet. Until Phase 4, make an agent Urdu by setting `language = 'ur-PK'` in Supabase, then Publish it in the editor.
+- Tested live on 2026-10-28: publish created the Uplift assistant, Talk live connected, the Urdu greeting played, the agent understood spoken Urdu and replied in Urdu, captions showed both sides (duplicate interim captions fixed in 7fc6f61).
+- Until Phase 4, make an agent Urdu by setting `language = 'ur-PK'` in Supabase, then Publish it in the editor.
 
 ### Phase 3: Uplift webhook (about 1 day)
 - `/api/webhooks/uplift`: verify `x-uplift-ai-signature` (`t=<seconds>,v1=<hex>`, HMAC-SHA256 of `${t}.${rawBody}` with the signing secret, reject if older than 5 minutes). Answer `ping` with 204.
