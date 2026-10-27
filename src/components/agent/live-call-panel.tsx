@@ -96,18 +96,24 @@ export function LiveCallPanel({
         setStatus("idle");
       });
 
-      // LiveKit agents publish transcripts as text streams; each stream
-      // is one utterance arriving in deltas.
+      // LiveKit agents publish transcripts as text streams tagged with
+      // lk.segment_id. The agent's reply is one stream arriving in deltas;
+      // the caller's speech is re-sent as a new stream (full text so far)
+      // on every interim result. So: one caption per segment, and each
+      // stream replaces that caption's text rather than adding a new one.
       room.registerTextStreamHandler("lk.transcription", (reader: TextStreamReader, participant) => {
-        const id = reader.info.id;
+        const id = reader.info.attributes?.["lk.segment_id"] ?? reader.info.id;
         const fromAgent = participant.identity !== room.localParticipant.identity;
         void (async () => {
+          let text = "";
           for await (const delta of reader) {
+            text += delta;
+            const current = text;
             setCaptions((prev) => {
               const i = prev.findIndex((c) => c.id === id);
-              if (i === -1) return [...prev, { id, fromAgent, text: delta }].slice(-MAX_CAPTIONS);
+              if (i === -1) return [...prev, { id, fromAgent, text: current }].slice(-MAX_CAPTIONS);
               const next = [...prev];
-              next[i] = { ...next[i], text: next[i].text + delta };
+              next[i] = { ...next[i], text: current };
               return next;
             });
           }
