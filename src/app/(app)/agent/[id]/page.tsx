@@ -370,7 +370,7 @@ function AgentEditor({
 
         {/* ---------------- Column 2: config cards ---------------- */}
         <div className="border-r border-neutral-200 bg-white p-5 overflow-y-auto thin-scrollbar space-y-5">
-          <ConfigSection title="Voice" subtitle="The Urdu voice callers hear (Uplift AI).">
+          <ConfigSection title="Voice" subtitle="The Urdu voice callers hear (Soniox).">
             {/* div + role/keyboard handler instead of <button>: VoicePreview
                 renders its own <button> for the inline play action, so
                 wrapping it in another <button> would cause the
