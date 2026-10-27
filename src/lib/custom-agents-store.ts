@@ -102,6 +102,7 @@ type AgentRow = {
   id: string;
   name: string;
   status: string;
+  language: string;
   system_prompt: string;
   greeting: string | null;
   voice_id: string | null;
@@ -124,13 +125,21 @@ function rowToAgent(row: AgentRow): CustomAgent {
     systemPrompt: row.system_prompt,
     firstMessage: row.greeting ?? "",
     llm: (s.model as string) ?? DEFAULT_LLM_ID,
-    defaultLanguage: "English",
+    defaultLanguage: languageFromCode(row.language),
     additionalLanguages: [],
     behaviorTraits: (s.behaviorTraits as string[]) ?? [],
     voiceTuning: { ...DEFAULT_VOICE_TUNING, ...((s.voiceTuning as VoiceTuning) ?? {}) },
     createdAt: row.created_at,
     status: row.status === "active" ? "published" : "draft",
   };
+}
+
+// agents.language <-> the editor's language label.
+function languageFromCode(code: string | null): string {
+  return code?.toLowerCase().startsWith("ur") ? "Urdu" : "English";
+}
+function languageToCode(label: string): string {
+  return label === "Urdu" ? "ur-PK" : "en-US";
 }
 
 // Only the columns members may write (see the column grants in the
@@ -142,7 +151,8 @@ function agentToRow(a: CustomAgent) {
     system_prompt: a.systemPrompt,
     greeting: a.firstMessage,
     voice_id: a.voiceId,
-    language: "en-US",
+    // The server picks the runtime from this: ur-* runs on Uplift.
+    language: languageToCode(a.defaultLanguage),
     settings: {
       type: a.type,
       industry: a.industry,
@@ -186,7 +196,7 @@ export const useCustomAgentsStore = create<Store>()((set, get) => ({
   load: async () => {
     const { data, error } = await supabase
       .from("agents")
-      .select("id, name, status, system_prompt, greeting, voice_id, settings, created_at")
+      .select("id, name, status, language, system_prompt, greeting, voice_id, settings, created_at")
       .order("created_at", { ascending: false });
     if (error) {
       reportError("load agents", error.message);

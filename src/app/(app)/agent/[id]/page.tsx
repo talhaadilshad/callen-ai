@@ -52,6 +52,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { SiriOrb } from "@/components/ui/siri-orb";
+import { LiveCallPanel } from "@/components/agent/live-call-panel";
 import {
   Sheet,
   SheetContent,
@@ -713,7 +714,16 @@ function TestPanel({
         </button>
       </div>
 
-      {tab === "inline" ? (
+      {tab === "inline" && agent.defaultLanguage === "Urdu" ? (
+        // Urdu agents run on Uplift: a real live conversation instead of
+        // the browser-TTS preview below.
+        <LiveCallPanel
+          agentId={agent.id}
+          agentName={agent.name}
+          published={agent.status === "published"}
+          colors={palette}
+        />
+      ) : tab === "inline" ? (
         <>
           {/* Orb area */}
           <div className="flex-1 flex flex-col items-center justify-center px-6 py-6 min-h-[320px]">

@@ -1,6 +1,6 @@
 # Urdu voice agents on Uplift AI
 
-Status: Phase 1 done (2026-10-28). Replaces the earlier LiveKit plan.
+Status: Phases 1 and 2 done (2026-10-28). Replaces the earlier LiveKit plan.
 
 Decision (2026-10-28): Uplift runs the whole Urdu stack. Soniox is used *inside* Uplift for STT (Uplift's default for Urdu), and is available as a TTS choice per agent (`soniox:<Voice>`). We are not self-hosting a LiveKit/Pipecat pipeline; revisit only if cost, limits or Uplift itself become a problem.
 
@@ -60,11 +60,12 @@ Build one Urdu agent by hand in the Uplift Calling portal and talk to it in the 
 - Not yet reachable from the UI: the store still saves every agent as `en-US` until Phase 4.
 - Voice ids: `uplift:<id>` or `soniox:<Voice>`; default `helpdesk-agent` (the only id in Uplift's docs, swap after the portal test). Mood controls are not mapped to Uplift yet.
 
-### Phase 2: "Talk live" in the editor (about 1 day)
-- `POST /api/agents/[id]/voice-session`: checks login, loads the agent under RLS, requires `provider = 'uplift'`, returns `{ token, wsUrl }`.
-- `TestPanel`: a Talk live button using `livekit-client` / `@livekit/components-react`, with hang-up and live captions if available.
-- One session at a time per user, so nobody burns minutes by accident.
-- **Done when:** you can talk to an Urdu agent from the editor.
+### Phase 2: "Talk live" in the editor ✅ done
+- `POST /api/agents/[id]/voice-session` (`src/lib/uplift/sessions.ts`): checks login, loads the agent under RLS, requires a published Uplift agent, mints `{ token, wsUrl }` from Uplift (retries Uplift's 503 right after a publish), maps Uplift's 402 to "out of credits".
+- Rate limits via the new `voice_sessions` table (migration `20261028000002`): one start per user per 30 seconds, 30 per workspace per day.
+- `src/components/agent/live-call-panel.tsx`: replaces the browser-TTS preview for Urdu agents. Joins with `livekit-client` 2.22.4, plays the agent's audio, mic mute, live captions from the `lk.transcription` text stream (if Uplift publishes them), hangs up after 10 minutes.
+- The agent store now keeps `agents.language` (it used to force `en-US`), so an Urdu agent survives saves.
+- Not tested against real Uplift yet. Until Phase 4, make an agent Urdu by setting `language = 'ur-PK'` in Supabase, then Publish it in the editor.
 
 ### Phase 3: Uplift webhook (about 1 day)
 - `/api/webhooks/uplift`: verify `x-uplift-ai-signature` (`t=<seconds>,v1=<hex>`, HMAC-SHA256 of `${t}.${rawBody}` with the signing secret, reject if older than 5 minutes). Answer `ping` with 204.
