@@ -6,11 +6,14 @@
 //   - updateAgent / removeAgent apply optimistically and persist async
 //   - publishing (status -> "published") also syncs the agent to the
 //     voice runtime via POST /api/agents/:id/sync
+//   - removeAgent goes through DELETE /api/agents/:id so the runtime
+//     agent is torn down and its numbers unbound
 //
 // DB mapping: name/system_prompt/greeting/voice_id/status live in their
 // own columns; wizard-specific fields (type, industry, useCase, website,
 // mainGoal, chatOnly, llm, languages, behaviorTraits, voice tuning) ride
-// in the settings jsonb.
+// in the settings jsonb. Runtime ids (provider, provider_agent_id,
+// provider_llm_id) are server-owned: members cannot write them.
 
 import { create } from "zustand";
 import { useEffect, useState } from "react";
@@ -130,16 +133,16 @@ function rowToAgent(row: AgentRow): CustomAgent {
   };
 }
 
+// Only the columns members may write (see the column grants in the
+// harden_runtime_wiring migration). id is added on insert.
 function agentToRow(a: CustomAgent) {
   return {
-    id: a.id,
     name: a.name,
     status: a.status === "published" ? "active" : "draft",
     system_prompt: a.systemPrompt,
     greeting: a.firstMessage,
     voice_id: a.voiceId,
     language: "en-US",
-    provider: "retell",
     settings: {
       type: a.type,
       industry: a.industry,
@@ -167,6 +170,8 @@ function getWorkspaceId(): Promise<string | null> {
   })();
   return workspaceIdPromise;
 }
+
+const resyncQueued = new Set<string>();
 
 function reportError(action: string, message: string) {
   console.error(`[agents] ${action} failed:`, message);
@@ -241,7 +246,7 @@ export const useCustomAgentsStore = create<Store>()((set, get) => ({
       }
       const { error } = await supabase
         .from("agents")
-        .insert({ ...agentToRow(agent), workspace_id: workspaceId });
+        .insert({ ...agentToRow(agent), id, workspace_id: workspaceId });
       if (error) reportError("create agent", error.message);
     })();
 
@@ -272,8 +277,11 @@ export const useCustomAgentsStore = create<Store>()((set, get) => ({
   removeAgent: (id) => {
     set((s) => ({ agents: s.agents.filter((a) => a.id !== id) }));
     void (async () => {
-      const { error } = await supabase.from("agents").delete().eq("id", id);
-      if (error) reportError("delete agent", error.message);
+      const res = await fetch(`/api/agents/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const body = (await res.json().catch(() => null)) as { error?: string } | null;
+        reportError("delete agent", body?.error ?? `delete failed (${res.status})`);
+      }
     })();
   },
 
@@ -298,7 +306,12 @@ export const useCustomAgentsStore = create<Store>()((set, get) => ({
   },
 
   syncAgent: async (id) => {
-    if (get().syncingIds.includes(id)) return;
+    // A save while a sync is in flight must not be lost: queue one more
+    // run, which picks up the latest saved row.
+    if (get().syncingIds.includes(id)) {
+      resyncQueued.add(id);
+      return;
+    }
     set((s) => ({ syncingIds: [...s.syncingIds, id] }));
     try {
       const res = await fetch(`/api/agents/${id}/sync`, { method: "POST" });
@@ -313,6 +326,7 @@ export const useCustomAgentsStore = create<Store>()((set, get) => ({
       reportError("sync agent to runtime", err instanceof Error ? err.message : "unknown error");
     } finally {
       set((s) => ({ syncingIds: s.syncingIds.filter((x) => x !== id) }));
+      if (resyncQueued.delete(id)) void get().syncAgent(id);
     }
   },
 }));

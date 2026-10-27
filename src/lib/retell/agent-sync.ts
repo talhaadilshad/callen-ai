@@ -20,12 +20,17 @@ export type CallenAgentRow = {
   voice_id: string | null;
   language: string;
   provider_agent_id: string | null;
+  provider_llm_id: string | null;
   settings: Record<string, unknown>;
 };
 
 export type AgentSyncResult = {
   providerAgentId: string;
   providerLlmId: string;
+  // Which ids this call created (vs updated), so the caller can roll
+  // them back if persisting them fails.
+  createdAgent: boolean;
+  createdLlm: boolean;
 };
 
 // Voice tuning saved by the dashboard's mood controls (settings.voiceTuning).
@@ -40,7 +45,6 @@ type VoiceTuning = {
 export async function syncAgentToRetell(agent: CallenAgentRow): Promise<AgentSyncResult> {
   const client = retell();
   const model = (agent.settings?.model as typeof DEFAULT_MODEL) ?? DEFAULT_MODEL;
-  const existingLlmId = (agent.settings?.provider_llm_id as string) ?? null;
   const tuning = (agent.settings?.voiceTuning as VoiceTuning) ?? {};
 
   const llmPayload = {
@@ -49,14 +53,16 @@ export async function syncAgentToRetell(agent: CallenAgentRow): Promise<AgentSyn
     model,
   };
 
-  let llmId = existingLlmId;
+  let llmId = agent.provider_llm_id;
+  const createdLlm = !llmId;
   if (llmId) {
     await client.llm.update(llmId, llmPayload);
   } else {
-    const llm = await client.llm.create(llmPayload);
-    llmId = llm.llm_id;
+    llmId = (await client.llm.create(llmPayload)).llm_id;
   }
 
+  // Retell agents have no metadata field (metadata is per call), so the
+  // webhook correlates calls back to us via provider_agent_id.
   const agentPayload = {
     agent_name: agent.name,
     voice_id: toRetellVoiceId(agent.voice_id),
@@ -69,17 +75,31 @@ export async function syncAgentToRetell(agent: CallenAgentRow): Promise<AgentSyn
     responsiveness: tuning.responsiveness ?? 1,
     interruption_sensitivity: tuning.interruptionSensitivity ?? 1,
     enable_backchannel: tuning.backchannel ?? true,
-    // Callen agent id rides along on every webhook for cheap correlation.
-    metadata: { callen_agent_id: agent.id, callen_workspace_id: agent.workspace_id },
   };
 
   let providerAgentId = agent.provider_agent_id;
-  if (providerAgentId) {
-    await client.agent.update(providerAgentId, agentPayload);
-  } else {
-    const created = await client.agent.create(agentPayload);
-    providerAgentId = created.agent_id;
+  const createdAgent = !providerAgentId;
+  try {
+    if (providerAgentId) {
+      await client.agent.update(providerAgentId, agentPayload);
+    } else {
+      providerAgentId = (await client.agent.create(agentPayload)).agent_id;
+    }
+  } catch (err) {
+    // Don't leave a brand-new LLM behind that nothing references.
+    if (createdLlm) await client.llm.delete(llmId).catch(() => {});
+    throw err;
   }
 
-  return { providerAgentId, providerLlmId: llmId };
+  return { providerAgentId, providerLlmId: llmId, createdAgent, createdLlm };
+}
+
+// Best-effort removal of runtime resources (rollback + agent deletion).
+export async function deleteRetellAgent(ids: {
+  providerAgentId?: string | null;
+  providerLlmId?: string | null;
+}) {
+  const client = retell();
+  if (ids.providerAgentId) await client.agent.delete(ids.providerAgentId).catch(() => {});
+  if (ids.providerLlmId) await client.llm.delete(ids.providerLlmId).catch(() => {});
 }

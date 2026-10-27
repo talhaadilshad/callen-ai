@@ -85,7 +85,7 @@ const llmPayload = {
   begin_message: agent.greeting,
   model: "gemini-3.0-flash",
 };
-let llmId = agent.settings?.provider_llm_id ?? null;
+let llmId = agent.provider_llm_id ?? null;
 if (llmId) {
   await retell.llm.update(llmId, llmPayload);
 } else {
@@ -98,7 +98,6 @@ const agentPayload = {
   language: "en-US",
   response_engine: { type: "retell-llm", llm_id: llmId },
   webhook_url: `${siteUrl}/api/webhooks/retell`,
-  metadata: { callen_agent_id: agent.id, callen_workspace_id: workspaceId },
 };
 let providerAgentId = agent.provider_agent_id;
 if (providerAgentId) {
@@ -113,7 +112,7 @@ const { error: persistError } = await supabase
   .from("agents")
   .update({
     provider_agent_id: providerAgentId,
-    settings: { ...(agent.settings ?? {}), provider_llm_id: llmId },
+    provider_llm_id: llmId,
     status: "active",
   })
   .eq("id", agent.id);
@@ -138,7 +137,10 @@ if (flag("--buy-number")) {
     status: "active",
     monthly_cost_cents: 200,
   });
-  if (numError) throw new Error(`number bought but not persisted: ${numError.message}`);
+  if (numError) {
+    await retell.phoneNumber.delete(purchased.phone_number).catch(() => {});
+    throw new Error(`number bought but not persisted (released it): ${numError.message}`);
+  }
   console.log("phone_numbers row inserted");
   console.log(`\nCALL THIS NUMBER FROM YOUR PHONE: ${purchased.phone_number}`);
 } else {
