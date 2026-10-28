@@ -10,8 +10,38 @@
 // Anything else (an old English catalog slug, null) gets the default
 // Soniox voice.
 
-import { DEFAULT_SONIOX_VOICE_ID, SONIOX_TTS_MODEL } from "@/lib/soniox-voices";
-import { normalizeUpliftVoiceId } from "@/lib/uplift/voices";
+import { DEFAULT_SONIOX_VOICE_ID, SONIOX_TTS_MODEL, sonioxVoiceById } from "@/lib/soniox-voices";
+import { normalizeUpliftVoiceId, UPLIFT_VOICES } from "@/lib/uplift/voices";
+
+export type VoiceGender = "Female" | "Male";
+
+// Gender of the voice an agent will speak with. Urdu verbs agree with the
+// speaker (karti hoon vs karta hoon), so the agent has to be told. Unknown
+// ids speak with the default voice, so they take its gender.
+export function voiceGender(voiceId: string | null | undefined): VoiceGender {
+  const soniox = sonioxVoiceById(voiceId);
+  if (soniox) return soniox.gender;
+  const upliftId = voiceId?.startsWith("uplift:") ? voiceId.slice(7) : normalizeUpliftVoiceId(voiceId);
+  const uplift = UPLIFT_VOICES.find((v) => v.id === upliftId);
+  if (uplift) return uplift.gender;
+  return sonioxVoiceById(DEFAULT_SONIOX_VOICE_ID)?.gender ?? "Female";
+}
+
+// Grammar rule appended to the agent's instructions so first-person Urdu
+// matches the voice callers hear.
+export function speakingAsSection(gender: VoiceGender): string {
+  return gender === "Female"
+    ? [
+        "# Speaking as a woman",
+        "Your voice is a woman's. When you speak about yourself in Urdu, always use feminine forms: کرتی ہوں، سکتی ہوں، رہی ہوں، دیتی ہوں، بتاتی ہوں (karti hoon, sakti hoon, rahi hoon).",
+        "Never use masculine forms such as کرتا، سکتا، رہا for yourself. Words about the caller follow the caller, not you.",
+      ].join("\n")
+    : [
+        "# Speaking as a man",
+        "Your voice is a man's. When you speak about yourself in Urdu, always use masculine forms: کرتا ہوں، سکتا ہوں، رہا ہوں، دیتا ہوں، بتاتا ہوں (karta hoon, sakta hoon, raha hoon).",
+        "Never use feminine forms such as کرتی، سکتی، رہی for yourself. Words about the caller follow the caller, not you.",
+      ].join("\n");
+}
 
 export type UpliftTtsConfig =
   | { provider: "upliftai"; voiceId: string }

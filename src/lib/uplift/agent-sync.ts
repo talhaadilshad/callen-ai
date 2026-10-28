@@ -10,7 +10,7 @@
 
 import "server-only";
 import { uplift } from "@/lib/uplift/client";
-import { toUpliftLlm, toUpliftTts } from "@/lib/uplift/voice-map";
+import { toUpliftLlm, toUpliftTts, voiceGender, speakingAsSection } from "@/lib/uplift/voice-map";
 import type { CallenAgentRow, AgentSyncResult } from "@/lib/voice-runtime";
 
 type UpliftAssistant = { realtimeAssistantId: string; version: number };
@@ -23,7 +23,11 @@ function assistantBody(agent: CallenAgentRow) {
     public: false,
     config: {
       agent: {
-        instructions: [agent.system_prompt, agent.knowledge].filter(Boolean).join("\n\n"),
+        // Prompt, then the grammar rule for the voice's gender (so a woman's
+        // voice never says "sakta"), then restaurant knowledge.
+        instructions: [agent.system_prompt, speakingAsSection(voiceGender(agent.voice_id)), agent.knowledge]
+          .filter(Boolean)
+          .join("\n\n"),
         initialGreeting: Boolean(greeting),
         ...(greeting
           ? { greetingInstructions: `Open the call by saying exactly this greeting: "${greeting}"` }
