@@ -254,7 +254,7 @@ const STEP_META: Record<Step, { title: string; subtitle: string }> = {
   },
   4: {
     title: "Pick a voice",
-    subtitle: "Urdu voices from Uplift AI. Tap any tile to preview.",
+    subtitle: "Urdu voices from Soniox. Tap any tile to preview.",
   },
 };
 
