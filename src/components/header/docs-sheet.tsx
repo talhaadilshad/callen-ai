@@ -109,10 +109,10 @@ const DOCS: Category[] = [
     articles: [
       {
         id: "kb-1",
-        title: "Adding your menu and deals",
-        body: "Open Menu & Deals in the sidebar. Add items one by one, or use Paste menu to import a whole menu as text. Turn an item off when it runs out, then press Update live agents so callers hear the change.",
-        href: "/menu",
-        hrefLabel: "Open Menu & Deals",
+        title: "Teaching your agent: the Knowledge Base",
+        body: "Open Knowledge Base in the sidebar. Menu and Deals hold what you sell (add items or paste a whole menu); Restaurant info, Policies and FAQs hold everything else callers ask about (write, paste, or upload a .txt, .md or PDF). Turn anything off to hide it, then press Update live agents.",
+        href: "/knowledge",
+        hrefLabel: "Open Knowledge Base",
       },
       {
         id: "kb-2",

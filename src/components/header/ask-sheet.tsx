@@ -86,15 +86,15 @@ const KB: QA[] = [
   {
     keywords: ["knowledge", "kb", "document", "upload", "menu", "faq", "pdf"],
     answer:
-      "Open Menu & Deals. Add items one by one or paste a whole menu as text. Your agents only quote items and prices from this page, so keep it current and press Update live agents after changes.",
-    links: [{ label: "Open Menu & Deals", href: "/menu" }],
+      "Open Knowledge Base. Add menu items and deals (or paste a whole menu), plus documents for restaurant info, policies and FAQs; upload a .txt, .md or PDF if you have one. Your agents only answer from here, so press Update live agents after changes.",
+    links: [{ label: "Open Knowledge Base", href: "/knowledge" }],
     followups: ["What file types are supported?", "How does retrieval work?"],
   },
   {
     keywords: ["rag", "retrieval", "chunk", "embedding", "vector"],
     answer:
-      "Your agent gets your restaurant details and the available items from Menu & Deals as part of its instructions every time it is updated. Items you turn off are left out, so the agent never offers them.",
-    links: [{ label: "Open Menu & Deals", href: "/menu" }],
+      "Every time an agent is updated it receives your restaurant details plus everything switched on in the Knowledge Base: menu, deals, info, policies and FAQs. Anything turned off is left out, so the agent never mentions it.",
+    links: [{ label: "Open Knowledge Base", href: "/knowledge" }],
   },
   {
     keywords: ["tool", "webhook", "mcp", "function", "endpoint"],

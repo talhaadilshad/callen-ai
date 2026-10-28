@@ -1189,11 +1189,11 @@ function RestaurantDetailsCard({
           Save details
         </Button>
         <Link
-          href="/menu"
+          href="/knowledge"
           className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 hover:border-neutral-300 h-8 px-3 text-[12px] font-medium text-neutral-800"
         >
           <UtensilsCrossed className="size-3.5" />
-          Edit menu & deals
+          Open knowledge base
         </Link>
       </div>
     </div>

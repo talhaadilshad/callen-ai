@@ -87,9 +87,9 @@ const SEED: Notification[] = [
   {
     id: "n4",
     kind: "kb_indexed",
-    title: "Menu updated",
-    body: "3 new deals added. Update live agents so callers hear them.",
-    href: "/menu",
+    title: "Knowledge base updated",
+    body: "Delivery policy changed. Update live agents so callers hear it.",
+    href: "/knowledge",
     minutesAgo: 64,
     read: false,
   },

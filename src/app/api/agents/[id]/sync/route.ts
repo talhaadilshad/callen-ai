@@ -18,6 +18,11 @@ import {
 } from "@/lib/voice-runtime";
 import { restaurantFactsSection, type RestaurantProfile } from "@/lib/agent-meta";
 import { menuSection } from "@/lib/menu";
+import { knowledgeSection } from "@/lib/knowledge";
+
+// The UI warns at KNOWLEDGE_CHAR_BUDGET; this keeps a runaway knowledge
+// base from producing instructions Uplift might reject.
+const KNOWLEDGE_HARD_CAP = 60000;
 
 export async function POST(
   _request: NextRequest,
@@ -77,27 +82,37 @@ export async function POST(
     agent = { ...agent, provider_agent_id: null, provider_llm_id: null };
   }
 
-  // Urdu (Uplift) agents get the restaurant details + current menu
-  // appended to their instructions, so saving the menu and re-syncing
-  // is all it takes to update what the agent knows.
+  // Urdu (Uplift) agents get the restaurant details + the Knowledge Base
+  // (menu, deals, info, policies, FAQs) appended to their instructions,
+  // so editing the Knowledge Base and re-syncing is all it takes to update
+  // what the agent knows.
   if (runtime === "uplift") {
-    const { data: menu, error: menuError } = await admin
-      .from("menu_items")
-      .select("kind, category, name, description, price_pkr, available, sort")
-      .eq("workspace_id", agent.workspace_id);
-    if (menuError) {
-      return NextResponse.json({ error: `Could not load the menu: ${menuError.message}` }, { status: 500 });
+    const [menu, docs] = await Promise.all([
+      admin
+        .from("menu_items")
+        .select("kind, category, name, description, price_pkr, available, sort")
+        .eq("workspace_id", agent.workspace_id),
+      admin
+        .from("knowledge_docs")
+        .select("kind, title, content, enabled, sort")
+        .eq("workspace_id", agent.workspace_id),
+    ]);
+    const loadError = menu.error ?? docs.error;
+    if (loadError) {
+      return NextResponse.json({ error: `Could not load the knowledge base: ${loadError.message}` }, { status: 500 });
     }
-    agent = {
-      ...agent,
-      knowledge: [
-        restaurantFactsSection(
-          agent.settings?.restaurant as Partial<RestaurantProfile> | undefined,
-          agent.settings?.website as string | undefined
-        ),
-        menuSection(menu ?? []),
-      ].join("\n\n"),
-    };
+    const knowledge = [
+      "Everything below is this restaurant's own information. Answer only from it.",
+      restaurantFactsSection(
+        agent.settings?.restaurant as Partial<RestaurantProfile> | undefined,
+        agent.settings?.website as string | undefined
+      ),
+      menuSection(menu.data ?? []),
+      knowledgeSection(docs.data ?? []),
+    ]
+      .filter(Boolean)
+      .join("\n\n");
+    agent = { ...agent, knowledge: knowledge.slice(0, KNOWLEDGE_HARD_CAP) };
   }
 
   let result;
