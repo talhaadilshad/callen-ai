@@ -89,8 +89,8 @@ export type LlmModel = {
 // src/lib/uplift/voice-map.ts). What the user picks here is exactly
 // what runs on the call.
 export const LLM_MODELS: LlmModel[] = [
-  { id: "gemini-2.5-flash",      provider: "Google", label: "Gemini 2.5 Flash",      description: "Fastest replies · the default for phone calls" },
-  { id: "gemini-3.5-flash",      provider: "Google", label: "Gemini 3.5 Flash",      description: "Smarter · good balance of speed and quality" },
+  { id: "gemini-3.5-flash",      provider: "Google", label: "Gemini 3.5 Flash",      description: "Smarter Urdu · the default for phone calls" },
+  { id: "gemini-2.5-flash",      provider: "Google", label: "Gemini 2.5 Flash",      description: "Fastest replies · simpler Urdu" },
   { id: "gemini-3.1-flash-lite", provider: "Google", label: "Gemini 3.1 Flash Lite", description: "Lowest cost · simple order taking" },
   { id: "gpt-5.4-mini",          provider: "OpenAI", label: "GPT-5.4 Mini",          description: "Strong reasoning · handles tricky orders" },
   { id: "gpt-5.4-nano",          provider: "OpenAI", label: "GPT-5.4 Nano",          description: "Fast + cheap" },
@@ -99,7 +99,7 @@ export const LLM_MODELS: LlmModel[] = [
 
 export const LLM_PROVIDERS: LlmProvider[] = ["Google", "OpenAI"];
 
-export const DEFAULT_LLM_ID = "gemini-2.5-flash";
+export const DEFAULT_LLM_ID = "gemini-3.5-flash";
 
 export function llmById(id: string | null | undefined): LlmModel | undefined {
   if (!id) return undefined;
@@ -246,6 +246,7 @@ export function languageFor(id: string | undefined | null): LanguageOption | und
 // (settings.restaurant). The menu and deals come from the Menu & Deals
 // page and are appended at sync time, so they are not part of this.
 export type RestaurantProfile = {
+  urduName: string;       // how callers say the name, e.g. "ڈومینوز پیزا"
   city: string;
   branches: string;       // e.g. "F-7 Markaz, G-11 Markaz"
   hours: string;          // e.g. "12 pm to 2 am, every day"
@@ -258,6 +259,7 @@ export type RestaurantProfile = {
 };
 
 export const EMPTY_RESTAURANT: RestaurantProfile = {
+  urduName: "",
   city: "",
   branches: "",
   hours: "",
@@ -353,6 +355,7 @@ export function restaurantFactsSection(
 ): string {
   const r = { ...EMPTY_RESTAURANT, ...(profile ?? {}) };
   const facts: string[] = [];
+  if (r.urduName) facts.push(`Restaurant name in Urdu (always say it like this): ${r.urduName}`);
   if (r.city) facts.push(`City: ${r.city}`);
   if (r.branches) facts.push(`Branches: ${r.branches}`);
   if (r.hours) facts.push(`Opening hours: ${r.hours}`);
@@ -370,12 +373,16 @@ export function restaurantFactsSection(
   return ["# Restaurant details", ...facts.map((f) => `- ${f}`)].join("\n");
 }
 
+// The greeting is spoken word for word, so it uses the Urdu spelling of the
+// name when there is one: English letters inside an Urdu sentence make the
+// voice stumble.
 export function buildFirstMessage(input: {
   name: string;
   useCase: string | null;
   defaultLanguage?: string;
+  urduName?: string;
 }): string {
-  const name = input.name.trim();
+  const name = input.urduName?.trim() || input.name.trim();
   const welcome = name ? `${name} میں خوش آمدید` : "خوش آمدید";
   if (input.useCase === "reservation") {
     return `السلام علیکم! ${welcome}۔ ٹیبل بک کرنی ہے یا آرڈر دینا ہے؟`;

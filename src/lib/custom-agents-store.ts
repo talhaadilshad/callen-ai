@@ -233,7 +233,7 @@ export const useCustomAgentsStore = create<Store>()((set, get) => ({
 
     const firstMessage =
       input.firstMessage ??
-      buildFirstMessage({ name: input.name, useCase: input.useCase });
+      buildFirstMessage({ name: input.name, useCase: input.useCase, urduName: restaurant.urduName });
 
     const agent: CustomAgent = {
       id,
@@ -323,6 +323,7 @@ export const useCustomAgentsStore = create<Store>()((set, get) => ({
     const firstMessage = buildFirstMessage({
       name: agent.name,
       useCase: agent.useCase,
+      urduName: agent.restaurant.urduName,
     });
     get().updateAgent(id, { systemPrompt, firstMessage });
   },

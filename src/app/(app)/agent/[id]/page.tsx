@@ -1131,6 +1131,7 @@ const RESTAURANT_FIELDS: {
   label: string;
   placeholder: string;
 }[] = [
+  { key: "urduName",      label: "Name in Urdu (how callers say it)", placeholder: "ڈومینوز پیزا" },
   { key: "city",          label: "City",            placeholder: "Islamabad" },
   { key: "branches",      label: "Branches",        placeholder: "F-7 Markaz, G-11 Markaz" },
   { key: "hours",         label: "Opening hours",   placeholder: "12 pm to 2 am, every day" },
@@ -1162,6 +1163,7 @@ function RestaurantDetailsCard({
         <label key={f.key} className="block">
           <span className="block text-[11px] font-medium text-neutral-600 mb-1">{f.label}</span>
           <Input
+            dir="auto"
             value={draft[f.key]}
             onChange={(e) => patch({ [f.key]: e.target.value })}
             placeholder={f.placeholder}

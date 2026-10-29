@@ -12,8 +12,11 @@
 // Plain data (no server-only import) so the dashboard catalog, the
 // preview route and the Uplift sync can all use it.
 
-// The Soniox TTS model Uplift accepts in an assistant's tts config.
-export const SONIOX_TTS_MODEL = "tts-rt-v1";
+// The Soniox TTS model used on calls (via Uplift's tts config) and for
+// previews. v2 is Soniox's newer, more natural model; Uplift's docs only
+// list v1 but pass the model string through to Soniox.
+export const SONIOX_TTS_MODEL = "tts-rt-v2";
+export const SONIOX_TTS_FALLBACK_MODEL = "tts-rt-v1";
 
 export type SonioxAccent = "Neutral" | "South Asian";
 

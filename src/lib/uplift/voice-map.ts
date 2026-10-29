@@ -64,7 +64,9 @@ export function toUpliftTts(voiceId: string | null | undefined): UpliftTtsConfig
 export type UpliftLlmConfig = { provider: "google" | "openai"; model: string };
 
 // Models Uplift hosts. An agent's settings.model is reused when Uplift
-// supports it; otherwise we use the fastest model Uplift lists.
+// supports it; otherwise Gemini 3.5 Flash, Uplift's "good balance of
+// intelligence and speed", which handles conversational Urdu better than
+// the faster 2.5.
 const UPLIFT_LLMS: Record<string, UpliftLlmConfig["provider"]> = {
   "gemini-2.5-flash": "google",
   "gemini-3.5-flash": "google",
@@ -74,7 +76,7 @@ const UPLIFT_LLMS: Record<string, UpliftLlmConfig["provider"]> = {
   "gpt-4o-mini": "openai",
 };
 
-export const DEFAULT_UPLIFT_LLM: UpliftLlmConfig = { provider: "google", model: "gemini-2.5-flash" };
+export const DEFAULT_UPLIFT_LLM: UpliftLlmConfig = { provider: "google", model: "gemini-3.5-flash" };
 
 export function toUpliftLlm(model: unknown): UpliftLlmConfig {
   if (typeof model === "string" && UPLIFT_LLMS[model]) {

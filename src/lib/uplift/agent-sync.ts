@@ -11,6 +11,7 @@
 import "server-only";
 import { uplift } from "@/lib/uplift/client";
 import { toUpliftLlm, toUpliftTts, voiceGender, speakingAsSection } from "@/lib/uplift/voice-map";
+import { urduSpeechSection } from "@/lib/urdu-speech";
 import type { CallenAgentRow, AgentSyncResult } from "@/lib/voice-runtime";
 
 type UpliftAssistant = { realtimeAssistantId: string; version: number };
@@ -23,9 +24,15 @@ function assistantBody(agent: CallenAgentRow) {
     public: false,
     config: {
       agent: {
-        // Prompt, then the grammar rule for the voice's gender (so a woman's
-        // voice never says "sakta"), then restaurant knowledge.
-        instructions: [agent.system_prompt, speakingAsSection(voiceGender(agent.voice_id)), agent.knowledge]
+        // Prompt, the grammar rule for the voice's gender (so a woman's
+        // voice never says "sakta"), how to say things so the voice reads
+        // them naturally, then restaurant knowledge.
+        instructions: [
+          agent.system_prompt,
+          speakingAsSection(voiceGender(agent.voice_id)),
+          urduSpeechSection((agent.settings?.restaurant as { urduName?: string } | undefined)?.urduName),
+          agent.knowledge,
+        ]
           .filter(Boolean)
           .join("\n\n"),
         initialGreeting: Boolean(greeting),

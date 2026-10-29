@@ -156,6 +156,8 @@ export function CreateAgentWizard({ open, onOpenChange }: Props) {
                     nameMax={NAME_MAX}
                     city={restaurant.city}
                     setCity={(city) => patchRestaurant({ city })}
+                    urduName={restaurant.urduName}
+                    setUrduName={(urduName) => patchRestaurant({ urduName })}
                     industry={industry}
                     setIndustry={setIndustry}
                   />
@@ -268,6 +270,8 @@ function StepRestaurant({
   nameMax,
   city,
   setCity,
+  urduName,
+  setUrduName,
   industry,
   setIndustry,
 }: {
@@ -276,6 +280,8 @@ function StepRestaurant({
   nameMax: number;
   city: string;
   setCity: (v: string) => void;
+  urduName: string;
+  setUrduName: (v: string) => void;
   industry: string | null;
   setIndustry: (v: string) => void;
 }) {
@@ -312,6 +318,23 @@ function StepRestaurant({
             className="h-10 rounded-xl"
           />
         </div>
+      </div>
+
+      <div>
+        <Label htmlFor="restaurant-urdu-name" className="text-[13px] font-medium mb-1.5 block">
+          Name in Urdu <span className="text-neutral-400 font-normal">(how callers say it)</span>
+        </Label>
+        <Input
+          id="restaurant-urdu-name"
+          dir="rtl"
+          value={urduName}
+          onChange={(e) => setUrduName(e.target.value.slice(0, 80))}
+          placeholder="مثلاً: چیزیئس جی الیون"
+          className="h-10 rounded-xl"
+        />
+        <p className="text-[11px] text-neutral-500 mt-1.5">
+          The agent says this in its greeting. English letters inside Urdu make the voice stumble.
+        </p>
       </div>
 
       <div>

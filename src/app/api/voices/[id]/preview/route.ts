@@ -6,7 +6,7 @@
 // https://soniox.com/docs/tts/rest-api/generate-speech
 
 import { NextRequest, NextResponse } from "next/server";
-import { SONIOX_TTS_MODEL, sonioxVoiceByName } from "@/lib/soniox-voices";
+import { SONIOX_TTS_MODEL, SONIOX_TTS_FALLBACK_MODEL, sonioxVoiceByName } from "@/lib/soniox-voices";
 
 const SONIOX_TTS_URL = "https://tts-rt.soniox.com/tts";
 
@@ -24,11 +24,11 @@ export async function GET(
     return NextResponse.json({ error: "Voice previews are not configured (SONIOX_API_KEY missing)." }, { status: 503 });
   }
 
-  // Prefer the model calls use; Soniox's REST docs have moved to v2, so
-  // fall back to it if the account or endpoint rejects v1.
+  // Prefer the model calls use; fall back to the older one if the account
+  // or endpoint rejects it.
   let res: Response | null = null;
   let detail = "";
-  for (const model of [SONIOX_TTS_MODEL, "tts-rt-v2"]) {
+  for (const model of [SONIOX_TTS_MODEL, SONIOX_TTS_FALLBACK_MODEL]) {
     res = await fetch(SONIOX_TTS_URL, {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
