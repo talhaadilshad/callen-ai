@@ -3,7 +3,9 @@
 // and the formatter the runtime sync uses to append enabled documents to
 // an agent's instructions. Plain functions, safe on server and client.
 
-export type DocKind = "info" | "policy" | "faq";
+// "pronunciation" rows are tiny: title = how it's written on the menu,
+// content = how callers say it in Urdu script (BBQ -> باربی کیو).
+export type DocKind = "info" | "policy" | "faq" | "pronunciation";
 
 export type KnowledgeDoc = {
   id: string;
@@ -19,6 +21,7 @@ export const DOC_KINDS: { kind: DocKind; label: string; section: string; blurb: 
   { kind: "info",   label: "Restaurant info", section: "Restaurant information", blurb: "About you, your story, branches, specialities, parking, dine-in." },
   { kind: "policy", label: "Policies",        section: "Policies",               blurb: "Ordering, delivery, refunds, payment, cancellations." },
   { kind: "faq",    label: "FAQs",            section: "Frequently asked questions", blurb: "Questions callers ask often, with the answer you want given." },
+  { kind: "pronunciation", label: "Pronunciation", section: "Pronunciation for this restaurant (say these exactly like this; this list wins over the general one)", blurb: "How your item and brand names are said in Urdu, so the voice never spells them letter by letter." },
 ];
 
 export const DOC_CONTENT_MAX = 20000;
@@ -71,6 +74,7 @@ export const DOC_TEMPLATES: Record<DocKind, { title: string; content: string }[]
       content: "Yes, all our meat is 100% halal and sourced from certified suppliers.",
     },
   ],
+  pronunciation: [],
 };
 
 // The documents block appended to an agent's instructions. Disabled or
@@ -83,12 +87,13 @@ export function knowledgeSection(docs: Pick<KnowledgeDoc, "kind" | "title" | "co
       .filter((d) => d.kind === kind)
       .sort((a, b) => a.sort - b.sort || a.title.localeCompare(b.title));
     if (rows.length === 0) continue;
-    blocks.push(
-      `# ${section}\n` +
-        rows
-          .map((d) => (kind === "faq" ? `Q: ${d.title}\nA: ${d.content.trim()}` : `## ${d.title}\n${d.content.trim()}`))
-          .join("\n\n")
-    );
+    const body =
+      kind === "pronunciation"
+        ? rows.map((d) => `${d.title} = ${d.content.trim()}`).join("\n")
+        : rows
+            .map((d) => (kind === "faq" ? `Q: ${d.title}\nA: ${d.content.trim()}` : `## ${d.title}\n${d.content.trim()}`))
+            .join("\n\n");
+    blocks.push(`# ${section}\n${body}`);
   }
   return blocks.join("\n\n");
 }

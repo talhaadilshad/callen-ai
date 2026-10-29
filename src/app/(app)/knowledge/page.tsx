@@ -25,6 +25,7 @@ import {
 } from "@/lib/knowledge";
 import { MenuManager } from "@/components/knowledge/menu-manager";
 import { DocsManager } from "@/components/knowledge/docs-manager";
+import { PronunciationManager } from "@/components/knowledge/pronunciation-manager";
 
 const supabase = createClient();
 
@@ -79,7 +80,7 @@ export default function KnowledgePage() {
       setStats({
         items: menuRows.filter((r) => r.kind === "item").length,
         deals: menuRows.filter((r) => r.kind === "deal").length,
-        docs: docRows.length,
+        docs: docRows.filter((r) => r.kind !== "pronunciation").length,
         chars: menuSection(menuRows).length + knowledgeSection(docRows).length,
       });
     })();
@@ -169,6 +170,8 @@ export default function KnowledgePage() {
         <p className="py-12 text-center text-sm text-neutral-500">Loading...</p>
       ) : tab === "item" || tab === "deal" ? (
         <MenuManager key={tab} kind={tab} workspaceId={workspaceId} onChanged={onChanged} />
+      ) : tab === "pronunciation" ? (
+        <PronunciationManager workspaceId={workspaceId} onChanged={onChanged} />
       ) : (
         <DocsManager key={tab} kind={tab} workspaceId={workspaceId} onChanged={onChanged} />
       )}

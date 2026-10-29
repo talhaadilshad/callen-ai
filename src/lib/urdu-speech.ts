@@ -9,6 +9,85 @@
 // hundreds ("اٹھارہ سو", not "ایک ہزار آٹھ سو"), so the agent should too.
 // Examples avoid gendered verbs; the voice's gender rule covers those.
 
+// How Pakistanis actually say common restaurant words. Abbreviations are
+// the big trap: the voice spells "BBQ" as بی بی کیو unless the model
+// writes باربی کیو. Each restaurant can add or override words in the
+// Knowledge Base "Pronunciation" tab.
+export const PRONUNCIATION_DICTIONARY: { written: string; spoken: string }[] = [
+  // Abbreviations and units: always said as full words
+  { written: "BBQ", spoken: "باربی کیو" },
+  { written: "XL", spoken: "ایکسٹرا لارج" },
+  { written: "S / M / L (sizes)", spoken: "سمال / میڈیم / لارج" },
+  { written: "pcs / pc", spoken: "پیس" },
+  { written: "1.5L / 1.5 litre", spoken: "ڈیڑھ لیٹر" },
+  { written: "345ml / small drink", spoken: "چھوٹی ڈرنک" },
+  { written: "Rs", spoken: "روپے" },
+  { written: "COD", spoken: "کیش آن ڈیلیوری" },
+  { written: "kg", spoken: "کلو" },
+  // Flavours and toppings
+  { written: "Peri Peri", spoken: "پیری پیری" },
+  { written: "Tex-Mex", spoken: "ٹیکس میکس" },
+  { written: "Fajita", spoken: "فجیتا" },
+  { written: "Tikka", spoken: "ٹکہ" },
+  { written: "Seekh Kebab", spoken: "سیخ کباب" },
+  { written: "Alfredo", spoken: "الفریڈو" },
+  { written: "Supreme", spoken: "سپریم" },
+  { written: "Pepperoni", spoken: "پیپرونی" },
+  { written: "Hawaiian", spoken: "ہوائین" },
+  { written: "Dynamite", spoken: "ڈائنامائٹ" },
+  { written: "Ranch", spoken: "رینچ" },
+  { written: "Creamy", spoken: "کریمی" },
+  { written: "Mozzarella", spoken: "موزریلا" },
+  { written: "Cheddar", spoken: "چیڈر" },
+  { written: "Jalapeno", spoken: "جلاپینو" },
+  { written: "Mushroom", spoken: "مشروم" },
+  { written: "Olives", spoken: "اولیوز" },
+  { written: "Capsicum / green peppers", spoken: "شملہ مرچ" },
+  { written: "Sausage", spoken: "ساسیج" },
+  { written: "Veggie", spoken: "ویجی" },
+  { written: "Extravaganza", spoken: "ایکسٹراوگینزا" },
+  { written: "Italiano", spoken: "اٹالیانو" },
+  // Pizza and crust words
+  { written: "Pizza", spoken: "پیزا" },
+  { written: "Super Loaded", spoken: "سپر لوڈڈ" },
+  { written: "Stuffed Crust", spoken: "اسٹفڈ کرسٹ" },
+  { written: "Cheese Burst", spoken: "چیز برسٹ" },
+  { written: "Pan crust", spoken: "پین کرسٹ" },
+  { written: "Half n Half", spoken: "ہاف اینڈ ہاف" },
+  { written: "Pizza Roll", spoken: "پیزا رول" },
+  { written: "Pasta / Penne", spoken: "پاستا / پینے" },
+  // Sides, chicken, desserts
+  { written: "Wings", spoken: "ونگز" },
+  { written: "Strips", spoken: "اسٹرپس" },
+  { written: "Nuggets", spoken: "نگٹس" },
+  { written: "Zinger", spoken: "زنگر" },
+  { written: "Burger", spoken: "برگر" },
+  { written: "Shawarma", spoken: "شوارما" },
+  { written: "Wedges", spoken: "ویجز" },
+  { written: "Fries", spoken: "فرائز" },
+  { written: "Garlic Bread", spoken: "گارلک بریڈ" },
+  { written: "Lava Cake", spoken: "لاوا کیک" },
+  { written: "Brownie", spoken: "براؤنی" },
+  { written: "Dip", spoken: "ڈِپ" },
+  { written: "Mayo", spoken: "میو" },
+  { written: "Ketchup", spoken: "کیچپ" },
+  { written: "Combo / Platter / Deal", spoken: "کومبو / پلیٹر / ڈیل" },
+  // Drinks
+  { written: "Pepsi", spoken: "پیپسی" },
+  { written: "7UP", spoken: "سیون اپ" },
+  { written: "Coke", spoken: "کوک" },
+  { written: "Sprite", spoken: "اسپرائٹ" },
+  { written: "Fanta", spoken: "فانٹا" },
+  { written: "Mirinda", spoken: "مرنڈا" },
+  { written: "Mountain Dew", spoken: "ماؤنٹین ڈیو" },
+  { written: "Sting", spoken: "اسٹنگ" },
+  { written: "Aquafina / mineral water", spoken: "ایکوا فینا / منرل واٹر" },
+  { written: "Zero (Pepsi Zero)", spoken: "زیرو" },
+  // Real letter acronyms stay letters
+  { written: "DHA", spoken: "ڈی ایچ اے" },
+  { written: "KFC", spoken: "کے ایف سی" },
+];
+
 export function urduSpeechSection(restaurantUrduName?: string | null): string {
   const name = restaurantUrduName?.trim();
   return [
@@ -21,9 +100,12 @@ export function urduSpeechSection(restaurantUrduName?: string | null): string {
     "- Keep each reply to one or two short sentences. Ask one thing at a time. Never read out the whole menu; offer two or three options at most.",
     "- If you did not understand, say: معاف کیجیے، ذرا دوبارہ بتا دیں؟",
     ...(name ? [`- Say the restaurant's name exactly like this: ${name}`] : []),
+    "- Abbreviations: never spell a food word or size letter by letter. BBQ is باربی کیو (never بی بی کیو), XL is ایکسٹرا لارج, pcs is پیس, 1.5L is ڈیڑھ لیٹر. Only real acronyms people say as letters stay letters (ڈی ایچ اے، کے ایف سی).",
     "",
-    "## Word list (say these words this way)",
-    "پیزا، ڈیل، سمال، میڈیم، لارج، ایکسٹرا لارج، چیز، ایکسٹرا چیز، چکن، بیف، فرائز، ویجز، گارلک بریڈ، ونگز، ڈِپ، ڈرنک، ڈیڑھ لیٹر، پاستا، ڈیزرٹ، لاوا کیک، آرڈر، ڈیلیوری، ٹیک اوے، ایڈریس، لوکیشن، ٹوٹل، کیش آن ڈیلیوری، کارڈ، برانچ، مینیو، کنفرم، کینسل، اسپائسی، ویجیٹیرین۔",
+    "## Pronunciation list (written on the menu = how you say it)",
+    ...PRONUNCIATION_DICTIONARY.map((w) => `${w.written} = ${w.spoken}`),
+    "Other everyday words: آرڈر، ڈیلیوری، ٹیک اوے، ایڈریس، لوکیشن، ٹوٹل، کارڈ، برانچ، مینیو، کنفرم، کینسل، اسپائسی، ویجیٹیرین، ڈیزرٹ۔",
+    "If this restaurant has its own pronunciation list below, it wins over this one.",
     "",
     "## Numbers and prices",
     "- Say prices in hundreds, the Pakistani way: 650 = ساڑھے چھ سو روپے، 1,250 = ساڑھے بارہ سو روپے، 1,800 = اٹھارہ سو روپے، 2,250 = ساڑھے بائیس سو روپے، 3,400 = چونتیس سو روپے، 5,250 = ساڑھے باون سو روپے۔",
