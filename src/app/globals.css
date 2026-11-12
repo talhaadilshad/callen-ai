@@ -10,7 +10,19 @@
    for the AI signature accent.
    ========================================================================= */
 
+/* Marketing surfaces. The brand has no primary colour: pages are warm
+   off-white with black type, and colour only appears inside the gradient
+   orbs (src/components/brand/orb.tsx). */
+@theme {
+  --color-paper: #fcfbfa;      /* page background */
+  --color-shell: #f4f2ef;      /* cards and panels */
+  --color-shell-deep: #eae7e2; /* pressed / nested surfaces */
+  --color-ink-soft: #5c5750;   /* secondary text */
+  --color-hairline: rgb(0 0 0 / 0.07);
+}
+
 @theme inline {
+  --font-urdu: var(--font-nastaliq), "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -282,6 +294,29 @@
 
   .bg-gradient-callen-subtle {
     background: linear-gradient(135deg, oklch(0.85 0.10 280 / 0.15) 0%, oklch(0.80 0.15 305 / 0.15) 50%, oklch(0.78 0.18 340 / 0.15) 100%);
+  }
+
+  /* Gradient orbs: slow drift of the colour blobs, and film grain on top */
+  @keyframes orb-drift {
+    0%   { transform: rotate(0deg) scale(1); }
+    50%  { transform: rotate(180deg) scale(1.08); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+  @keyframes orb-breathe {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.045); }
+  }
+  .orb-drift { animation: orb-drift 26s linear infinite; }
+  .orb-drift-slow { animation: orb-drift 60s linear infinite; }
+  .orb-breathe { animation: orb-breathe 1.6s ease-in-out infinite; }
+  .grain-overlay {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
+    background-size: 160px 160px;
+    mix-blend-mode: overlay;
+    opacity: 0.9;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .orb-drift, .orb-drift-slow, .orb-breathe { animation: none; }
   }
 
   /* Cream surface utility */

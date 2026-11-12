@@ -76,8 +76,8 @@ for event := range stream {
 
 const STATUS_STYLES: Record<string, string> = {
   Stable: "bg-neutral-950 text-white",
-  Beta: "bg-neutral-100 text-neutral-700 border border-neutral-200",
-  Alpha: "bg-white text-neutral-700 border border-neutral-300",
+  Beta: "bg-shell text-black border border-hairline",
+  Alpha: "bg-white text-black border border-neutral-300",
 };
 
 export default function SdksPage() {
@@ -88,7 +88,7 @@ export default function SdksPage() {
         title={
           <>
             Official SDKs for{" "}
-            <span className="italic font-light">every stack you ship in.</span>
+            <span>every stack you ship in.</span>
           </>
         }
         lede="Idiomatic, type-safe, fully documented. Node and Python are stable. Go is in public beta. Java and Rust are on the roadmap."
@@ -99,14 +99,14 @@ export default function SdksPage() {
           {SDKS.map((sdk) => (
             <div
               key={sdk.name}
-              className="rounded-3xl border border-neutral-200 overflow-hidden"
+              className="rounded-3xl border border-hairline overflow-hidden"
             >
-              <div className="flex items-center justify-between px-6 lg:px-8 py-5 border-b border-neutral-200">
+              <div className="flex items-center justify-between px-6 lg:px-8 py-5 border-b border-hairline">
                 <div className="flex items-center gap-3">
-                  <Boxes className="size-5 text-neutral-700" />
-                  <h3 className="text-lg font-bold tracking-tight">{sdk.name}</h3>
+                  <Boxes className="size-5 text-black" />
+                  <h3 className="text-lg font-normal tracking-tight">{sdk.name}</h3>
                   <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${STATUS_STYLES[sdk.status] ?? STATUS_STYLES.Stable}`}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-normal uppercase tracking-wider ${STATUS_STYLES[sdk.status] ?? STATUS_STYLES.Stable}`}
                   >
                     {sdk.status}
                   </span>
@@ -114,17 +114,17 @@ export default function SdksPage() {
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_2fr]">
-                <div className="px-6 lg:px-8 py-6 border-r border-neutral-200">
-                  <p className="text-[11px] uppercase tracking-widest text-neutral-500 font-semibold mb-2">
+                <div className="px-6 lg:px-8 py-6 border-r border-hairline">
+                  <p className="text-[11px]  text-ink-soft font-normal mb-2">
                     Install
                   </p>
-                  <code className="block bg-neutral-100 text-neutral-900 rounded-lg px-3 py-2 text-[12.5px] font-mono">
+                  <code className="block bg-shell text-neutral-900 rounded-lg px-3 py-2 text-[12.5px] font-mono">
                     {sdk.install}
                   </code>
                 </div>
                 <div className="bg-neutral-950 text-neutral-100">
                   <div className="px-5 py-3 border-b border-white/10 flex items-center justify-between">
-                    <span className="text-[11px] uppercase tracking-widest text-white/50 font-semibold">
+                    <span className="text-[11px]  text-white/50 font-normal">
                       First call
                     </span>
                     <span className="text-[10.5px] font-mono text-white/40">
@@ -144,7 +144,7 @@ export default function SdksPage() {
       <MarketingSection>
         <div className="rounded-3xl bg-neutral-950 text-white p-10 lg:p-14 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight mb-2">
+            <h2 className="text-3xl font-normal tracking-tight mb-2">
               Need a language we don&apos;t ship?
             </h2>
             <p className="text-white/70 leading-relaxed max-w-xl">
@@ -158,7 +158,7 @@ export default function SdksPage() {
           </div>
           <Link
             href="/docs/api"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 text-sm font-semibold hover:bg-white/90 transition-colors shrink-0"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 text-sm font-normal hover:bg-white/90 transition-colors shrink-0"
           >
             Read the spec <ArrowRight className="size-4" />
           </Link>

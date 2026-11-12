@@ -88,23 +88,23 @@ export default function StatusPage() {
         title={
           <>
             All systems{" "}
-            <span className="italic font-light">operational.</span>
+            <span>operational.</span>
           </>
         }
         lede="Live status of every Callen.ai service. Past incidents listed below with full post-mortems. Subscribe to email alerts in your workspace settings."
       />
 
       <MarketingSection>
-        <div className="rounded-3xl border border-neutral-200 bg-white overflow-hidden">
-          <div className="px-6 lg:px-8 py-5 border-b border-neutral-200 flex items-center justify-between flex-wrap gap-3">
+        <div className="rounded-3xl border border-hairline bg-white overflow-hidden">
+          <div className="px-6 lg:px-8 py-5 border-b border-hairline flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
               <span className="relative flex size-2.5">
                 <span className="animate-ping absolute h-full w-full rounded-full bg-emerald-400 opacity-60" />
                 <span className="relative rounded-full size-2.5 bg-emerald-500" />
               </span>
-              <p className="font-semibold tracking-tight">All systems operational</p>
+              <p className="font-normal tracking-tight">All systems operational</p>
             </div>
-            <p className="text-xs text-neutral-500 tabular-nums">
+            <p className="text-xs text-ink-soft tabular-nums">
               Updated{" "}
               <time dateTime={lastChecked.toISOString()}>
                 {new Intl.DateTimeFormat("en-GB", {
@@ -126,7 +126,7 @@ export default function StatusPage() {
               <div
                 key={s.name}
                 className={`flex items-center justify-between gap-3 px-6 lg:px-8 py-4 ${
-                  i > 0 ? "border-t border-neutral-100" : ""
+                  i > 0 ? "border-t border-hairline" : ""
                 }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -134,11 +134,11 @@ export default function StatusPage() {
                   <p className="text-[14px] font-medium truncate">{s.name}</p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
-                  <span className="text-xs text-neutral-500 tabular-nums hidden sm:block">
+                  <span className="text-xs text-ink-soft tabular-nums hidden sm:block">
                     {s.uptime} · 90d
                   </span>
                   <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${STATUS_STYLES[s.status].pill}`}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-normal uppercase tracking-wider ${STATUS_STYLES[s.status].pill}`}
                   >
                     {STATUS_STYLES[s.status].label}
                   </span>
@@ -154,25 +154,25 @@ export default function StatusPage() {
         title={
           <>
             Full post-mortems,{" "}
-            <span className="italic font-light">no hiding.</span>
+            <span>no hiding.</span>
           </>
         }
       >
         <div className="space-y-5">
           {INCIDENTS.map((inc) => (
-            <article key={inc.title} className="rounded-2xl border border-neutral-200 p-6">
+            <article key={inc.title} className="rounded-2xl border border-hairline p-6">
               <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-                <h3 className="text-lg font-bold tracking-tight">{inc.title}</h3>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-semibold uppercase tracking-wider">
+                <h3 className="text-lg font-normal tracking-tight">{inc.title}</h3>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-normal uppercase tracking-wider">
                   {inc.status}
                 </span>
               </div>
-              <div className="flex items-center gap-3 text-xs text-neutral-500 mb-3 tabular-nums">
+              <div className="flex items-center gap-3 text-xs text-ink-soft mb-3 tabular-nums">
                 <span>{inc.start}</span>
                 <span className="size-0.5 rounded-full bg-neutral-400" />
                 <span>{inc.duration}</span>
               </div>
-              <p className="text-[14px] text-neutral-700 leading-relaxed">{inc.body}</p>
+              <p className="text-[14px] text-black leading-relaxed">{inc.body}</p>
             </article>
           ))}
         </div>

@@ -1,6 +1,5 @@
-// Mobile nav menu shared by the landing header and MarketingNav.
-// Hamburger toggle (visible below md) that drops a white panel with the
-// page links stacked above Log in / Sign up. Monochrome, hairline borders.
+// Mobile nav menu for MarketingNav. Hamburger toggle (below md) that drops
+// a panel with the page links stacked above Log in / Sign up.
 
 "use client";
 
@@ -22,7 +21,7 @@ export function MobileMenu({ links }: { links: MobileMenuLink[] }) {
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center justify-center size-9 rounded-full text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 transition-colors"
+        className="inline-flex size-9 items-center justify-center rounded-full text-black transition-colors hover:bg-shell"
       >
         {open ? <X className="size-5" /> : <Menu className="size-5" />}
       </button>
@@ -34,31 +33,31 @@ export function MobileMenu({ links }: { links: MobileMenuLink[] }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
-            className="absolute top-16 left-0 right-0 bg-white border-b border-neutral-200 shadow-[0_16px_40px_-24px_rgba(0,0,0,0.25)]"
+            className="absolute left-0 right-0 top-16 border-b border-hairline bg-paper shadow-[0_16px_40px_-24px_rgba(0,0,0,0.25)]"
           >
-            <nav className="max-w-7xl mx-auto px-6 py-4 flex flex-col">
+            <nav className="mx-auto flex max-w-6xl flex-col px-5 py-3">
               {links.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={close}
-                  className="py-3 text-base font-medium text-neutral-700 hover:text-neutral-950 transition-colors border-b border-neutral-100 last:border-b-0"
+                  className="border-b border-hairline py-3.5 text-lg font-light text-black last:border-b-0"
                 >
                   {link.label}
                 </Link>
               ))}
-              <div className="flex items-center gap-3 pt-4 pb-1">
+              <div className="flex items-center gap-2.5 pb-2 pt-4">
                 <Link
                   href="/login"
                   onClick={close}
-                  className="flex-1 text-center text-sm font-semibold px-4 py-2.5 rounded-full bg-white border border-neutral-300 hover:bg-neutral-50 transition-colors"
+                  className="flex h-11 flex-1 items-center justify-center rounded-full border border-hairline bg-white text-[15px] text-black"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/signup"
                   onClick={close}
-                  className="flex-1 text-center text-sm font-semibold px-4 py-2.5 rounded-full bg-neutral-950 text-white hover:bg-neutral-800 transition-colors"
+                  className="flex h-11 flex-1 items-center justify-center rounded-full bg-black text-[15px] text-white"
                 >
                   Sign up
                 </Link>

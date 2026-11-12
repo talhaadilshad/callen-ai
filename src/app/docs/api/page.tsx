@@ -53,9 +53,9 @@ const ENDPOINTS = [
 ];
 
 const METHOD_STYLES: Record<string, string> = {
-  GET:    "bg-neutral-100 text-neutral-900",
+  GET:    "bg-shell text-neutral-900",
   POST:   "bg-neutral-950 text-white",
-  PATCH:  "bg-neutral-100 text-neutral-900",
+  PATCH:  "bg-shell text-neutral-900",
   DELETE: "bg-white text-neutral-900 border border-neutral-300",
 };
 
@@ -98,7 +98,7 @@ export default function ApiDocsPage() {
         title={
           <>
             Programmatic access to{" "}
-            <span className="italic font-light">every Callen agent.</span>
+            <span>every Callen agent.</span>
           </>
         }
         lede="REST for control, WebSocket for streams. Authenticate with a workspace API key. SDKs available for Node, Python, and Go."
@@ -111,12 +111,12 @@ export default function ApiDocsPage() {
             { icon: Zap, title: "Latency", body: "p99 under 80ms for REST. Real-time event stream pushes within 60ms of speech-end." },
             { icon: Webhook, title: "Webhooks", body: "Signed payloads on call.start, call.end, call.escalated, tool.error." },
           ].map((c) => (
-            <div key={c.title} className="rounded-2xl border border-neutral-200 p-6">
-              <div className="size-9 rounded-xl bg-neutral-100 flex items-center justify-center mb-4">
+            <div key={c.title} className="rounded-2xl border border-hairline p-6">
+              <div className="size-9 rounded-xl bg-shell flex items-center justify-center mb-4">
                 <c.icon className="size-4" />
               </div>
-              <h3 className="text-base font-semibold tracking-tight mb-1.5">{c.title}</h3>
-              <p className="text-[13.5px] text-neutral-600 leading-relaxed">{c.body}</p>
+              <h3 className="text-base font-normal tracking-tight mb-1.5">{c.title}</h3>
+              <p className="text-[13.5px] text-ink-soft leading-relaxed">{c.body}</p>
             </div>
           ))}
         </div>
@@ -127,23 +127,23 @@ export default function ApiDocsPage() {
         title={
           <>
             The REST surface.{" "}
-            <span className="italic font-light">No surprises.</span>
+            <span>No surprises.</span>
           </>
         }
       >
-        <div className="rounded-2xl border border-neutral-200 overflow-hidden">
+        <div className="rounded-2xl border border-hairline overflow-hidden">
           {ENDPOINTS.map((e, i) => (
             <div
               key={e.path}
-              className={`flex items-center gap-4 px-5 py-4 ${i > 0 ? "border-t border-neutral-200" : ""}`}
+              className={`flex items-center gap-4 px-5 py-4 ${i > 0 ? "border-t border-hairline" : ""}`}
             >
               <span
-                className={`inline-flex items-center justify-center w-16 py-1 rounded-md text-[10.5px] font-bold tracking-wider ${METHOD_STYLES[e.method] ?? METHOD_STYLES.GET}`}
+                className={`inline-flex items-center justify-center w-16 py-1 rounded-md text-[10.5px] font-normal tracking-wider ${METHOD_STYLES[e.method] ?? METHOD_STYLES.GET}`}
               >
                 {e.method}
               </span>
               <code className="text-[13px] font-mono text-neutral-900 flex-1 min-w-0 truncate">{e.path}</code>
-              <span className="text-[13px] text-neutral-600 text-right hidden sm:block">{e.summary}</span>
+              <span className="text-[13px] text-ink-soft text-right hidden sm:block">{e.summary}</span>
             </div>
           ))}
         </div>
@@ -154,7 +154,7 @@ export default function ApiDocsPage() {
         title={
           <>
             Place an outbound call in{" "}
-            <span className="italic font-light">one request.</span>
+            <span>one request.</span>
           </>
         }
       >
@@ -163,9 +163,9 @@ export default function ApiDocsPage() {
           <CodeBlock label="Response" lang="json" code={RESPONSE_EXAMPLE} />
         </div>
 
-        <p className="text-[14.5px] text-neutral-600 leading-relaxed mt-6 max-w-2xl">
+        <p className="text-[14.5px] text-ink-soft leading-relaxed mt-6 max-w-2xl">
           Subscribe to{" "}
-          <code className="text-[13px] font-mono bg-neutral-100 px-1.5 py-0.5 rounded">
+          <code className="text-[13px] font-mono bg-shell px-1.5 py-0.5 rounded">
             stream_url
           </code>{" "}
           to receive transcript, intent, and tool events in real time. Or set a
@@ -179,7 +179,7 @@ export default function ApiDocsPage() {
       <MarketingSection>
         <div className="rounded-3xl bg-neutral-950 text-white p-10 lg:p-12">
           <Terminal className="size-7 mb-5 text-white/70" />
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+          <h2 className="text-3xl md:text-4xl font-normal tracking-tight mb-3">
             Ready to integrate?
           </h2>
           <p className="text-white/70 leading-relaxed mb-7 max-w-xl">
@@ -189,13 +189,13 @@ export default function ApiDocsPage() {
           <div className="flex flex-wrap gap-3">
             <Link
               href="/signup"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 text-sm font-semibold hover:bg-white/90 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 text-sm font-normal hover:bg-white/90 transition-colors"
             >
               Get an API key
             </Link>
             <Link
               href="/docs/sdks"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-transparent text-white text-sm font-semibold hover:bg-white/10 border border-white/20 transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-transparent text-white text-sm font-normal hover:bg-white/10 border border-white/20 transition-colors"
             >
               Browse SDKs
             </Link>
@@ -210,7 +210,7 @@ function CodeBlock({ label, lang, code }: { label: string; lang: string; code: s
   return (
     <div className="rounded-2xl bg-neutral-950 text-neutral-100 overflow-hidden">
       <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">
-        <span className="text-[11px] uppercase tracking-widest text-white/50 font-semibold">{label}</span>
+        <span className="text-[11px]  text-white/50 font-normal">{label}</span>
         <span className="text-[10.5px] font-mono text-white/40">{lang}</span>
       </div>
       <pre className="px-5 py-4 text-[12.5px] font-mono leading-relaxed overflow-x-auto thin-scrollbar">

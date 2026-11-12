@@ -4,7 +4,7 @@
 
 import { ImageResponse } from "next/og";
 
-export const alt = "Callen.ai · AI voice agents for every business call";
+export const alt = "Callen.ai · Urdu AI phone agents for Pakistani restaurants";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -67,10 +67,10 @@ export default function OgImage() {
               lineHeight: 1.02,
             }}
           >
-            AI voice agents for every business call.
+            Every restaurant call, answered in Urdu.
           </div>
           <div style={{ fontSize: 32, color: "#a3a3a3", letterSpacing: "-0.01em" }}>
-            Urdu + English customer calls, answered 24/7. Live in 10 minutes.
+            The AI phone agent for Pakistani restaurants.
           </div>
         </div>
 

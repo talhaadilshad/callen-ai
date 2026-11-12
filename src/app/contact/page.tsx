@@ -87,7 +87,7 @@ export default function ContactPage() {
         title={
           <>
             Talk to a{" "}
-            <span className="italic font-light">human.</span>
+            <span>human.</span>
           </>
         }
         lede="We answer every message within one business day. For urgent production issues, WhatsApp the sales line and someone will route you to on-call."
@@ -98,17 +98,17 @@ export default function ContactPage() {
           {/* Form */}
           <form
             onSubmit={handleSubmit}
-            className="rounded-3xl border border-neutral-200 p-7 lg:p-9 bg-white"
+            className="rounded-3xl border border-hairline p-7 lg:p-9 bg-white"
           >
-            <h2 className="text-2xl font-bold tracking-tight mb-1">Send a message</h2>
-            <p className="text-[14px] text-neutral-600 mb-7">
+            <h2 className="text-2xl font-normal tracking-tight mb-1">Send a message</h2>
+            <p className="text-[14px] text-ink-soft mb-7">
               Pick the closest topic so we can route your message to the right
               person.
             </p>
 
             {/* Reason chips */}
             <div className="mb-7">
-              <p className="text-[11px] uppercase tracking-widest text-neutral-500 font-semibold mb-3">
+              <p className="text-[11px]  text-ink-soft font-normal mb-3">
                 Reason
               </p>
               <div className="flex flex-wrap gap-2">
@@ -119,12 +119,12 @@ export default function ContactPage() {
                     onClick={() => setReason(r.id)}
                     className={
                       reason === r.id
-                        ? "inline-flex flex-col items-start gap-0.5 px-4 py-2.5 rounded-2xl border border-neutral-900 bg-neutral-50 text-left transition-all"
-                        : "inline-flex flex-col items-start gap-0.5 px-4 py-2.5 rounded-2xl border border-neutral-200 hover:border-neutral-400 text-left transition-all"
+                        ? "inline-flex flex-col items-start gap-0.5 px-4 py-2.5 rounded-2xl border border-neutral-900 bg-shell text-left transition-all"
+                        : "inline-flex flex-col items-start gap-0.5 px-4 py-2.5 rounded-2xl border border-hairline hover:border-neutral-400 text-left transition-all"
                     }
                   >
-                    <span className="text-[13px] font-semibold tracking-tight">{r.label}</span>
-                    <span className="text-[11px] text-neutral-500">{r.description}</span>
+                    <span className="text-[13px] font-normal tracking-tight">{r.label}</span>
+                    <span className="text-[11px] text-ink-soft">{r.description}</span>
                   </button>
                 ))}
               </div>
@@ -176,7 +176,7 @@ export default function ContactPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full inline-flex items-center justify-center gap-2 h-11 rounded-full bg-neutral-950 text-white text-sm font-semibold hover:bg-neutral-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+              className="w-full inline-flex items-center justify-center gap-2 h-11 rounded-full bg-neutral-950 text-white text-sm font-normal hover:bg-neutral-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
             >
               {submitting ? "Sending..." : (
                 <>Send message <ArrowRight className="size-4" /></>
@@ -186,8 +186,8 @@ export default function ContactPage() {
 
           {/* Channels */}
           <div className="space-y-5">
-            <div className="rounded-3xl border border-neutral-200 p-7">
-              <h3 className="text-base font-bold tracking-tight mb-5">Direct channels</h3>
+            <div className="rounded-3xl border border-hairline p-7">
+              <h3 className="text-base font-normal tracking-tight mb-5">Direct channels</h3>
               <div className="space-y-4">
                 {CHANNELS.map((c) => (
                   <a
@@ -197,11 +197,11 @@ export default function ContactPage() {
                     rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
                     className="flex items-start gap-3 group"
                   >
-                    <div className="size-9 rounded-xl bg-neutral-100 flex items-center justify-center shrink-0">
+                    <div className="size-9 rounded-xl bg-shell flex items-center justify-center shrink-0">
                       <c.icon className="size-4" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[11px] uppercase tracking-widest text-neutral-500 font-semibold">
+                      <p className="text-[11px]  text-ink-soft font-normal">
                         {c.label}
                       </p>
                       <p className="text-[14px] font-medium text-neutral-900 group-hover:underline truncate">
@@ -214,13 +214,13 @@ export default function ContactPage() {
             </div>
 
             <div className="rounded-3xl bg-neutral-950 text-white p-7">
-              <h3 className="text-base font-bold tracking-tight mb-4">Routed inboxes</h3>
+              <h3 className="text-base font-normal tracking-tight mb-4">Routed inboxes</h3>
               <div className="space-y-4">
                 {ROUTES.map((r) => (
                   <div key={r.label} className="border-t border-white/10 pt-4 first:border-0 first:pt-0">
                     <div className="flex items-center gap-2 mb-1">
                       <r.icon className="size-3.5 text-white/70" />
-                      <p className="text-[11px] uppercase tracking-widest text-white/60 font-semibold">
+                      <p className="text-[11px]  text-white/60 font-normal">
                         {r.label}
                       </p>
                     </div>

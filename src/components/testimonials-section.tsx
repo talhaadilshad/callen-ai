@@ -86,16 +86,16 @@ const fadeUp = {
 
 export function TestimonialsSection() {
   return (
-    <section className="py-24 lg:py-32 bg-white relative">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <motion.div {...fadeUp} className="flex flex-col items-center text-center max-w-2xl mx-auto mb-14">
-          <span className="inline-block text-xs uppercase tracking-[0.2em] text-neutral-500 mb-4 font-medium">
-            Customer stories
-          </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-5">
-            Teams that finally <span className="italic font-light">answer</span> every call.
-          </h2>
-          <p className="text-lg text-neutral-600 leading-relaxed">
+    <section className="relative border-t border-hairline bg-paper">
+      <div className="mx-auto max-w-6xl border-x border-hairline px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
+        <motion.div {...fadeUp} className="mb-12 grid gap-x-12 gap-y-5 lg:grid-cols-2">
+          <div>
+            <p className="mb-4 text-sm text-ink-soft">Customer stories</p>
+            <h2 className="text-3xl font-light leading-[1.12] tracking-[-0.02em] sm:text-4xl lg:text-[2.6rem]">
+              Teams that finally answer every call
+            </h2>
+          </div>
+          <p className="max-w-md text-base leading-relaxed text-black lg:pt-9">
             From Karachi delivery floors to Lahore clinics, here is what changed when Pakistani teams switched on Callen.
           </p>
         </motion.div>

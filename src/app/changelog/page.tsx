@@ -17,11 +17,11 @@ type Tag = "Feature" | "Improvement" | "Fix" | "Voice" | "Integration" | "Securi
 
 const TAG_STYLES: Record<Tag, string> = {
   Feature:     "bg-neutral-950 text-white",
-  Improvement: "bg-neutral-100 text-neutral-700 border border-neutral-200",
-  Fix:         "bg-white text-neutral-700 border border-neutral-300",
-  Voice:       "bg-neutral-100 text-neutral-700 border border-neutral-200",
-  Integration: "bg-neutral-100 text-neutral-700 border border-neutral-200",
-  Security:    "bg-white text-neutral-700 border border-neutral-300",
+  Improvement: "bg-shell text-black border border-hairline",
+  Fix:         "bg-white text-black border border-neutral-300",
+  Voice:       "bg-shell text-black border border-hairline",
+  Integration: "bg-shell text-black border border-hairline",
+  Security:    "bg-white text-black border border-neutral-300",
 };
 
 const ENTRIES: Array<{
@@ -121,7 +121,7 @@ export default function ChangelogPage() {
         title={
           <>
             What we&apos;re{" "}
-            <span className="italic font-light">shipping.</span>
+            <span>shipping.</span>
           </>
         }
         lede="Every meaningful change to Callen.ai, dated and grouped by tag. New entries land here the day they ship."
@@ -132,9 +132,9 @@ export default function ChangelogPage() {
           {ENTRIES.map((e) => (
             <article
               key={e.date + e.title}
-              className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-6 md:gap-12 pb-12 border-b border-neutral-200 last:border-0"
+              className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-6 md:gap-12 pb-12 border-b border-hairline last:border-0"
             >
-              <div className="text-sm text-neutral-500 font-medium tabular-nums shrink-0">
+              <div className="text-sm text-ink-soft font-medium tabular-nums shrink-0">
                 {e.date}
               </div>
               <div>
@@ -142,14 +142,14 @@ export default function ChangelogPage() {
                   {e.tags.map((t) => (
                     <span
                       key={t}
-                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${TAG_STYLES[t]}`}
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-normal uppercase tracking-wider ${TAG_STYLES[t]}`}
                     >
                       {t}
                     </span>
                   ))}
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold tracking-tight mb-3">{e.title}</h3>
-                <div className="space-y-3 text-[15px] text-neutral-700 leading-relaxed">
+                <h3 className="text-xl md:text-2xl font-normal tracking-tight mb-3">{e.title}</h3>
+                <div className="space-y-3 text-[15px] text-black leading-relaxed">
                   {e.body.map((p, i) => (
                     <p key={i}>{p}</p>
                   ))}

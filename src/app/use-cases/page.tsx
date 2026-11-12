@@ -124,7 +124,7 @@ export default function UseCasesPage() {
         title={
           <>
             Every kind of call your business{" "}
-            <span className="italic font-light">already takes.</span>
+            <span>already takes.</span>
           </>
         }
         lede="Callen.ai ships templates for the eight verticals Pakistani SMBs run on. Pick one, tune the prompt, point a phone number at it. Live in under ten minutes."
@@ -135,18 +135,18 @@ export default function UseCasesPage() {
           {VERTICALS.map((v) => (
             <div
               key={v.title}
-              className="rounded-3xl border border-neutral-200 p-7 lg:p-8 hover:border-neutral-400 transition-colors"
+              className="rounded-3xl border border-hairline p-7 lg:p-8 hover:border-neutral-400 transition-colors"
             >
-              <div className="size-11 rounded-2xl bg-neutral-100 flex items-center justify-center mb-5">
+              <div className="size-11 rounded-2xl bg-shell flex items-center justify-center mb-5">
                 <v.icon className="size-5" />
               </div>
-              <h3 className="text-xl font-bold tracking-tight mb-2">{v.title}</h3>
-              <p className="text-[15px] text-neutral-600 leading-relaxed mb-5">{v.blurb}</p>
+              <h3 className="text-xl font-normal tracking-tight mb-2">{v.title}</h3>
+              <p className="text-[15px] text-ink-soft leading-relaxed mb-5">{v.blurb}</p>
               <ul className="space-y-2.5">
                 {v.bullets.map((b) => (
                   <li
                     key={b}
-                    className="flex gap-2.5 text-[14px] text-neutral-700 leading-relaxed"
+                    className="flex gap-2.5 text-[14px] text-black leading-relaxed"
                   >
                     <span className="text-neutral-400 shrink-0 mt-1">·</span>
                     <span>{b}</span>
@@ -163,11 +163,11 @@ export default function UseCasesPage() {
         title={
           <>
             Don&apos;t see your vertical?{" "}
-            <span className="italic font-light">Build a custom one.</span>
+            <span>Build a custom one.</span>
           </>
         }
       >
-        <p className="text-neutral-600 leading-relaxed mb-7 max-w-2xl">
+        <p className="text-ink-soft leading-relaxed mb-7 max-w-2xl">
           Every Callen.ai agent is a prompt, a workflow, and a set of tools.
           You can build one from scratch in Agent Studio for any business you
           run. The 8 templates above are starting points, not limits.
@@ -175,13 +175,13 @@ export default function UseCasesPage() {
         <div className="flex flex-wrap gap-3">
           <Link
             href="/signup"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-neutral-950 text-white text-sm font-semibold hover:bg-neutral-800 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-neutral-950 text-white text-sm font-normal hover:bg-neutral-800 transition-colors"
           >
             Try Callen.ai free <ArrowRight className="size-4" />
           </Link>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white border border-neutral-300 text-neutral-950 text-sm font-semibold hover:bg-neutral-50 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white border border-neutral-300 text-neutral-950 text-sm font-normal hover:bg-shell transition-colors"
           >
             Talk to a human
           </Link>

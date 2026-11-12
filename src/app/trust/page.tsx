@@ -96,7 +96,7 @@ export default function TrustPage() {
         title={
           <>
             Procurement-proof from day{" "}
-            <span className="italic font-light">one.</span>
+            <span>one.</span>
           </>
         }
         lede="Security and privacy aren't features we tacked on. They're baked into the storage layer, the consent flows, and the audit trails."
@@ -105,12 +105,12 @@ export default function TrustPage() {
       <MarketingSection>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {CONTROLS.map((c) => (
-            <div key={c.title} className="rounded-3xl border border-neutral-200 p-7">
-              <div className="size-10 rounded-xl bg-neutral-100 flex items-center justify-center mb-4">
+            <div key={c.title} className="rounded-3xl border border-hairline p-7">
+              <div className="size-10 rounded-xl bg-shell flex items-center justify-center mb-4">
                 <c.icon className="size-5" />
               </div>
-              <h3 className="text-base font-bold tracking-tight mb-2">{c.title}</h3>
-              <p className="text-[14px] text-neutral-600 leading-relaxed">{c.body}</p>
+              <h3 className="text-base font-normal tracking-tight mb-2">{c.title}</h3>
+              <p className="text-[14px] text-ink-soft leading-relaxed">{c.body}</p>
             </div>
           ))}
         </div>
@@ -121,20 +121,20 @@ export default function TrustPage() {
         title={
           <>
             Frameworks we{" "}
-            <span className="italic font-light">align to.</span>
+            <span>align to.</span>
           </>
         }
       >
-        <div className="rounded-2xl border border-neutral-200 overflow-hidden">
+        <div className="rounded-2xl border border-hairline overflow-hidden">
           {COMPLIANCE.map((c, i) => (
             <div
               key={c.code}
               className={`flex items-center justify-between px-6 py-5 ${
-                i > 0 ? "border-t border-neutral-200" : ""
+                i > 0 ? "border-t border-hairline" : ""
               }`}
             >
-              <p className="text-base font-semibold tracking-tight">{c.code}</p>
-              <p className="text-sm text-neutral-600">{c.status}</p>
+              <p className="text-base font-normal tracking-tight">{c.code}</p>
+              <p className="text-sm text-ink-soft">{c.status}</p>
             </div>
           ))}
         </div>
@@ -145,15 +145,15 @@ export default function TrustPage() {
         title={
           <>
             What we{" "}
-            <span className="italic font-light">get asked most.</span>
+            <span>get asked most.</span>
           </>
         }
       >
         <div className="space-y-4">
           {FAQS.map((f) => (
-            <div key={f.q} className="rounded-2xl border border-neutral-200 p-6">
-              <h4 className="text-base font-semibold tracking-tight mb-2">{f.q}</h4>
-              <p className="text-[14.5px] text-neutral-600 leading-relaxed">{f.a}</p>
+            <div key={f.q} className="rounded-2xl border border-hairline p-6">
+              <h4 className="text-base font-normal tracking-tight mb-2">{f.q}</h4>
+              <p className="text-[14.5px] text-ink-soft leading-relaxed">{f.a}</p>
             </div>
           ))}
         </div>
@@ -162,7 +162,7 @@ export default function TrustPage() {
       <MarketingSection>
         <div className="rounded-3xl bg-neutral-950 text-white p-10 lg:p-14">
           <Mail className="size-7 mb-5 text-white/70" />
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+          <h2 className="text-3xl md:text-4xl font-normal tracking-tight mb-3">
             Security questionnaire?
           </h2>
           <p className="text-white/70 leading-relaxed mb-7 max-w-xl">
@@ -174,7 +174,7 @@ export default function TrustPage() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 text-sm font-semibold hover:bg-white/90 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 text-sm font-normal hover:bg-white/90 transition-colors"
           >
             Request the trust report
           </Link>

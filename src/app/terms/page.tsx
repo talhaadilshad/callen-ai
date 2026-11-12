@@ -101,7 +101,7 @@ export default function TermsPage() {
         title={
           <>
             The{" "}
-            <span className="italic font-light">agreement.</span>
+            <span>agreement.</span>
           </>
         }
         lede="Last updated 25 May 2026. Pakistani jurisdiction. Plain-language version below; the full PDF is available on request."
@@ -111,8 +111,8 @@ export default function TermsPage() {
         <div className="max-w-3xl space-y-10">
           {SECTIONS.map((s) => (
             <section key={s.heading}>
-              <h2 className="text-xl md:text-2xl font-bold tracking-tight mb-4">{s.heading}</h2>
-              <div className="space-y-3 text-[15px] text-neutral-700 leading-relaxed">
+              <h2 className="text-xl md:text-2xl font-normal tracking-tight mb-4">{s.heading}</h2>
+              <div className="space-y-3 text-[15px] text-black leading-relaxed">
                 {s.body.map((p, i) => (
                   <p key={i}>{p}</p>
                 ))}

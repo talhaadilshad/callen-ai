@@ -64,7 +64,7 @@ export default function McpPage() {
         title={
           <>
             Plug any MCP server into your{" "}
-            <span className="italic font-light">Callen agent.</span>
+            <span>Callen agent.</span>
           </>
         }
         lede="The Model Context Protocol is the open standard for connecting LLMs to tools and data. Callen is a native MCP host: register a server, the agent's tool catalog updates instantly."
@@ -92,12 +92,12 @@ export default function McpPage() {
                 "Use any MCP-compliant server: official integrations (Stripe, Shopify, HubSpot, Notion) or your own internal services. Callen treats them identically.",
             },
           ].map((c) => (
-            <div key={c.title} className="rounded-2xl border border-neutral-200 p-6">
-              <div className="size-9 rounded-xl bg-neutral-100 flex items-center justify-center mb-4">
+            <div key={c.title} className="rounded-2xl border border-hairline p-6">
+              <div className="size-9 rounded-xl bg-shell flex items-center justify-center mb-4">
                 <c.icon className="size-4" />
               </div>
-              <h3 className="text-base font-semibold tracking-tight mb-1.5">{c.title}</h3>
-              <p className="text-[13.5px] text-neutral-600 leading-relaxed">{c.body}</p>
+              <h3 className="text-base font-normal tracking-tight mb-1.5">{c.title}</h3>
+              <p className="text-[13.5px] text-ink-soft leading-relaxed">{c.body}</p>
             </div>
           ))}
         </div>
@@ -108,14 +108,14 @@ export default function McpPage() {
         title={
           <>
             Register a server in{" "}
-            <span className="italic font-light">three lines.</span>
+            <span>three lines.</span>
           </>
         }
       >
         <CodeBlock label="Register" lang="ts" code={REGISTER_EXAMPLE} />
-        <p className="text-[14.5px] text-neutral-600 leading-relaxed mt-6 max-w-2xl">
+        <p className="text-[14.5px] text-ink-soft leading-relaxed mt-6 max-w-2xl">
           Or do it from the dashboard:{" "}
-          <Link href="/signup" className="text-neutral-950 font-semibold underline">
+          <Link href="/signup" className="text-neutral-950 font-normal underline">
             sign up
           </Link>{" "}
           → Tools → Add tool → pick MCP. Same result, no code.
@@ -127,7 +127,7 @@ export default function McpPage() {
         title={
           <>
             Discovery happens{" "}
-            <span className="italic font-light">automatically.</span>
+            <span>automatically.</span>
           </>
         }
       >
@@ -137,7 +137,7 @@ export default function McpPage() {
       <MarketingSection>
         <div className="rounded-3xl bg-neutral-950 text-white p-10 lg:p-12">
           <Boxes className="size-7 mb-5 text-white/70" />
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-3">
+          <h2 className="text-3xl md:text-4xl font-normal tracking-tight mb-3">
             Need a tool we don&apos;t have?
           </h2>
           <p className="text-white/70 leading-relaxed mb-7 max-w-xl">
@@ -147,7 +147,7 @@ export default function McpPage() {
           </p>
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 text-sm font-semibold hover:bg-white/90 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 text-sm font-normal hover:bg-white/90 transition-colors"
           >
             Talk to engineering <ArrowRight className="size-4" />
           </Link>
@@ -161,7 +161,7 @@ function CodeBlock({ label, lang, code }: { label: string; lang: string; code: s
   return (
     <div className="rounded-2xl bg-neutral-950 text-neutral-100 overflow-hidden">
       <div className="flex items-center justify-between px-5 py-3 border-b border-white/10">
-        <span className="text-[11px] uppercase tracking-widest text-white/50 font-semibold">{label}</span>
+        <span className="text-[11px]  text-white/50 font-normal">{label}</span>
         <span className="text-[10.5px] font-mono text-white/40">{lang}</span>
       </div>
       <pre className="px-5 py-4 text-[12.5px] font-mono leading-relaxed overflow-x-auto thin-scrollbar">

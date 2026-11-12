@@ -1,9 +1,9 @@
 // Shared footer for every marketing page. Real hrefs so every link
-// lands on a real page. Used by the landing page and every page
-// reached from it.
+// lands on a real page.
 
 import Link from "next/link";
 import { Logo } from "@/components/logo";
+import { Rail } from "@/components/marketing/kit";
 
 type FooterColumn = {
   title: string;
@@ -14,19 +14,19 @@ const COLUMNS: FooterColumn[] = [
   {
     title: "Product",
     links: [
-      { label: "Use cases",    href: "/use-cases" },
-      { label: "Integrations", href: "/#integrations" },
+      { label: "What it does", href: "/#product" },
+      { label: "Urdu voices",  href: "/#voices" },
+      { label: "How it works", href: "/#how" },
       { label: "Pricing",      href: "/pricing" },
-      { label: "Changelog",    href: "/changelog" },
     ],
   },
   {
-    title: "Developers",
+    title: "Resources",
     links: [
-      { label: "API docs",    href: "/docs/api" },
-      { label: "SDKs",        href: "/docs/sdks" },
-      { label: "MCP support", href: "/docs/mcp" },
-      { label: "Status",      href: "/status" },
+      { label: "Use cases", href: "/use-cases" },
+      { label: "API docs",  href: "/docs/api" },
+      { label: "Changelog", href: "/changelog" },
+      { label: "Status",    href: "/status" },
     ],
   },
   {
@@ -48,25 +48,22 @@ const LEGAL_LINKS: Array<{ label: string; href: string }> = [
 
 export function MarketingFooter() {
   return (
-    <footer className="border-t border-neutral-200 py-16">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12 mb-12">
+    <footer className="border-t border-hairline">
+      <Rail className="py-16">
+        <div className="mb-14 grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-5">
           <div className="col-span-2">
-            <Logo />
-            <p className="text-sm text-neutral-600 mt-4 max-w-xs leading-relaxed">
-              Multilingual AI voice agents for Pakistani businesses. Voice and chat. Live in 10 minutes.
+            <Logo size="lg" />
+            <p className="mt-4 max-w-xs text-[15px] leading-relaxed text-ink-soft">
+              Urdu AI phone agents for Pakistani restaurants. Every call answered, every order taken.
             </p>
           </div>
           {COLUMNS.map((col) => (
             <div key={col.title}>
-              <h4 className="text-sm font-semibold mb-4 tracking-tight">{col.title}</h4>
+              <h4 className="mb-4 text-sm font-normal text-ink-soft">{col.title}</h4>
               <ul className="space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.href + link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-neutral-600 hover:text-neutral-950 transition-colors"
-                    >
+                    <Link href={link.href} className="text-[15px] text-black transition-opacity hover:opacity-60">
                       {link.label}
                     </Link>
                   </li>
@@ -75,21 +72,17 @@ export function MarketingFooter() {
             </div>
           ))}
         </div>
-        <div className="pt-8 border-t border-neutral-200 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
-          <p>© 2026 Callen.ai · Built for Pakistani SMBs.</p>
-          <div className="flex items-center gap-5">
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-hairline pt-7 text-sm text-ink-soft md:flex-row">
+          <p>© 2026 Callen.ai · Made in Pakistan</p>
+          <div className="flex items-center gap-6">
             {LEGAL_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="hover:text-neutral-950 transition-colors"
-              >
+              <Link key={link.href} href={link.href} className="transition-colors hover:text-black">
                 {link.label}
               </Link>
             ))}
           </div>
         </div>
-      </div>
+      </Rail>
     </footer>
   );
 }

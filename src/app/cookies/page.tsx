@@ -48,8 +48,8 @@ const COOKIES: CookieRow[] = [
 
 const TYPE_STYLES: Record<CookieRow["type"], string> = {
   Essential:  "bg-neutral-950 text-white",
-  Functional: "bg-neutral-100 text-neutral-700 border border-neutral-200",
-  Analytics:  "bg-white text-neutral-700 border border-neutral-300",
+  Functional: "bg-shell text-black border border-hairline",
+  Analytics:  "bg-white text-black border border-neutral-300",
 };
 
 export default function CookiesPage() {
@@ -60,14 +60,14 @@ export default function CookiesPage() {
         title={
           <>
             Only the cookies{" "}
-            <span className="italic font-light">we actually need.</span>
+            <span>we actually need.</span>
           </>
         }
         lede="Last updated 25 May 2026. We default to declining everything optional. No third-party tracking, no advertising cookies, no session replay."
       />
 
       <MarketingSection>
-        <div className="max-w-3xl space-y-6 text-[15px] text-neutral-700 leading-relaxed mb-12">
+        <div className="max-w-3xl space-y-6 text-[15px] text-black leading-relaxed mb-12">
           <p>
             Cookies are small text files that websites store on your device.
             We use them sparingly and only to make Callen.ai work.
@@ -85,41 +85,41 @@ export default function CookiesPage() {
         title={
           <>
             The full list.{" "}
-            <span className="italic font-light">All of them.</span>
+            <span>All of them.</span>
           </>
         }
       >
-        <div className="rounded-2xl border border-neutral-200 overflow-hidden">
+        <div className="rounded-2xl border border-hairline overflow-hidden">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-neutral-200 bg-neutral-50">
-                <th className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold px-5 py-3">
+              <tr className="border-b border-hairline bg-shell">
+                <th className="text-[10px]  text-ink-soft font-normal px-5 py-3">
                   Name
                 </th>
-                <th className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold px-5 py-3">
+                <th className="text-[10px]  text-ink-soft font-normal px-5 py-3">
                   Purpose
                 </th>
-                <th className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold px-5 py-3 hidden md:table-cell">
+                <th className="text-[10px]  text-ink-soft font-normal px-5 py-3 hidden md:table-cell">
                   Duration
                 </th>
-                <th className="text-[10px] uppercase tracking-widest text-neutral-500 font-semibold px-5 py-3">
+                <th className="text-[10px]  text-ink-soft font-normal px-5 py-3">
                   Type
                 </th>
               </tr>
             </thead>
             <tbody>
               {COOKIES.map((c, i) => (
-                <tr key={c.name} className={i > 0 ? "border-t border-neutral-100" : ""}>
+                <tr key={c.name} className={i > 0 ? "border-t border-hairline" : ""}>
                   <td className="px-5 py-4 align-top">
                     <code className="text-[12.5px] font-mono">{c.name}</code>
                   </td>
-                  <td className="px-5 py-4 text-[13.5px] text-neutral-700">{c.purpose}</td>
-                  <td className="px-5 py-4 text-[13px] text-neutral-500 hidden md:table-cell">
+                  <td className="px-5 py-4 text-[13.5px] text-black">{c.purpose}</td>
+                  <td className="px-5 py-4 text-[13px] text-ink-soft hidden md:table-cell">
                     {c.duration}
                   </td>
                   <td className="px-5 py-4">
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider ${TYPE_STYLES[c.type]}`}
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-normal uppercase tracking-wider ${TYPE_STYLES[c.type]}`}
                     >
                       {c.type}
                     </span>
@@ -133,22 +133,22 @@ export default function CookiesPage() {
 
       <MarketingSection
         eyebrow="Your controls"
-        title={<>How to <span className="italic font-light">manage them.</span></>}
+        title={<>How to <span>manage them.</span></>}
       >
-        <div className="space-y-4 text-[15px] text-neutral-700 leading-relaxed max-w-3xl">
+        <div className="space-y-4 text-[15px] text-black leading-relaxed max-w-3xl">
           <p>
-            <strong className="font-semibold text-neutral-950">In Callen:</strong>{" "}
+            <strong className="font-normal text-neutral-950">In Callen:</strong>{" "}
             Visit your workspace settings → Privacy. You can clear stored
             preferences or revoke functional cookies at any time.
           </p>
           <p>
-            <strong className="font-semibold text-neutral-950">In your browser:</strong>{" "}
+            <strong className="font-normal text-neutral-950">In your browser:</strong>{" "}
             You can disable cookies entirely. Essential cookies are required
             for the dashboard to function; blocking them will sign you out.
           </p>
           <p>
             Questions? Email{" "}
-            <a href="mailto:privacy@callen.ai" className="text-neutral-950 font-semibold underline">
+            <a href="mailto:privacy@callen.ai" className="text-neutral-950 font-normal underline">
               privacy@callen.ai
             </a>
             .
