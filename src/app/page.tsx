@@ -20,6 +20,7 @@ import { CountUp } from "@/components/count-up";
 import { CallFlow } from "@/components/landing/call-flow";
 import { DayTimeline } from "@/components/landing/day-timeline";
 import { OrderDemo } from "@/components/landing/order-demo";
+import { SaidRight } from "@/components/landing/said-right";
 import { VoiceStage } from "@/components/landing/voice-stage";
 import {
   Band, BTN_PRIMARY, BTN_SECONDARY, H1, H2, InfoCard, Rail, SectionHead,
@@ -36,13 +37,6 @@ const RESTAURANTS = ["Cheezious", "Domino's", "KFC", "Pizza Hut", "Howdy", "OPTP
 
 const QUESTIONS_A = ["Kab tak khule hain?", "G-11 mein delivery?", "Delivery charges?", "Minimum order?"];
 const QUESTIONS_B = ["Card se payment?", "Nearest branch?", "Aaj ki deal?", "Table for six?"];
-
-const SAID_AS = [
-  { written: "BBQ", spoken: "باربی کیو", roman: "baar-bee-kyoo" },
-  { written: "PKR 1,250", spoken: "ساڑھے بارہ سو روپے", roman: "saarhay baara sau rupay" },
-  { written: "1.5 L", spoken: "ڈیڑھ لیٹر", roman: "derh litre" },
-  { written: "F-10", spoken: "ایف ٹین", roman: "F ten" },
-];
 
 const VOICE_WALL: Array<{ name: string; palette: OrbPalette }> = [
   { name: "Ayesha", palette: "ember" },
@@ -137,7 +131,7 @@ export default function LandingPage() {
           <div className="grid items-end gap-x-12 gap-y-6 lg:grid-cols-2">
             <div>
               <h1 className={H1}>
-                <WordsReveal text={"Every restaurant call,\nanswered in Urdu"} onView={false} />
+                <WordsReveal text={"Missed calls are\nmissed orders"} onView={false} />
               </h1>
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
@@ -159,8 +153,8 @@ export default function LandingPage() {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="max-w-md text-base leading-relaxed text-black lg:justify-self-end"
             >
-              Callen is an AI phone agent for Pakistani restaurants. It picks up on the first ring, takes delivery
-              and takeaway orders in natural Urdu, and knows your menu and today&apos;s deals.
+              Callen answers your restaurant&apos;s phone on the first ring and takes the order in natural Urdu. It
+              knows your menu and today&apos;s deals, and it never puts a caller on hold.
             </motion.p>
           </div>
 
@@ -316,14 +310,14 @@ export default function LandingPage() {
           />
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.15fr_1fr]">
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           <Reveal>
             <InfoCard
               className="h-full"
               title="Sixteen voices"
               body="Choose the voice that fits your brand, and listen to it before you decide. Every voice has its own orb."
             >
-              <div className="grid grid-cols-4 gap-x-3 gap-y-7 py-4">
+              <div className="my-auto grid grid-cols-4 gap-x-3 gap-y-9 py-6">
                 {VOICE_WALL.map((v, i) => (
                   <motion.div
                     key={v.name}
@@ -333,7 +327,7 @@ export default function LandingPage() {
                   >
                     <Orb
                       palette={v.palette}
-                      className="size-14 shadow-[0_12px_24px_-12px_rgba(0,0,0,0.35)] transition-transform duration-300 hover:scale-110 sm:size-[4.75rem]"
+                      className="size-14 shadow-[0_12px_24px_-12px_rgba(0,0,0,0.35)] transition-transform duration-300 hover:scale-110 sm:size-[5.5rem]"
                     />
                     <span className="text-sm text-black">{v.name}</span>
                   </motion.div>
@@ -342,35 +336,8 @@ export default function LandingPage() {
             </InfoCard>
           </Reveal>
 
-          <Reveal delay={0.08}>
-            <InfoCard
-              className="h-full"
-              title="Said the way people say it"
-              body="Prices in hundreds, sectors as they are spoken, and your own names taught once and said right on every call."
-            >
-              <ul className="py-2">
-                {SAID_AS.map((row, i) => (
-                  <motion.li
-                    key={row.written}
-                    initial={{ opacity: 0, x: 14 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-60px" }}
-                    transition={{ duration: 0.5, delay: 0.15 + i * 0.12 }}
-                    className="flex items-center justify-between gap-4 border-b border-dotted border-black/15 py-2 last:border-0"
-                  >
-                    <span className="rounded-lg border border-hairline bg-white px-2.5 py-1 font-mono text-xs text-black">
-                      {row.written}
-                    </span>
-                    <span className="text-right">
-                      <span dir="rtl" lang="ur" className="block font-urdu text-base leading-[2.1] text-black">
-                        {row.spoken}
-                      </span>
-                      <span className="block text-xs text-ink-soft">{row.roman}</span>
-                    </span>
-                  </motion.li>
-                ))}
-              </ul>
-            </InfoCard>
+          <Reveal delay={0.08} className="h-full">
+            <SaidRight />
           </Reveal>
         </div>
       </Band>
