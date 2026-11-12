@@ -11,7 +11,7 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { BookOpen, Check, Headphones, Phone, Store } from "lucide-react";
+import { BookOpen, Check, Headphones, Phone, PhoneIncoming, Store, TrendingUp, Users } from "lucide-react";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
@@ -20,7 +20,7 @@ import { CountUp } from "@/components/count-up";
 import { CallFlow } from "@/components/landing/call-flow";
 import { DayTimeline } from "@/components/landing/day-timeline";
 import { OrderDemo } from "@/components/landing/order-demo";
-import { SaidRight } from "@/components/landing/said-right";
+import { ValueCalculator } from "@/components/landing/value-calculator";
 import { VoiceStage } from "@/components/landing/voice-stage";
 import {
   Band, BTN_PRIMARY, BTN_SECONDARY, H1, H2, InfoCard, Rail, SectionHead,
@@ -38,15 +38,22 @@ const RESTAURANTS = ["Cheezious", "Domino's", "KFC", "Pizza Hut", "Howdy", "OPTP
 const QUESTIONS_A = ["Kab tak khule hain?", "G-11 mein delivery?", "Delivery charges?", "Minimum order?"];
 const QUESTIONS_B = ["Card se payment?", "Nearest branch?", "Aaj ki deal?", "Table for six?"];
 
-const VOICE_WALL: Array<{ name: string; palette: OrbPalette }> = [
-  { name: "Ayesha", palette: "ember" },
-  { name: "Ahmed", palette: "ocean" },
-  { name: "Hira", palette: "lilac" },
-  { name: "Bilal", palette: "moss" },
-  { name: "Sana", palette: "rose" },
-  { name: "Usman", palette: "dusk" },
-  { name: "Zainab", palette: "sun" },
-  { name: "Hamza", palette: "mint" },
+const VALUE = [
+  {
+    icon: PhoneIncoming,
+    title: "More orders from the same phone",
+    body: "Every call is answered, so the orders you were losing to a busy line now reach your kitchen.",
+  },
+  {
+    icon: Users,
+    title: "Staff stay on the floor",
+    body: "Your team serves the customers in front of them instead of running back to the phone.",
+  },
+  {
+    icon: TrendingUp,
+    title: "A bigger bill on each call",
+    body: "Every caller hears today's deal and the add-on that fits, which busy staff often forget to mention.",
+  },
 ];
 
 const STEPS = [
@@ -300,45 +307,26 @@ export default function LandingPage() {
         </Reveal>
       </Band>
 
-      {/* ============================ URDU VOICES ============================ */}
-      <Band id="voices">
+      {/* ============================ VALUE ============================ */}
+      <Band id="value">
         <Reveal>
           <SectionHead
-            label="Urdu voices"
-            title="Sounds like your best order taker, not a robot"
-            body="Everyday Pakistani Urdu, with words like pizza, deal and delivery said the natural way. Each voice uses the right grammar for a male or a female speaker."
+            label="Why it pays"
+            title="What a missed call really costs"
+            body="A caller who cannot get through does not wait. They order from the next restaurant. Put in your own numbers and see what that adds up to in a month."
           />
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-          <Reveal>
-            <InfoCard
-              className="h-full"
-              title="Sixteen voices"
-              body="Choose the voice that fits your brand, and listen to it before you decide. Every voice has its own orb."
-            >
-              <div className="my-auto grid grid-cols-4 gap-x-3 gap-y-9 py-6">
-                {VOICE_WALL.map((v, i) => (
-                  <motion.div
-                    key={v.name}
-                    className="flex flex-col items-center gap-2.5"
-                    animate={{ y: [0, -6, 0] }}
-                    transition={{ duration: 4 + (i % 4) * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.25 }}
-                  >
-                    <Orb
-                      palette={v.palette}
-                      className="size-14 shadow-[0_12px_24px_-12px_rgba(0,0,0,0.35)] transition-transform duration-300 hover:scale-110 sm:size-[5.5rem]"
-                    />
-                    <span className="text-sm text-black">{v.name}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </InfoCard>
-          </Reveal>
+        <Reveal>
+          <ValueCalculator />
+        </Reveal>
 
-          <Reveal delay={0.08} className="h-full">
-            <SaidRight />
-          </Reveal>
+        <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-3">
+          {VALUE.map((f, i) => (
+            <Reveal key={f.title} delay={i * 0.06}>
+              <InfoCard className="h-full" icon={<f.icon className="size-[18px]" strokeWidth={1.5} />} title={f.title} body={f.body} />
+            </Reveal>
+          ))}
         </div>
       </Band>
 
@@ -347,8 +335,8 @@ export default function LandingPage() {
         <Reveal>
           <SectionHead
             label="Always on"
-            title="A day on your phone line"
-            body="Your staff get busy, go on break and go home. The phone keeps getting answered, the same way, from the lunch rush to the last order of the night."
+            title="Your staff cannot always reach the phone. Callen can."
+            body="Calls peak exactly when your team is busiest. Follow one day, from the lunch rush to the last order of the night, and see who is free to answer."
           />
         </Reveal>
         <Reveal>

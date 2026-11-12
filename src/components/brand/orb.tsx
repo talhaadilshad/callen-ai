@@ -1,14 +1,19 @@
-// Callen's brand visual: a textured gradient orb. The site itself stays
-// black, white and neutral grey; colour only ever appears inside these
-// orbs and the grain surfaces below. Each agent voice has its own orb.
+// Callen's brand visual: a textured, lit gradient orb. The site itself
+// stays black, white and neutral grey; colour only ever appears inside
+// these orbs and the grain surfaces below. Each agent voice has its own.
 //
-// How it is drawn (all inline SVG, no image files):
-//   1. a handful of saturated colour blobs on a base colour
-//   2. a turbulence + displacement filter that warps the blobs into liquid,
-//      marbled swirls (each palette has its own seed, so no two match)
-//   3. fine film grain on top
-//   4. a fixed highlight and edge shade, so it reads as a lit sphere while
-//      the texture underneath turns slowly
+// How it is drawn (all inline SVG and CSS, no image files):
+//   1. saturated colour blobs, warped by a turbulence filter and melted
+//      into one clouded gradient (each palette has its own seed)
+//   2. fine film grain
+//   3. lighting that makes it a sphere: a lit side, a shaded side, darker
+//      edges, a soft rim of light and a coloured shadow on the "floor"
+//   4. while `active` (the agent is speaking) the gradient swells and
+//      settles like a voice level, a light pulses from inside, and a halo
+//      of the orb's own colour breathes around it
+//
+// Sizes inside use container-query units (cqw), so the lighting and
+// shadows scale with the orb, from a 12px dot to a 240px hero orb.
 
 import { useId, type CSSProperties, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
@@ -47,20 +52,14 @@ function Texture({
   const p = PALETTES[palette];
   const [light, deep, pale, vivid, dark] = p.blobs;
   return (
-    <svg
-      viewBox="0 0 200 200"
-      preserveAspectRatio="xMidYMid slice"
-      className={className}
-      aria-hidden
-      focusable="false"
-    >
+    <svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" className={className} aria-hidden focusable="false">
       <defs>
         <filter id={id} x="-30%" y="-30%" width="160%" height="160%" colorInterpolationFilters="sRGB">
           {/* 1. warp the blobs into organic shapes */}
           <feTurbulence type="fractalNoise" baseFrequency={soft ? 0.006 : 0.01} numOctaves={2} seed={p.seed} result="warpNoise" />
           <feDisplacementMap in="SourceGraphic" in2="warpNoise" scale={soft ? 110 : 84} xChannelSelector="R" yChannelSelector="G" result="warped" />
           {/* 2. melt them into one smooth gradient */}
-          <feGaussianBlur in="warped" stdDeviation={soft ? 24 : 15} result="smooth" />
+          <feGaussianBlur in="warped" stdDeviation={soft ? 24 : 14} result="smooth" />
           {/* 3. cloud the gradient a little, so it is never flat */}
           <feTurbulence type="fractalNoise" baseFrequency={soft ? 0.012 : 0.022} numOctaves={3} seed={p.seed + 1} result="cloud" />
           <feColorMatrix
@@ -95,28 +94,91 @@ export function Orb({
   palette?: OrbPalette;
   // Pixel size. Leave out to size it with classes (e.g. "size-40").
   size?: number;
-  // True while this orb is "speaking": it breathes.
+  // True while this orb is "speaking".
   active?: boolean;
   className?: string;
   style?: CSSProperties;
 }) {
+  const p = PALETTES[palette];
   return (
     <div
       aria-hidden
-      className={cn("relative shrink-0 overflow-hidden rounded-full", active && "orb-breathe", className)}
-      style={{ width: size, height: size, backgroundColor: PALETTES[palette].base, ...style }}
+      className={cn("relative shrink-0 rounded-full [container-type:size]", className)}
+      style={{ width: size, height: size, ...style }}
     >
-      <Texture palette={palette} className="orb-drift absolute inset-0 size-full" />
-      <div className="grain-overlay absolute inset-0" />
-      {/* fixed light: highlight top left, soft shade round the edge */}
-      <div
-        className="absolute inset-0 rounded-full"
+      {/* coloured shadow on the "floor" under the sphere */}
+      <span
+        className="absolute rounded-[50%]"
         style={{
-          backgroundImage:
-            "radial-gradient(circle at 30% 24%, rgba(255,255,255,0.42), transparent 44%), radial-gradient(circle at 50% 50%, transparent 58%, rgba(0,0,0,0.20) 100%)",
-          boxShadow: "inset 0 -6px 18px rgba(0,0,0,0.10), inset 0 0 0 1px rgba(255,255,255,0.10)",
+          left: "14cqw",
+          right: "14cqw",
+          bottom: "-9cqw",
+          height: "22cqw",
+          backgroundColor: p.blobs[1],
+          filter: "blur(9cqw)",
+          opacity: 0.45,
         }}
       />
+
+      {/* halo of the orb's own colour, only while speaking */}
+      {active && (
+        <span
+          className="orb-halo absolute inset-0 rounded-full"
+          style={{ backgroundColor: p.base, filter: "blur(10cqw)" }}
+        />
+      )}
+
+      <div className="absolute inset-0 overflow-hidden rounded-full" style={{ backgroundColor: p.base }}>
+        {/* the gradient: turns slowly, and swells like a voice level while speaking */}
+        <div className={cn("absolute inset-0", active && "orb-voice")}>
+          <Texture palette={palette} className="orb-drift absolute inset-0 size-full" />
+        </div>
+
+        {/* light pulsing from inside while speaking */}
+        {active && (
+          <div
+            className="orb-voice-glow absolute inset-0"
+            style={{
+              backgroundImage: "radial-gradient(circle at 50% 54%, rgba(255,255,255,0.95), rgba(255,255,255,0.25) 34%, transparent 58%)",
+              mixBlendMode: "soft-light",
+            }}
+          />
+        )}
+
+        <div className="grain-overlay absolute inset-0" />
+
+        {/* fixed lighting: lit top left, shaded bottom right, darker edge */}
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            backgroundImage: [
+              "radial-gradient(circle at 31% 24%, rgba(255,255,255,0.62) 0%, rgba(255,255,255,0.16) 26%, transparent 48%)",
+              "radial-gradient(circle at 72% 80%, rgba(0,0,0,0.40) 0%, transparent 56%)",
+              "radial-gradient(circle at 50% 50%, transparent 60%, rgba(0,0,0,0.26) 100%)",
+            ].join(", "),
+            boxShadow:
+              "inset 2cqw 3cqw 7cqw rgba(255,255,255,0.28), inset -4cqw -6cqw 12cqw rgba(0,0,0,0.26), inset 0 0 0 0.5cqw rgba(255,255,255,0.14)",
+          }}
+        />
+        {/* soft specular spot */}
+        <div
+          className="absolute rounded-[50%]"
+          style={{
+            left: "20cqw",
+            top: "13cqw",
+            width: "26cqw",
+            height: "15cqw",
+            backgroundColor: "rgba(255,255,255,0.55)",
+            filter: "blur(5cqw)",
+            transform: "rotate(-24deg)",
+          }}
+        />
+        {/* bounce light on the lower rim */}
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{ backgroundImage: "radial-gradient(circle at 62% 104%, rgba(255,255,255,0.30), transparent 34%)" }}
+        />
+      </div>
     </div>
   );
 }

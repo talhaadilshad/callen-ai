@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 const NAV_LINKS: Array<{ href: string; label: string }> = [
   { href: "/#product", label: "Product" },
-  { href: "/#voices", label: "Urdu voices" },
+  { href: "/#value", label: "Why Callen" },
   { href: "/#how", label: "How it works" },
   { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "Company" },

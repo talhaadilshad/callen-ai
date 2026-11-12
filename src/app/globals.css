@@ -309,6 +309,83 @@
   .orb-drift { animation: orb-drift 26s linear infinite; }
   .orb-drift-slow { animation: orb-drift 60s linear infinite; }
   .orb-breathe { animation: orb-breathe 1.6s ease-in-out infinite; }
+
+  /* Speaking: the gradient swells and settles like a voice level. Uneven
+     steps and three different loop lengths keep it from looking like a
+     metronome. */
+  @keyframes orb-voice {
+    0%   { transform: scale(1.03); }
+    9%   { transform: scale(1.22); }
+    18%  { transform: scale(1.08); }
+    31%  { transform: scale(1.30); }
+    42%  { transform: scale(1.12); }
+    55%  { transform: scale(1.24); }
+    66%  { transform: scale(1.05); }
+    79%  { transform: scale(1.19); }
+    90%  { transform: scale(1.09); }
+    100% { transform: scale(1.03); }
+  }
+  @keyframes orb-voice-glow {
+    0%, 100% { opacity: 0.10; transform: scale(0.80); }
+    14%  { opacity: 0.85; transform: scale(1.10); }
+    27%  { opacity: 0.30; transform: scale(0.90); }
+    45%  { opacity: 1;    transform: scale(1.22); }
+    58%  { opacity: 0.40; transform: scale(0.95); }
+    74%  { opacity: 0.75; transform: scale(1.08); }
+    88%  { opacity: 0.20; transform: scale(0.85); }
+  }
+  @keyframes orb-halo {
+    0%, 100% { opacity: 0.18; transform: scale(0.98); }
+    20%  { opacity: 0.50; transform: scale(1.10); }
+    38%  { opacity: 0.26; transform: scale(1.02); }
+    56%  { opacity: 0.60; transform: scale(1.16); }
+    72%  { opacity: 0.30; transform: scale(1.04); }
+    86%  { opacity: 0.45; transform: scale(1.09); }
+  }
+  .orb-voice { animation: orb-voice 1.7s ease-in-out infinite; }
+  .orb-voice-glow { animation: orb-voice-glow 1.3s ease-in-out infinite; }
+  .orb-halo { animation: orb-halo 2.1s ease-in-out infinite; }
+
+  /* Range slider used by the cost calculator. --fill is set inline. */
+  .range-ink {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 22px;
+    background: transparent;
+    cursor: pointer;
+  }
+  .range-ink::-webkit-slider-runnable-track {
+    height: 3px;
+    border-radius: 9999px;
+    background: linear-gradient(to right, #000 var(--fill, 50%), rgb(0 0 0 / 0.14) var(--fill, 50%));
+  }
+  .range-ink::-moz-range-track {
+    height: 3px;
+    border-radius: 9999px;
+    background: linear-gradient(to right, #000 var(--fill, 50%), rgb(0 0 0 / 0.14) var(--fill, 50%));
+  }
+  .range-ink::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    margin-top: -8.5px;
+    border-radius: 9999px;
+    background: #fff;
+    border: 1px solid rgb(0 0 0 / 0.14);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.18);
+    transition: transform 0.15s ease;
+  }
+  .range-ink::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 9999px;
+    background: #fff;
+    border: 1px solid rgb(0 0 0 / 0.14);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.18);
+  }
+  .range-ink:active::-webkit-slider-thumb { transform: scale(1.12); }
   .grain-overlay {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");
     background-size: 160px 160px;
@@ -316,7 +393,7 @@
     opacity: 0.9;
   }
   @media (prefers-reduced-motion: reduce) {
-    .orb-drift, .orb-drift-slow, .orb-breathe { animation: none; }
+    .orb-drift, .orb-drift-slow, .orb-breathe, .orb-voice, .orb-voice-glow, .orb-halo { animation: none; }
   }
 
   /* Cream surface utility */
