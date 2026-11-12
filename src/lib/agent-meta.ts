@@ -89,17 +89,17 @@ export type LlmModel = {
 // src/lib/uplift/voice-map.ts). What the user picks here is exactly
 // what runs on the call.
 export const LLM_MODELS: LlmModel[] = [
-  { id: "gemini-3.5-flash",      provider: "Google", label: "Gemini 3.5 Flash",      description: "Smarter Urdu · the default for phone calls" },
+  { id: "gemini-3.5-flash",      provider: "Google", label: "Gemini 3.5 Flash",      description: "Good balance of speed and quality" },
   { id: "gemini-2.5-flash",      provider: "Google", label: "Gemini 2.5 Flash",      description: "Fastest replies · simpler Urdu" },
   { id: "gemini-3.1-flash-lite", provider: "Google", label: "Gemini 3.1 Flash Lite", description: "Lowest cost · simple order taking" },
-  { id: "gpt-5.4-mini",          provider: "OpenAI", label: "GPT-5.4 Mini",          description: "Strong reasoning · handles tricky orders" },
+  { id: "gpt-5.4-mini",          provider: "OpenAI", label: "GPT-5.4 Mini",          description: "Best judgment · the default for phone calls" },
   { id: "gpt-5.4-nano",          provider: "OpenAI", label: "GPT-5.4 Nano",          description: "Fast + cheap" },
   { id: "gpt-4o-mini",           provider: "OpenAI", label: "GPT-4o Mini",           description: "Proven with Urdu speech" },
 ];
 
 export const LLM_PROVIDERS: LlmProvider[] = ["Google", "OpenAI"];
 
-export const DEFAULT_LLM_ID = "gemini-3.5-flash";
+export const DEFAULT_LLM_ID = "gpt-5.4-mini";
 
 export function llmById(id: string | null | undefined): LlmModel | undefined {
   if (!id) return undefined;

@@ -61,12 +61,14 @@ export function toUpliftTts(voiceId: string | null | undefined): UpliftTtsConfig
   return soniox(DEFAULT_SONIOX_VOICE_ID.slice(7));
 }
 
-export type UpliftLlmConfig = { provider: "google" | "openai"; model: string };
+export type UpliftLlmConfig =
+  | { provider: "google"; model: string }
+  | { provider: "openai"; model: string; reasoningEffort?: "low"; verbosity?: "low" };
 
 // Models Uplift hosts. An agent's settings.model is reused when Uplift
-// supports it; otherwise Gemini 3.5 Flash, Uplift's "good balance of
-// intelligence and speed", which handles conversational Urdu better than
-// the faster 2.5.
+// supports it; otherwise GPT-5.4 Mini, the model Uplift recommends for
+// "calls that need more judgment" (order changes, complaints, vague
+// requests). Uplift bills a flat rate per minute whatever the model.
 const UPLIFT_LLMS: Record<string, UpliftLlmConfig["provider"]> = {
   "gemini-2.5-flash": "google",
   "gemini-3.5-flash": "google",
@@ -76,11 +78,23 @@ const UPLIFT_LLMS: Record<string, UpliftLlmConfig["provider"]> = {
   "gpt-4o-mini": "openai",
 };
 
-export const DEFAULT_UPLIFT_LLM: UpliftLlmConfig = { provider: "google", model: "gemini-3.5-flash" };
+const DEFAULT_UPLIFT_MODEL = "gpt-5.4-mini";
+
+// Voice tuning per provider:
+// - gpt-5.x: a short reasoning pass and short answers, Uplift's own
+//   recommended settings for calls (a chatty model is a slow call). The
+//   knobs don't exist on gpt-4o-mini.
+// - Gemini: nothing sent. Uplift already applies its voice-tuned thinking
+//   defaults (thinkingLevel low on 3.x, a 512-token budget on 2.5).
+function llmConfig(model: string): UpliftLlmConfig {
+  if (UPLIFT_LLMS[model] === "google") return { provider: "google", model };
+  return model.startsWith("gpt-5")
+    ? { provider: "openai", model, reasoningEffort: "low", verbosity: "low" }
+    : { provider: "openai", model };
+}
+
+export const DEFAULT_UPLIFT_LLM: UpliftLlmConfig = llmConfig(DEFAULT_UPLIFT_MODEL);
 
 export function toUpliftLlm(model: unknown): UpliftLlmConfig {
-  if (typeof model === "string" && UPLIFT_LLMS[model]) {
-    return { provider: UPLIFT_LLMS[model], model };
-  }
-  return DEFAULT_UPLIFT_LLM;
+  return typeof model === "string" && UPLIFT_LLMS[model] ? llmConfig(model) : DEFAULT_UPLIFT_LLM;
 }
