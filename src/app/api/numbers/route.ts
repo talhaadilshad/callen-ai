@@ -1,8 +1,14 @@
-// POST /api/numbers — buy a Retell-managed number and bind it to an
-// agent. Auth: session cookie for the agent lookup (RLS-scoped); buying
-// costs money, so only workspace owners/admins may do it, capped per
-// workspace. The phone_numbers insert uses the service role because
-// users are intentionally not allowed to write that table.
+// POST /api/numbers — get a phone number for an agent.
+//
+// Urdu (Uplift) agents: Uplift has no API to buy numbers. A dedicated
+// Pakistani number is assigned on request and routed to the assistant on
+// their side, so this stores a 'provisioning' request that a platform
+// admin fulfils (POST /api/admin/numbers/:id).
+// English (Retell) agents: buys a Retell-managed US number right away.
+//
+// Auth: session cookie for the agent lookup (RLS-scoped). Numbers cost
+// money, so only workspace owners/admins may ask, capped per workspace.
+// phone_numbers is written with the service role: users can only read it.
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
@@ -10,19 +16,14 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { retell, isRetellConfigured } from "@/lib/retell/client";
 
 const NUMBER_MONTHLY_COST_CENTS = 200; // Retell-managed: $2/mo
-const MAX_ACTIVE_NUMBERS_PER_WORKSPACE = 5;
+const MAX_NUMBERS_PER_WORKSPACE = 5;   // active + requested
 
 export async function POST(request: NextRequest) {
-  if (!isRetellConfigured()) {
-    return NextResponse.json(
-      { error: "Voice runtime is not configured (RETELL_API_KEY missing)." },
-      { status: 503 }
-    );
-  }
-
   const body = (await request.json().catch(() => null)) as {
     agentId?: string;
     areaCode?: number;
+    preferredCity?: string;
+    note?: string;
   } | null;
   if (!body?.agentId) {
     return NextResponse.json({ error: "agentId is required." }, { status: 400 });
@@ -58,20 +59,14 @@ export async function POST(request: NextRequest) {
     .maybeSingle();
   if (membership?.role !== "owner" && membership?.role !== "admin") {
     return NextResponse.json(
-      { error: "Only workspace owners and admins can buy numbers." },
+      { error: "Only workspace owners and admins can get numbers." },
       { status: 403 }
     );
   }
 
-  if (agent.provider === "uplift") {
-    return NextResponse.json(
-      { error: "Urdu agents get their Pakistani number from Uplift AI on request. It can't be bought here yet." },
-      { status: 409 }
-    );
-  }
   if (!agent.provider_agent_id) {
     return NextResponse.json(
-      { error: "Agent has not been synced to the voice runtime yet. Save the agent first." },
+      { error: "Publish the agent first, so the number has something to ring." },
       { status: 409 }
     );
   }
@@ -81,11 +76,45 @@ export async function POST(request: NextRequest) {
     .from("phone_numbers")
     .select("id", { count: "exact", head: true })
     .eq("workspace_id", agent.workspace_id)
-    .eq("status", "active");
-  if ((count ?? 0) >= MAX_ACTIVE_NUMBERS_PER_WORKSPACE) {
+    .in("status", ["active", "provisioning"]);
+  if ((count ?? 0) >= MAX_NUMBERS_PER_WORKSPACE) {
     return NextResponse.json(
-      { error: `This workspace already has ${MAX_ACTIVE_NUMBERS_PER_WORKSPACE} numbers, the current limit.` },
+      { error: `This workspace already has ${MAX_NUMBERS_PER_WORKSPACE} numbers, the current limit.` },
       { status: 409 }
+    );
+  }
+
+  // ---- Urdu agents: store a request for a Pakistani number ----
+  if (agent.provider === "uplift") {
+    const { data: requestRow, error: requestError } = await admin
+      .from("phone_numbers")
+      .insert({
+        workspace_id: agent.workspace_id,
+        agent_id: agent.id,
+        provider: "uplift",
+        status: "provisioning",
+        requested_by: user.id,
+        preferred_city: body.preferredCity?.trim().slice(0, 80) || null,
+        note: body.note?.trim().slice(0, 500) || null,
+      })
+      .select()
+      .single();
+    if (requestError) {
+      // Unique index: one open request per agent.
+      const duplicate = requestError.code === "23505";
+      return NextResponse.json(
+        { error: duplicate ? "This agent already has a number being set up." : requestError.message },
+        { status: duplicate ? 409 : 500 }
+      );
+    }
+    return NextResponse.json({ number: requestRow, requested: true });
+  }
+
+  // ---- English agents: buy a Retell number now ----
+  if (!isRetellConfigured()) {
+    return NextResponse.json(
+      { error: "Voice runtime is not configured (RETELL_API_KEY missing)." },
+      { status: 503 }
     );
   }
 
@@ -111,6 +140,8 @@ export async function POST(request: NextRequest) {
       provider_number_id: purchased.phone_number,
       status: "active",
       monthly_cost_cents: NUMBER_MONTHLY_COST_CENTS,
+      requested_by: user.id,
+      activated_at: new Date().toISOString(),
     })
     .select()
     .single();

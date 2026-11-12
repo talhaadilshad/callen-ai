@@ -1,4 +1,10 @@
-// /pricing — three-tier pricing card matrix tuned for Pakistani SMBs.
+// /pricing — per-restaurant plans in PKR.
+//
+// Prices are set from what a call minute costs us: the voice runtime
+// (Uplift) charges about PKR 12 per phone minute and PKR 9 per browser
+// minute (2026-11). Included minutes work out to PKR 22 to 25 each, so
+// every plan covers its own minutes with roughly 45 to 50% left over.
+// Revisit these numbers whenever the runtime's rate changes.
 
 import Link from "next/link";
 import { Check, ArrowRight, Phone } from "lucide-react";
@@ -11,11 +17,11 @@ import {
 export const metadata = {
   title: "Pricing",
   description:
-    "Pakistani SMB pricing for Callen.ai. Starter free, Pro at PKR 12,000/month, Enterprise custom. Pay in PKR, no card needed to start.",
+    "Callen.ai pricing for Pakistani restaurants. Free 14-day pilot, then plans from PKR 14,900 a month with call minutes included. Pay in PKR.",
 };
 
 type Tier = {
-  id: "starter" | "pro" | "enterprise";
+  id: "starter" | "growth" | "chains";
   name: string;
   price: string;
   priceLabel: string;
@@ -30,77 +36,83 @@ const TIERS: Tier[] = [
   {
     id: "starter",
     name: "Starter",
-    price: "Free",
-    priceLabel: "30 mins included",
-    description: "Spin up an agent in 10 minutes. Perfect for solo founders and demos.",
+    price: "PKR 14,900",
+    priceLabel: "per month · 600 minutes included",
+    description: "One branch that wants every call answered, in Urdu.",
     features: [
-      "1 agent",
-      "30 minutes of call time",
-      "Urdu + English",
-      "1 phone number (shared Twilio pool)",
-      "Knowledge base up to 5 MB",
-      "Email support",
+      "1 Urdu agent for one branch",
+      "600 call minutes a month (about 10 calls a day)",
+      "1 Pakistani phone number",
+      "Knowledge Base: menu, deals, policies, FAQs",
+      "16 Urdu voices and your own pronunciation list",
+      "Extra minutes at PKR 25 each",
+      "Email and WhatsApp support",
     ],
-    cta: "Start free",
+    cta: "Start free pilot",
     ctaHref: "/signup",
   },
   {
-    id: "pro",
-    name: "Pro",
-    price: "PKR 12,000",
-    priceLabel: "per month",
-    description: "For real Pakistani SMBs taking calls every day.",
+    id: "growth",
+    name: "Growth",
+    price: "PKR 34,900",
+    priceLabel: "per month · 1,600 minutes included",
+    description: "Busy restaurants and small groups with up to three branches.",
     features: [
-      "5 agents",
-      "5,000 minutes / month",
-      "Urdu, English, Punjabi, Sindhi, Pashto",
-      "Dedicated +92 phone number",
-      "Knowledge base up to 500 MB",
-      "MCP tools + CRM webhooks",
-      "Call recordings, transcripts, analytics",
-      "Priority WhatsApp + email support",
+      "Up to 3 Urdu agents, one per branch",
+      "1,600 call minutes a month (about 25 calls a day)",
+      "Up to 3 Pakistani phone numbers",
+      "Everything in Starter",
+      "Extra minutes at PKR 22 each",
+      "We set up your menu and deals for you",
+      "Priority WhatsApp support",
     ],
-    cta: "Start 14-day trial",
+    cta: "Start free pilot",
     ctaHref: "/signup",
     featured: true,
   },
   {
-    id: "enterprise",
-    name: "Enterprise",
+    id: "chains",
+    name: "Chains",
     price: "Custom",
-    priceLabel: "annual contract",
-    description: "Multi-tenant, multi-vertical, audit-ready.",
+    priceLabel: "priced on your call volume",
+    description: "Restaurant chains and call centres taking thousands of calls.",
     features: [
-      "Unlimited agents",
-      "Custom minute pool",
-      "All 12 languages",
-      "Multiple +92 numbers and SIP trunk",
-      "Per-tenant data isolation",
-      "SOC 2 + custom DPA",
-      "SSO via SAML / OIDC",
-      "Onboarding engineer + 4-hour SLA",
+      "As many agents and branches as you need",
+      "Volume rate per minute",
+      "Several calls answered at the same time",
+      "Numbers for every branch",
+      "Hands-on setup and tuning by our team",
+      "A named contact for support",
     ],
-    cta: "Talk to sales",
+    cta: "Talk to us",
     ctaHref: "/contact",
   },
 ];
 
 const FAQS: Array<{ q: string; a: string }> = [
   {
-    q: "What currencies do you accept?",
-    a: "PKR primary, billed via Stripe with the conversion locked at the start of each month. Enterprise contracts can pay in USD on annual terms.",
+    q: "How does the free pilot work?",
+    a: "You get 14 days and 100 call minutes at no cost. Build your agent, add your menu, and talk to it from the dashboard. No card is needed to start.",
   },
   {
-    q: "What happens if I go over my minute pool?",
-    a: "Overage at PKR 3 per minute for Starter and Pro. No surprise bills: we email at 80% and ask before charging.",
+    q: "What counts as a minute?",
+    a: "The time your agent spends on a call with a customer. Test calls you make from the dashboard count too.",
   },
   {
-    q: "Can I bring my own phone number?",
-    a: "Yes. Port any +92 landline or mobile to Callen, or set up call-forwarding from any provider that supports SIP or PSTN forwarding.",
+    q: "What happens if I go over my minutes?",
+    a: "Extra minutes are billed at PKR 25 each on Starter and PKR 22 on Growth. We contact you before you run over, so there are no surprise bills.",
+  },
+  {
+    q: "How do I get a phone number?",
+    a: "Request one from the Phone Numbers page. We arrange a Pakistani number through our telephony partner and connect it to your agent, usually within one business day. You can keep your current restaurant number and forward its calls to the new one.",
+  },
+  {
+    q: "How do I pay?",
+    a: "We invoice monthly in Pakistani Rupees. During the beta, payment is by bank transfer.",
   },
   {
     q: "Is there a long-term contract?",
-    a: "Starter and Pro are monthly. Cancel any time. Enterprise is an annual contract.",
+    a: "No. Starter and Growth are monthly and you can cancel any time. Chains plans are agreed with you.",
   },
 ];
 
@@ -112,13 +124,27 @@ export default function PricingPage() {
         title={
           <>
             Simple PKR pricing.{" "}
-            <span className="italic font-light">Built for Pakistan.</span>
+            <span className="italic font-light">Built for restaurants.</span>
           </>
         }
-        lede="Pay in rupees, not dollars. Start free, upgrade when your call volume justifies it. No card required to begin."
+        lede="Pay in rupees. Start with a free 14-day pilot, then pick the plan that matches how many calls your restaurant takes."
       />
 
       <MarketingSection>
+        <div className="rounded-3xl border border-neutral-200 bg-neutral-50 px-6 py-5 mb-6 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-base font-bold tracking-tight">Free pilot: 14 days, 100 call minutes</p>
+            <p className="text-[14px] text-neutral-600 mt-0.5">
+              Build your agent, add your menu and talk to it in Urdu before you pay anything.
+            </p>
+          </div>
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-neutral-950 text-white text-sm font-semibold hover:bg-neutral-800 transition-colors"
+          >
+            Start free pilot <ArrowRight className="size-4" />
+          </Link>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6">
           {TIERS.map((tier) => (
             <div
@@ -228,13 +254,13 @@ export default function PricingPage() {
             Still working out the math?
           </h2>
           <p className="text-white/70 leading-relaxed mb-7 max-w-xl mx-auto">
-            We&apos;ll size a plan to your monthly call volume and target latency, in Pakistani Rupees, in under fifteen minutes.
+            Tell us how many calls your restaurant takes in a day and we&apos;ll size a plan for you, in Pakistani Rupees.
           </p>
           <Link
             href="/contact"
             className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 text-sm font-semibold hover:bg-white/90 transition-colors"
           >
-            Talk to sales <ArrowRight className="size-4" />
+            Talk to us <ArrowRight className="size-4" />
           </Link>
         </div>
       </MarketingSection>

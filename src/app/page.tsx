@@ -715,7 +715,7 @@ export default function LandingPage() {
               },
               {
                 q: "What does it cost?",
-                a: "Free demo with 30 minutes of call time. Paid plans start at PKR 12,000/month for the Pro tier (5,000 minutes/month, 1 tenant, basic analytics). Enterprise pricing is custom. Talk to sales for a quote.",
+                a: "Start with a free 14-day pilot that includes 100 call minutes. Paid plans start at PKR 14,900 a month for Starter (600 minutes, one branch) and PKR 34,900 for Growth (1,600 minutes, up to three branches). Chains are priced on call volume.",
               },
             ].map((item, i) => (
               <AccordionItem

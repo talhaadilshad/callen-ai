@@ -153,7 +153,7 @@ const KB: QA[] = [
   {
     keywords: ["pricing", "plan", "billing", "subscription", "cost", "upgrade", "price"],
     answer:
-      "Pro is $199 a month and includes 5,000 voice minutes plus 10,000 messages. Enterprise scales linearly with custom rates and dedicated routing regions. Usage resets on the 1st of each month and is metered live on the Billing tab.",
+      "Starter is PKR 14,900 a month with 600 call minutes for one branch. Growth is PKR 34,900 with 1,600 minutes for up to three branches. Extra minutes are PKR 25 on Starter and PKR 22 on Growth. Chains are priced on call volume.",
     links: [{ label: "Open Billing", href: "/settings" }],
   },
   {

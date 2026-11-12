@@ -240,7 +240,7 @@ const DOCS: Category[] = [
       {
         id: "team-3",
         title: "Plans, usage, and billing",
-        body: "Pro ($199/mo) includes 5,000 voice minutes and 10,000 messages. Enterprise scales linearly with custom rates and dedicated routing regions. Usage resets on the 1st of each month and is metered live on the Billing tab.",
+        body: "Starter (PKR 14,900 a month) includes 600 call minutes for one branch. Growth (PKR 34,900) includes 1,600 minutes for up to three branches. Extra minutes are PKR 25 on Starter and PKR 22 on Growth. Chains are priced on call volume.",
         href: "/settings",
         hrefLabel: "Open Billing",
       },
