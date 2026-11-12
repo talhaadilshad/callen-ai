@@ -310,41 +310,48 @@
   .orb-drift-slow { animation: orb-drift 60s linear infinite; }
   .orb-breathe { animation: orb-breathe 1.6s ease-in-out infinite; }
 
-  /* Speaking: the gradient swells and settles like a voice level. Uneven
-     steps and three different loop lengths keep it from looking like a
-     metronome. */
-  @keyframes orb-voice {
-    0%   { transform: scale(1.03); }
-    9%   { transform: scale(1.22); }
-    18%  { transform: scale(1.08); }
-    31%  { transform: scale(1.30); }
-    42%  { transform: scale(1.12); }
-    55%  { transform: scale(1.24); }
-    66%  { transform: scale(1.05); }
-    79%  { transform: scale(1.19); }
-    90%  { transform: scale(1.09); }
-    100% { transform: scale(1.03); }
+  /* Speaking: the colour blobs inside the orb flow like liquid. Five
+     different paths with five different loop lengths, so the gradient
+     keeps reshaping without an obvious rhythm. Units are the orb's own
+     200-unit drawing space. */
+  @keyframes orb-flow-a {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    21% { transform: translate(46px, 22px) scale(1.18); }
+    43% { transform: translate(-14px, 52px) scale(0.88); }
+    68% { transform: translate(34px, -26px) scale(1.12); }
+    86% { transform: translate(-22px, -8px) scale(0.95); }
   }
-  @keyframes orb-voice-glow {
-    0%, 100% { opacity: 0.10; transform: scale(0.80); }
-    14%  { opacity: 0.85; transform: scale(1.10); }
-    27%  { opacity: 0.30; transform: scale(0.90); }
-    45%  { opacity: 1;    transform: scale(1.22); }
-    58%  { opacity: 0.40; transform: scale(0.95); }
-    74%  { opacity: 0.75; transform: scale(1.08); }
-    88%  { opacity: 0.20; transform: scale(0.85); }
+  @keyframes orb-flow-b {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    17% { transform: translate(-48px, 30px) scale(0.86); }
+    39% { transform: translate(-20px, -34px) scale(1.2); }
+    61% { transform: translate(28px, 44px) scale(1.05); }
+    83% { transform: translate(-36px, 12px) scale(0.92); }
   }
-  @keyframes orb-halo {
-    0%, 100% { opacity: 0.18; transform: scale(0.98); }
-    20%  { opacity: 0.50; transform: scale(1.10); }
-    38%  { opacity: 0.26; transform: scale(1.02); }
-    56%  { opacity: 0.60; transform: scale(1.16); }
-    72%  { opacity: 0.30; transform: scale(1.04); }
-    86%  { opacity: 0.45; transform: scale(1.09); }
+  @keyframes orb-flow-c {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(40px, -48px) scale(1.15); }
+    52% { transform: translate(64px, 10px) scale(0.84); }
+    77% { transform: translate(-18px, -30px) scale(1.1); }
   }
-  .orb-voice { animation: orb-voice 1.7s ease-in-out infinite; }
-  .orb-voice-glow { animation: orb-voice-glow 1.3s ease-in-out infinite; }
-  .orb-halo { animation: orb-halo 2.1s ease-in-out infinite; }
+  @keyframes orb-flow-d {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    19% { transform: translate(-52px, -40px) scale(1.25); }
+    46% { transform: translate(-70px, 14px) scale(0.9); }
+    72% { transform: translate(-10px, -58px) scale(1.14); }
+  }
+  @keyframes orb-flow-e {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    23% { transform: translate(-38px, 34px) scale(1.5); }
+    49% { transform: translate(30px, 46px) scale(0.8); }
+    74% { transform: translate(44px, -36px) scale(1.35); }
+  }
+  [class^="orb-flow-"] { transform-box: fill-box; transform-origin: center; will-change: transform; }
+  .orb-flow-1 { animation: orb-flow-a 3.7s ease-in-out infinite; }
+  .orb-flow-2 { animation: orb-flow-b 4.9s ease-in-out infinite; }
+  .orb-flow-3 { animation: orb-flow-c 4.3s ease-in-out infinite; }
+  .orb-flow-4 { animation: orb-flow-d 5.6s ease-in-out infinite; }
+  .orb-flow-5 { animation: orb-flow-e 3.1s ease-in-out infinite; }
 
   /* Range slider used by the cost calculator. --fill is set inline. */
   .range-ink {
@@ -393,7 +400,7 @@
     opacity: 0.9;
   }
   @media (prefers-reduced-motion: reduce) {
-    .orb-drift, .orb-drift-slow, .orb-breathe, .orb-voice, .orb-voice-glow, .orb-halo { animation: none; }
+    .orb-drift, .orb-drift-slow, .orb-breathe, [class^="orb-flow-"] { animation: none; }
   }
 
   /* Cream surface utility */

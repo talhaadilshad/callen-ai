@@ -255,18 +255,6 @@ export function VoiceStage() {
           </button>
 
           <div className="relative">
-            {/* rings while the agent speaks */}
-            {agentSpeaking &&
-              [0, 1].map((i) => (
-                <motion.span
-                  key={i}
-                  aria-hidden
-                  className="absolute inset-0 rounded-full border border-black/25"
-                  initial={{ scale: 1, opacity: 0.5 }}
-                  animate={{ scale: 1.38, opacity: 0 }}
-                  transition={{ duration: 1.9, repeat: Infinity, delay: i * 0.95, ease: "easeOut" }}
-                />
-              ))}
             <button
               type="button"
               onClick={toggle}

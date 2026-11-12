@@ -8,9 +8,10 @@
 //   2. fine film grain
 //   3. lighting that makes it a sphere: a lit side, a shaded side, darker
 //      edges, a soft rim of light and a coloured shadow on the "floor"
-//   4. while `active` (the agent is speaking) the gradient swells and
-//      settles like a voice level, a light pulses from inside, and a halo
-//      of the orb's own colour breathes around it
+//   4. while `active` (the agent is speaking) the colours inside flow like
+//      liquid: each blob wanders on its own path at its own pace, so the
+//      gradient keeps reshaping and never repeats in an obvious way.
+//      Nothing outside the orb moves or glows.
 //
 // Sizes inside use container-query units (cqw), so the lighting and
 // shadows scale with the orb, from a 12px dot to a 240px hero orb.
@@ -42,11 +43,14 @@ function Texture({
   palette,
   className,
   soft = false,
+  liquid = false,
 }: {
   palette: OrbPalette;
   className?: string;
   // Softer, larger swirls for wide surfaces.
   soft?: boolean;
+  // Blobs flow around (the speaking state).
+  liquid?: boolean;
 }) {
   const id = useId();
   const p = PALETTES[palette];
@@ -73,12 +77,25 @@ function Texture({
       </defs>
       <g filter={`url(#${id})`}>
         <rect x="-60" y="-60" width="320" height="320" fill={p.base} />
-        <circle cx="52" cy="50" r="64" fill={light} />
-        <circle cx="158" cy="62" r="60" fill={deep} />
-        <circle cx="84" cy="156" r="66" fill={vivid} />
-        <circle cx="166" cy="160" r="50" fill={dark} />
-        <ellipse cx="112" cy="96" rx="22" ry="40" fill={pale} transform="rotate(28 112 96)" />
-        <circle cx="30" cy="140" r="34" fill={deep} />
+        {/* each blob sits in its own group so it can flow on its own path */}
+        <g className={liquid ? "orb-flow-1" : undefined}>
+          <circle cx="52" cy="50" r="64" fill={light} />
+        </g>
+        <g className={liquid ? "orb-flow-2" : undefined}>
+          <circle cx="158" cy="62" r="60" fill={deep} />
+        </g>
+        <g className={liquid ? "orb-flow-3" : undefined}>
+          <circle cx="84" cy="156" r="66" fill={vivid} />
+        </g>
+        <g className={liquid ? "orb-flow-4" : undefined}>
+          <circle cx="166" cy="160" r="50" fill={dark} />
+        </g>
+        <g className={liquid ? "orb-flow-5" : undefined}>
+          <ellipse cx="112" cy="96" rx="22" ry="40" fill={pale} transform="rotate(28 112 96)" />
+        </g>
+        <g className={liquid ? "orb-flow-2" : undefined}>
+          <circle cx="30" cy="140" r="34" fill={deep} />
+        </g>
       </g>
     </svg>
   );
@@ -106,7 +123,7 @@ export function Orb({
       className={cn("relative shrink-0 rounded-full [container-type:size]", className)}
       style={{ width: size, height: size, ...style }}
     >
-      {/* coloured shadow on the "floor" under the sphere */}
+      {/* soft neutral shadow on the "floor" under the sphere */}
       <span
         className="absolute rounded-[50%]"
         style={{
@@ -114,36 +131,15 @@ export function Orb({
           right: "14cqw",
           bottom: "-9cqw",
           height: "22cqw",
-          backgroundColor: p.blobs[1],
+          backgroundColor: "#000",
           filter: "blur(9cqw)",
-          opacity: 0.45,
+          opacity: 0.16,
         }}
       />
 
-      {/* halo of the orb's own colour, only while speaking */}
-      {active && (
-        <span
-          className="orb-halo absolute inset-0 rounded-full"
-          style={{ backgroundColor: p.base, filter: "blur(10cqw)" }}
-        />
-      )}
-
       <div className="absolute inset-0 overflow-hidden rounded-full" style={{ backgroundColor: p.base }}>
-        {/* the gradient: turns slowly, and swells like a voice level while speaking */}
-        <div className={cn("absolute inset-0", active && "orb-voice")}>
-          <Texture palette={palette} className="orb-drift absolute inset-0 size-full" />
-        </div>
-
-        {/* light pulsing from inside while speaking */}
-        {active && (
-          <div
-            className="orb-voice-glow absolute inset-0"
-            style={{
-              backgroundImage: "radial-gradient(circle at 50% 54%, rgba(255,255,255,0.95), rgba(255,255,255,0.25) 34%, transparent 58%)",
-              mixBlendMode: "soft-light",
-            }}
-          />
-        )}
+        {/* the gradient: turns slowly; while speaking the colours flow like liquid */}
+        <Texture palette={palette} liquid={active} className="orb-drift absolute inset-0 size-full" />
 
         <div className="grain-overlay absolute inset-0" />
 
