@@ -1,5 +1,5 @@
 // Callen.ai logo.
-// Black rounded square + bold white C arc + single centre dot inside.
+// Brand-green rounded square + bold white C arc + single centre dot inside.
 // The C is drawn as a true SVG arc so it's geometrically perfect at any
 // size. The centre dot reads as the "listening" signal. The mark works
 // from 16px (sidebar) up to 64px+ (hero) without visual breakdown.
@@ -39,13 +39,16 @@ export function Logo({
   withWordmark?: boolean;
   size?: Size;
   // Set true on dark backgrounds. Tile becomes white, mark inside flips
-  // to near-black so the C and dot stay legible.
+  // to brand green so the C and dot stay legible.
   inverse?: boolean;
 }) {
-  const tile = inverse ? "#ffffff" : "#0a0a0a";
-  const ink  = inverse ? "#0a0a0a" : "#ffffff";
-  const wordmark       = inverse ? "text-white"     : "text-neutral-950";
-  const wordmarkAccent = inverse ? "text-white/55"  : "text-neutral-500";
+  // Keep these in step with --color-brand-700 / -950 in globals.css and
+  // with src/app/icon.svg (plain hex so the mark also renders in emails
+  // and image generators that do not read CSS variables).
+  const tile = inverse ? "#ffffff" : "#065f3d";
+  const ink  = inverse ? "#065f3d" : "#ffffff";
+  const wordmark       = inverse ? "text-white"       : "text-neutral-950";
+  const wordmarkAccent = inverse ? "text-saffron-300" : "text-brand-600";
 
   return (
     <div className={cn("inline-flex items-center", GAP[size], className)}>

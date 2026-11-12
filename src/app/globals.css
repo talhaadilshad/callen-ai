@@ -5,10 +5,41 @@
 @custom-variant dark (&:is(.dark *));
 
 /* =========================================================================
-   CALLEN.AI BRAND TOKENS — ElevenLabs-inspired aesthetic
-   Cream off-white background, near-black foreground, indigo→violet gradient
-   for the AI signature accent.
+   CALLEN.AI BRAND TOKENS
+   Brand colour: a deep emerald green (Pakistan's green), with a saffron
+   accent and warm sand surfaces. To re-colour the whole brand, change the
+   three scales below; every bg-brand-*, text-saffron-* and bg-sand-* class
+   follows. The dashboard keeps its neutral shadcn tokens further down.
    ========================================================================= */
+
+@theme {
+  /* Emerald: buttons, links, logo, dark sections */
+  --color-brand-50: oklch(0.975 0.018 160);
+  --color-brand-100: oklch(0.945 0.04 160);
+  --color-brand-200: oklch(0.89 0.07 160);
+  --color-brand-300: oklch(0.81 0.105 160);
+  --color-brand-400: oklch(0.71 0.13 160);
+  --color-brand-500: oklch(0.61 0.13 160);
+  --color-brand-600: oklch(0.51 0.115 160);
+  --color-brand-700: oklch(0.43 0.095 160);
+  --color-brand-800: oklch(0.35 0.075 161);
+  --color-brand-900: oklch(0.27 0.055 163);
+  --color-brand-950: oklch(0.2 0.04 165);
+
+  /* Saffron: highlights and the call-to-action on dark backgrounds */
+  --color-saffron-100: oklch(0.96 0.05 92);
+  --color-saffron-200: oklch(0.92 0.09 90);
+  --color-saffron-300: oklch(0.88 0.13 88);
+  --color-saffron-400: oklch(0.83 0.155 82);
+  --color-saffron-500: oklch(0.77 0.16 72);
+  --color-saffron-600: oklch(0.67 0.15 62);
+
+  /* Sand: warm page surfaces, in place of flat grey */
+  --color-sand-50: oklch(0.985 0.006 90);
+  --color-sand-100: oklch(0.965 0.011 90);
+  --color-sand-200: oklch(0.93 0.016 90);
+  --color-sand-300: oklch(0.88 0.02 90);
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -16,6 +47,10 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-geist-sans);
+  /* Marketing display serif and the Urdu (Nastaliq) face. The variables
+     are set by src/lib/fonts.ts on the pages that use them. */
+  --font-display: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
+  --font-urdu: var(--font-nastaliq), "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -191,9 +226,9 @@
     font-feature-settings: "ss01" 1;
   }
 
-  /* Selection - subtle indigo */
+  /* Selection - soft brand green */
   ::selection {
-    background: oklch(0.85 0.10 280 / 0.4);
+    background: oklch(0.89 0.07 160 / 0.6);
     color: var(--foreground);
   }
 

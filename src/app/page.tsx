@@ -1,33 +1,24 @@
-// Callen.ai marketing landing page modelled on elevenlabs.io/agents.
-// Pure white minimalism, bold display typography, aggressive whitespace, pill buttons.
+// Callen.ai landing page: Urdu AI phone agents for Pakistani restaurants.
+// Brand colours (emerald, saffron, sand) and the display/Urdu fonts come
+// from globals.css and src/lib/fonts.ts.
 
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { motion } from "motion/react";
 import {
-  ArrowRight, Check, ChevronRight, ShieldCheck, Globe, Zap, Phone,
-  Sparkles, Webhook, BarChart3, MessageCircle, Lock, Users, FileCheck,
+  ArrowRight, BookOpen, Check, Headphones, Phone, Store, X,
 } from "lucide-react";
 import {
   Accordion, AccordionContent, AccordionItem, AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Logo } from "@/components/logo";
-import { CountUp } from "@/components/count-up";
-import { IntegrationsGrid } from "@/components/integrations-grid";
-import { LiveTranscriptDemo } from "@/components/live-transcript-demo";
-import { AgentStudioMockup } from "@/components/mockups/agent-studio-mockup";
-import { MultiChannelMockup } from "@/components/mockups/multi-channel-mockup";
-import { UnifiedFeedMockup } from "@/components/mockups/unified-feed-mockup";
-import { PhoneMockup } from "@/components/mockups/phone-mockup";
-import { CalendarMockup } from "@/components/mockups/calendar-mockup";
-import { OrderReceiptMockup } from "@/components/mockups/order-receipt-mockup";
-import { PatientCardMockup } from "@/components/mockups/patient-card-mockup";
-import { TestimonialsSection } from "@/components/testimonials-section";
-import { TextRevealByWord } from "@/components/ui/text-reveal";
+import { CallScenarios } from "@/components/landing/call-scenarios";
+import { HeroCallDemo } from "@/components/landing/hero-call-demo";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
-import { MobileMenu } from "@/components/marketing/mobile-menu";
+import { MarketingNav } from "@/components/marketing/marketing-nav";
+import { TestimonialsSection } from "@/components/testimonials-section";
+import { marketingFonts } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 
 const fadeUp = {
@@ -37,175 +28,321 @@ const fadeUp = {
   transition: { duration: 0.6, ease: [0.2, 0.65, 0.3, 0.9] as [number, number, number, number] },
 };
 
-export default function LandingPage() {
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+const NAV_LINKS = [
+  { href: "/#product", label: "What it does" },
+  { href: "/#how", label: "How it works" },
+  { href: "/#urdu", label: "Urdu" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/#faq", label: "FAQ" },
+];
 
+const BTN_SAFFRON =
+  "inline-flex items-center justify-center gap-2 rounded-full bg-saffron-400 px-6 py-3.5 text-sm font-semibold text-neutral-950 transition-colors hover:bg-saffron-300";
+const BTN_BRAND =
+  "inline-flex items-center justify-center gap-2 rounded-full bg-brand-700 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-brand-800";
+const BTN_GHOST_DARK =
+  "inline-flex items-center justify-center gap-2 rounded-full border border-white/25 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10";
+const BTN_GHOST_LIGHT =
+  "inline-flex items-center justify-center gap-2 rounded-full border border-sand-300 bg-white px-6 py-3.5 text-sm font-semibold text-neutral-950 transition-colors hover:border-brand-300 hover:text-brand-800";
+
+function Eyebrow({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
   return (
-    <div className="bg-white text-neutral-950 selection:bg-neutral-950 selection:text-white">
-      {/* ============================ NAV ============================ */}
-      <header
-        className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          scrolled ? "bg-white/90 backdrop-blur-md border-b border-neutral-200/60" : "bg-transparent"
-        )}
-      >
-        <nav className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link href="/" className="text-neutral-950">
-            <Logo size="lg" />
-          </Link>
-          <div className="hidden md:flex items-center gap-7 text-sm font-medium text-neutral-600">
-            <a href="#product" className="hover:text-neutral-950 transition-colors">Product</a>
-            <a href="#usecases" className="hover:text-neutral-950 transition-colors">Use cases</a>
-            <a href="#integrations" className="hover:text-neutral-950 transition-colors">Integrations</a>
-            <a href="#pricing" className="hover:text-neutral-950 transition-colors">Pricing</a>
-            <Link href="/docs/api" className="hover:text-neutral-950 transition-colors">Docs</Link>
-          </div>
-          <div className="flex items-center gap-1">
-            <Link
-              href="/login"
-              className="hidden md:block text-sm font-medium px-3 py-2 text-neutral-700 hover:text-neutral-950 transition-colors"
-            >
-              Log in
-            </Link>
-            <Link
-              href="/signup"
-              className="text-sm font-semibold px-4 py-2 rounded-full bg-white border border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50 transition-all"
-            >
-              Sign up
-            </Link>
-            <MobileMenu
-              links={[
-                { href: "#product", label: "Product" },
-                { href: "#usecases", label: "Use cases" },
-                { href: "#integrations", label: "Integrations" },
-                { href: "#pricing", label: "Pricing" },
-                { href: "/docs/api", label: "Docs" },
-              ]}
-            />
-          </div>
-        </nav>
-      </header>
+    <motion.span
+      {...fadeUp}
+      className={cn(
+        "mb-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em]",
+        dark ? "text-saffron-300" : "text-brand-700"
+      )}
+    >
+      <span className={cn("size-1.5 rounded-full", dark ? "bg-saffron-400" : "bg-saffron-500")} />
+      {children}
+    </motion.span>
+  );
+}
+
+function H2({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <motion.h2
+      {...fadeUp}
+      className={cn(
+        "font-display text-4xl font-medium leading-[1.05] tracking-[-0.02em] md:text-5xl lg:text-[3.5rem]",
+        className
+      )}
+    >
+      {children}
+    </motion.h2>
+  );
+}
+
+const FACTS = [
+  { big: "24/7", label: "Picks up on the first ring, day and night" },
+  { big: "16", label: "Natural Urdu voices, male and female" },
+  { big: "10 min", label: "To set up your first agent" },
+  { big: "PKR 0", label: "For a 14-day pilot with 100 call minutes" },
+];
+
+const WITHOUT = [
+  "The line is busy at 9 pm on a Friday, so the caller tries the next restaurant",
+  "Orders are written by hand, repeated twice and still go out wrong",
+  "Nobody picks up during the rush or after closing",
+  "Staff forget to mention today's deal",
+  "Every new person on the phone has to learn the menu again",
+];
+
+const WITH = [
+  "Picks up on the first ring, even when the counter is slammed",
+  "Reads the full order and total back in Urdu before confirming",
+  "Answers at 2 am the same way it does at 2 pm",
+  "Offers the right deal on every single call",
+  "Knows a new menu the moment you update it",
+];
+
+const STEPS = [
+  {
+    n: "01",
+    title: "Tell us about your restaurant",
+    body: "Name, branches, timings, delivery areas and payment. Pick one of 16 Urdu voices and listen before you choose.",
+  },
+  {
+    n: "02",
+    title: "Add your menu and deals",
+    body: "Paste your menu, add deals, policies and FAQs. Your agent only says what you have given it, nothing else.",
+  },
+  {
+    n: "03",
+    title: "Call it, then go live",
+    body: "Talk to your agent in the browser first. When you are happy, we arrange a Pakistani number for your restaurant.",
+  },
+];
+
+const URDU_POINTS = [
+  {
+    title: "Everyday Pakistani Urdu",
+    body: "The mix people really use on the phone: Urdu, with words like pizza, deal and delivery said the natural way.",
+  },
+  {
+    title: "Prices the way people say them",
+    body: "Saarhe chaubees sau, not two thousand four hundred and fifty. Sectors and areas too: F-10 is “F ten”.",
+  },
+  {
+    title: "Your names, said right",
+    body: "Teach it your restaurant name, your signature items and your local areas once. It says them your way on every call.",
+  },
+  {
+    title: "A voice that fits your brand",
+    body: "Sixteen voices to choose from, each with correct Urdu grammar for a male or a female speaker.",
+  },
+];
+
+const SAID_AS = [
+  { written: "BBQ", spoken: "باربی کیو" },
+  { written: "PKR 1,250", spoken: "ساڑھے بارہ سو روپے" },
+  { written: "1.5 L", spoken: "ڈیڑھ لیٹر" },
+  { written: "F-10", spoken: "ایف ٹین" },
+  { written: "COD", spoken: "کیش آن ڈیلیوری" },
+];
+
+const VOICES = ["Ayesha", "Hira", "Sana", "Zainab", "Ahmed", "Bilal", "Usman", "Hamza"];
+
+const CONTROL = [
+  {
+    icon: BookOpen,
+    title: "Your menu is the script",
+    body: "Callen answers only from your menu, deals, policies and FAQs. Change a price in the dashboard and your agent has it within a minute.",
+  },
+  {
+    icon: Headphones,
+    title: "Test it before customers do",
+    body: "Talk to your agent in the browser as many times as you like. It does not go on a real line until you are satisfied.",
+  },
+  {
+    icon: Phone,
+    title: "A local number, arranged for you",
+    body: "During the beta our team sets up a dedicated Pakistani number for your restaurant. Forward your existing line to it.",
+  },
+  {
+    icon: Store,
+    title: "One agent for each branch",
+    body: "Every branch has its own timings, delivery areas and deals, so callers get answers for the branch they rang.",
+  },
+];
+
+const PLANS = [
+  {
+    name: "Free pilot",
+    price: "PKR 0",
+    per: "14 days",
+    line: "100 call minutes to build your agent and test it properly.",
+    featured: false,
+  },
+  {
+    name: "Starter",
+    price: "PKR 14,900",
+    per: "per month",
+    line: "600 minutes included. One branch, every call answered.",
+    featured: true,
+  },
+  {
+    name: "Growth",
+    price: "PKR 34,900",
+    per: "per month",
+    line: "1,600 minutes included. Up to three branches.",
+    featured: false,
+  },
+];
+
+const FAQS = [
+  {
+    q: "Will it sound like a robot?",
+    a: "No. Callen speaks everyday Pakistani Urdu in a natural voice that you choose. You do not have to take our word for it: build your agent, call it from the dashboard and judge it yourself before a single customer hears it.",
+  },
+  {
+    q: "What if a caller asks something it does not know?",
+    a: "Callen answers only from the menu, deals and information you have given it. If the answer is not there, it says so plainly instead of guessing. You can then add the answer to your knowledge base in a minute.",
+  },
+  {
+    q: "How long does setup take?",
+    a: "About ten minutes for a first agent. You enter your restaurant details, add your menu and deals, and pick a voice. After that you can talk to it straight away in your browser.",
+  },
+  {
+    q: "Do I need a new phone number?",
+    a: "During the beta our team arranges a dedicated Pakistani number for your restaurant, usually within a few working days. You can forward your existing line to it, so customers keep calling the number they already know.",
+  },
+  {
+    q: "Does it understand English words?",
+    a: "Yes. Callen is built for Urdu first, and it understands the English that Pakistanis mix into Urdu every day: item names, sizes, addresses and words like order, deal and delivery.",
+  },
+  {
+    q: "What does it cost?",
+    a: "Start with a free 14-day pilot that includes 100 call minutes. Paid plans start at PKR 14,900 a month for Starter (600 minutes, one branch) and PKR 34,900 for Growth (1,600 minutes, up to three branches). Chains are priced on call volume.",
+  },
+];
+
+export default function LandingPage() {
+  return (
+    <div className={cn(marketingFonts, "bg-white text-neutral-950")}>
+      <MarketingNav links={NAV_LINKS} overDark />
 
       {/* ============================ HERO ============================ */}
-      <section className="pt-32 pb-20 lg:pt-44 lg:pb-28">
-        <div className="max-w-5xl mx-auto px-6 lg:px-8 text-center">
+      <section className="relative bg-brand-950 pt-32 text-white lg:pt-40">
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-48 left-1/2 h-[38rem] w-[64rem] -translate-x-1/2 rounded-full bg-brand-600/35 blur-3xl" />
+          <div className="absolute -right-40 top-48 size-[30rem] rounded-full bg-saffron-500/15 blur-3xl" />
+          <div className="absolute -left-40 bottom-0 size-[26rem] rounded-full bg-brand-400/15 blur-3xl" />
+        </div>
+
+        <div className="relative mx-auto max-w-5xl px-6 text-center lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-100 border border-neutral-200 mb-8 text-xs font-medium text-neutral-700"
+            className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-white/85"
           >
-            <span className="size-1.5 rounded-full bg-neutral-900" />
-            Now in private beta · Urdu and English voice agents
+            <span className="size-1.5 rounded-full bg-saffron-400" />
+            Private beta · Built for Pakistani restaurants
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.05 }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-[-0.04em] leading-[0.95] mb-7"
+            className="font-display text-5xl font-medium leading-[1.02] tracking-[-0.025em] sm:text-6xl lg:text-[5.25rem]"
           >
-            AI voice agents
+            Every call answered.
             <br />
-            for every <span className="italic font-light">business call.</span>
+            Every order taken, <em className="italic text-saffron-300">in Urdu.</em>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.15 }}
-            className="text-lg md:text-xl text-neutral-600 max-w-2xl mx-auto leading-relaxed mb-10"
+            transition={{ duration: 0.7, delay: 0.12 }}
+            dir="rtl"
+            lang="ur"
+            className="mt-5 font-urdu text-xl leading-[2.2] text-saffron-200/90 sm:text-2xl sm:leading-[2.2]"
           >
-            Pakistan&apos;s first voice AI platform purpose-built for Urdu and English. Capture every lead, answer every question, close every call. Sub-second latency. Live in 10 minutes.
+            آپ کا ریسٹورنٹ، ہر کال پر حاضر۔
+          </motion.p>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.18 }}
+            className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-white/75 md:text-xl"
+          >
+            Callen is an AI phone agent for Pakistani restaurants. It picks up on the first ring, takes delivery
+            and takeaway orders in natural Urdu, knows your menu and today&apos;s deals, and never puts a caller on
+            hold.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.25 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16"
+            transition={{ duration: 0.6, delay: 0.26 }}
+            className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
           >
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-neutral-950 text-white text-sm font-semibold hover:bg-neutral-800 transition-colors"
-            >
-              Create your agent
+            <Link href="/signup" className={BTN_SAFFRON}>
+              Start your free pilot
               <ArrowRight className="size-4" />
             </Link>
-            <Link
-              href="#contact"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white border border-neutral-300 text-neutral-950 text-sm font-semibold hover:bg-neutral-50 transition-colors"
-            >
-              Talk to sales
+            <Link href="/#how" className={BTN_GHOST_DARK}>
+              See how it works
             </Link>
           </motion.div>
 
-          {/* Floating live demo card */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4, ease: [0.2, 0.65, 0.3, 0.9] }}
-            className="max-w-md mx-auto relative"
+          <motion.ul
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/65"
           >
-            {/* Decorative blur halo */}
-            <div className="absolute -inset-x-12 -inset-y-8 bg-gradient-to-br from-neutral-300/30 via-neutral-200/20 to-neutral-100/30 rounded-[3rem] blur-3xl -z-10" />
-            <LiveTranscriptDemo />
-          </motion.div>
+            {["14-day free pilot", "100 call minutes included", "No card needed"].map((t) => (
+              <li key={t} className="flex items-center gap-1.5">
+                <Check className="size-4 text-saffron-300" strokeWidth={2.5} />
+                {t}
+              </li>
+            ))}
+          </motion.ul>
         </div>
+
+        {/* Sample call: hangs over the edge of the hero into the next section */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.35, ease: [0.2, 0.65, 0.3, 0.9] }}
+          className="relative z-10 mx-auto -mb-36 mt-14 max-w-4xl px-4 sm:px-6 lg:-mb-44 lg:mt-16"
+        >
+          <HeroCallDemo />
+        </motion.div>
       </section>
 
-      {/* ============================ STAT BAND (animated count-up) ============================ */}
-      <section className="py-12 border-y border-neutral-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-4 text-center md:text-left">
-            <div>
-              <div className="text-3xl md:text-4xl font-bold tracking-tight">
-                <CountUp to={50000} format={(n) => Math.round(n).toLocaleString()} />
-                <span className="text-neutral-400">+</span>
+      {/* ============================ FACTS ============================ */}
+      <section className="border-b border-sand-200 bg-sand-50 pb-14 pt-48 lg:pb-16 lg:pt-60">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+            {FACTS.map((fact) => (
+              <div key={fact.big} className="text-center md:text-left">
+                <div className="font-display text-4xl font-medium tracking-[-0.02em] text-brand-800 md:text-5xl">
+                  {fact.big}
+                </div>
+                <div className="mt-2 text-sm leading-relaxed text-neutral-600">{fact.label}</div>
               </div>
-              <div className="text-sm text-neutral-600 mt-1">Calls handled this month</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold tracking-tight">
-                <span className="text-neutral-400">&lt;</span>
-                <CountUp to={800} duration={1.4} />
-                <span className="text-neutral-500 text-2xl ml-0.5">ms</span>
-              </div>
-              <div className="text-sm text-neutral-600 mt-1">Avg first-token latency</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold tracking-tight">
-                <CountUp to={12} duration={1.2} />
-              </div>
-              <div className="text-sm text-neutral-600 mt-1">Languages supported</div>
-            </div>
-            <div>
-              <div className="text-3xl md:text-4xl font-bold tracking-tight">
-                <CountUp to={99.9} duration={1.8} decimals={1} />
-                <span className="text-neutral-400">%</span>
-              </div>
-              <div className="text-sm text-neutral-600 mt-1">Uptime since launch</div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ============================ CUSTOMER LOGOS ============================ */}
-      <section className="py-16 lg:py-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <p className="text-center text-xs uppercase tracking-[0.2em] text-neutral-500 mb-10 font-medium">
-            Built for the businesses Pakistan calls every day
+      {/* ============================ RESTAURANT NAMES ============================ */}
+      <section className="py-14 lg:py-16">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <p className="mb-9 text-center text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
+            Built for the restaurants Pakistan calls every day
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 lg:gap-10 items-center">
+          <div className="grid grid-cols-2 items-center gap-6 sm:grid-cols-3 md:grid-cols-6 lg:gap-10">
             {["Cheezious", "Domino's", "KFC", "Pizza Hut", "Howdy", "OPTP"].map((name) => (
               <div
                 key={name}
-                className="text-center text-neutral-400 hover:text-neutral-700 transition-colors font-semibold text-base tracking-tight"
+                className="text-center text-base font-semibold tracking-tight text-neutral-400 transition-colors hover:text-brand-700"
               >
                 {name}
               </div>
@@ -214,58 +351,55 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============================ WHAT IS / COMPARISON ============================ */}
-      <section id="product" className="py-24 lg:py-32 bg-neutral-50 border-y border-neutral-200">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-16 max-w-3xl mx-auto">
-            <motion.span {...fadeUp} className="inline-block text-xs uppercase tracking-[0.2em] text-neutral-500 mb-4 font-medium">
-              The IVR era is over
-            </motion.span>
-            <motion.h2 {...fadeUp} className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-5">
-              Your callers deserve more than <span className="italic font-light">menus.</span>
-            </motion.h2>
-            <motion.p {...fadeUp} className="text-lg text-neutral-600 leading-relaxed">
-              Legacy IVRs trap callers in menus. Callen has a conversation. It listens, understands intent, takes action, and holds context across Urdu and English in milliseconds.
+      {/* ============================ THE PROBLEM ============================ */}
+      <section className="border-y border-sand-200 bg-sand-50 py-24 lg:py-32">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <div className="mx-auto mb-14 max-w-3xl text-center">
+            <Eyebrow>Why restaurants lose orders</Eyebrow>
+            <H2 className="mb-5">
+              In Pakistan, the order still <em className="italic text-brand-600">comes by phone.</em>
+            </H2>
+            <motion.p {...fadeUp} className="text-lg leading-relaxed text-neutral-600">
+              And during the rush, the phone is the first thing your team stops answering. Every missed call is an
+              order that went to the restaurant next door.
             </motion.p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-5 lg:gap-6">
-            {/* Legacy */}
-            <motion.div {...fadeUp} className="bg-white rounded-3xl p-8 lg:p-10 border border-neutral-200">
-              <span className="inline-block text-xs uppercase tracking-widest text-neutral-500 mb-4 font-semibold">Legacy IVR</span>
-              <h3 className="text-2xl font-bold mb-6 tracking-tight">Rigid menus. Lost customers.</h3>
-              <ul className="space-y-3">
-                {[
-                  "\"Press 1 for English, 2 for Urdu\" before any conversation",
-                  "Pre-recorded prompts that never quite fit the question",
-                  "Drops every call after hours. No human, no answer",
-                  "Adding a new option requires a developer ticket",
-                  "Zero analytics on what callers actually wanted",
-                ].map((t) => (
-                  <li key={t} className="flex gap-2.5 text-neutral-600 text-[15px] leading-relaxed">
-                    <span className="text-neutral-400 shrink-0 mt-1">·</span>
+          <div className="grid gap-5 md:grid-cols-2 lg:gap-6">
+            <motion.div {...fadeUp} className="rounded-3xl border border-sand-200 bg-white p-8 lg:p-10">
+              <span className="mb-4 inline-block text-xs font-semibold uppercase tracking-widest text-neutral-500">
+                One busy phone line
+              </span>
+              <h3 className="mb-6 font-display text-2xl font-medium tracking-[-0.01em] lg:text-[1.7rem]">
+                Missed calls. Wrong orders.
+              </h3>
+              <ul className="space-y-3.5">
+                {WITHOUT.map((t) => (
+                  <li key={t} className="flex gap-3 text-[15px] leading-relaxed text-neutral-600">
+                    <X className="mt-1 size-4 shrink-0 text-neutral-400" strokeWidth={2.5} />
                     <span>{t}</span>
                   </li>
                 ))}
               </ul>
             </motion.div>
 
-            {/* Modern */}
-            <motion.div {...fadeUp} className="bg-neutral-950 text-white rounded-3xl p-8 lg:p-10 relative overflow-hidden">
-              <div className="absolute -top-24 -right-24 w-64 h-64 bg-gradient-to-br from-neutral-100/20 via-neutral-50/20 to-white/30 rounded-full blur-3xl" />
+            <motion.div
+              {...fadeUp}
+              transition={{ ...fadeUp.transition, delay: 0.08 }}
+              className="relative overflow-hidden rounded-3xl bg-brand-900 p-8 text-white lg:p-10"
+            >
+              <div className="absolute -right-24 -top-24 size-64 rounded-full bg-saffron-400/20 blur-3xl" />
               <div className="relative">
-                <span className="inline-block text-xs uppercase tracking-widest text-white/60 mb-4 font-semibold">Callen.ai</span>
-                <h3 className="text-2xl font-bold mb-6 tracking-tight">Natural conversation. Real outcomes.</h3>
-                <ul className="space-y-3">
-                  {[
-                    "Detects Urdu or English in the first sentence. No menus, ever",
-                    "Understands intent in any phrasing: \"order kar do\", \"appointment chahiye\", or anything else",
-                    "Available 24/7, scales to 1,000+ concurrent calls",
-                    "Update behaviour by editing plain English, not code",
-                    "Every call transcribed, analysed, searchable, exportable",
-                  ].map((t) => (
-                    <li key={t} className="flex gap-2.5 text-white/80 text-[15px] leading-relaxed">
-                      <Check className="size-4 shrink-0 mt-1 text-white/90" />
+                <span className="mb-4 inline-block text-xs font-semibold uppercase tracking-widest text-saffron-300">
+                  With Callen
+                </span>
+                <h3 className="mb-6 font-display text-2xl font-medium tracking-[-0.01em] lg:text-[1.7rem]">
+                  Every call picked up. Every order right.
+                </h3>
+                <ul className="space-y-3.5">
+                  {WITH.map((t) => (
+                    <li key={t} className="flex gap-3 text-[15px] leading-relaxed text-white/85">
+                      <Check className="mt-1 size-4 shrink-0 text-saffron-300" strokeWidth={2.5} />
                       <span>{t}</span>
                     </li>
                   ))}
@@ -276,399 +410,227 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ============================ MANIFESTO (scroll reveal) ============================ */}
-      <section className="bg-white relative">
-        <TextRevealByWord text="Every missed call is a customer who chose someone else. Callen answers every one. In every language. At every hour." />
-      </section>
-
-      {/* ============================ FEATURE: WORKFLOW (with Agent Studio mockup) ============================ */}
-      <section className="py-24 lg:py-32">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Left: copy */}
-            <motion.div {...fadeUp}>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-7">
-                Ship in days.{" "}
-                <span className="italic font-light">Improve</span> every shift.
-              </h2>
-              <div className="space-y-6 max-w-md">
-                <div>
-                  <h3 className="text-base font-semibold mb-2 tracking-tight">Drag, drop, deploy</h3>
-                  <p className="text-neutral-600 leading-relaxed text-[15px]">
-                    Architect conversation flows visually. Mix scripted steps with dynamic agents, branch on intent or sentiment, and ship to production without touching code.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-base font-semibold mb-2 tracking-tight">Tested before it talks</h3>
-                  <p className="text-neutral-600 leading-relaxed text-[15px]">
-                    Simulate every edge case before launch. Run A/B tests on prompts. Score outputs against your success criteria. Catch regressions in seconds.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-base font-semibold mb-2 tracking-tight">Insights you can act on</h3>
-                  <p className="text-neutral-600 leading-relaxed text-[15px]">
-                    Intent distribution, resolution rate, sentiment, escalation reasons. Filter by date, language, voice. Export anything to your warehouse.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Right: mockup */}
-            <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.1 }}>
-              <AgentStudioMockup />
-            </motion.div>
+      {/* ============================ WHAT IT HANDLES ============================ */}
+      <section id="product" className="scroll-mt-16 py-24 lg:py-32">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mb-14 max-w-3xl">
+            <Eyebrow>What Callen handles</Eyebrow>
+            <H2>
+              One agent for the calls that <em className="italic text-brand-600">fill your kitchen.</em>
+            </H2>
           </div>
+          <motion.div {...fadeUp} className="-mx-2 rounded-[2rem] bg-sand-50 p-2 sm:mx-0 sm:p-6 lg:p-10">
+            <CallScenarios />
+          </motion.div>
         </div>
       </section>
 
-      {/* ============================ FEATURE: MULTI-CHANNEL ============================ */}
-      <section className="py-24 lg:py-32 bg-neutral-50 border-y border-neutral-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Left: mockup */}
-            <motion.div {...fadeUp} className="order-2 lg:order-1">
-              <UnifiedFeedMockup />
-            </motion.div>
-
-            {/* Right: copy */}
-            <motion.div {...fadeUp} transition={{ ...fadeUp.transition, delay: 0.1 }} className="order-1 lg:order-2">
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-7">
-                One brain.{" "}
-                <span className="italic font-light">Every channel.</span> Zero context lost.
-              </h2>
-              <div className="space-y-6 max-w-md">
-                <div>
-                  <h3 className="text-base font-semibold mb-2 tracking-tight">Voice, chat, and everything in between</h3>
-                  <p className="text-neutral-600 leading-relaxed text-[15px]">
-                    The same agent that answers your phone runs your website chat, your WhatsApp inbox, and your mobile app. One configuration. One source of truth. Zero context loss when a customer switches channels mid-conversation.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-base font-semibold mb-2 tracking-tight">Acts, doesn&apos;t just talk</h3>
-                  <p className="text-neutral-600 leading-relaxed text-[15px]">
-                    Connects to your CRM, POS, calendar, and payment stack through the Model Context Protocol. Books appointments, files tickets, processes refunds. Tangible outcomes on every call.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-base font-semibold mb-2 tracking-tight">Sounds exactly like your brand</h3>
-                  <p className="text-neutral-600 leading-relaxed text-[15px]">
-                    Pick from 10,000+ ElevenLabs voices or clone your own. Set the personality, tone, and vocabulary in plain English. Hear the result before you publish.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============================ 3-STEP : BUILD IN 5 MIN ============================ */}
-      <section className="py-24 lg:py-32">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-16 max-w-3xl mx-auto">
-            <motion.span {...fadeUp} className="inline-block text-xs uppercase tracking-[0.2em] text-neutral-500 mb-4 font-medium">
-              From signup to first call
-            </motion.span>
-            <motion.h2 {...fadeUp} className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-5">
-              Build your first agent in 5 minutes.
-            </motion.h2>
+      {/* ============================ HOW IT WORKS ============================ */}
+      <section id="how" className="scroll-mt-16 border-y border-sand-200 bg-sand-50 py-24 lg:py-32">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <div className="mx-auto mb-14 max-w-3xl text-center">
+            <Eyebrow>How it works</Eyebrow>
+            <H2>
+              Set up <em className="italic text-brand-600">before the dinner rush.</em>
+            </H2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-5 lg:gap-6">
-            {[
-              { n: "01", title: "Describe your business", body: "Paste your business name and a one-line description. Agent Studio drafts the prompt, voice, and greeting for you." },
-              { n: "02", title: "Upload your knowledge", body: "Drag in your menu, FAQs, policies. We chunk, embed, and index everything for instant retrieval during calls." },
-              { n: "03", title: "Connect your phone number", body: "Use a free Twilio number or port your existing one. Calls forward to Callen in under 60 seconds." },
-            ].map((s, i) => (
+          <div className="grid gap-5 md:grid-cols-3 lg:gap-6">
+            {STEPS.map((s, i) => (
               <motion.div
                 key={s.n}
                 {...fadeUp}
                 transition={{ ...fadeUp.transition, delay: i * 0.08 }}
-                className="card-lift rounded-3xl border border-neutral-200 p-8 hover:border-neutral-400"
+                className="card-lift rounded-3xl border border-sand-200 bg-white p-8 hover:border-brand-200"
               >
-                <div className="text-4xl font-bold tabular-nums text-neutral-300 mb-6 tracking-tight">{s.n}</div>
-                <h3 className="text-xl font-bold mb-2.5 tracking-tight">{s.title}</h3>
-                <p className="text-neutral-600 leading-relaxed text-[15px]">{s.body}</p>
+                <div className="mb-6 flex size-12 items-center justify-center rounded-2xl bg-brand-50 font-display text-xl font-medium text-brand-700">
+                  {s.n}
+                </div>
+                <h3 className="mb-2.5 font-display text-2xl font-medium tracking-[-0.01em]">{s.title}</h3>
+                <p className="text-[15px] leading-relaxed text-neutral-600">{s.body}</p>
               </motion.div>
             ))}
           </div>
+
+          <motion.div {...fadeUp} className="mt-10 flex justify-center">
+            <Link href="/signup" className={BTN_BRAND}>
+              Build your agent
+              <ArrowRight className="size-4" />
+            </Link>
+          </motion.div>
         </div>
       </section>
 
-      {/* ============================ USE CASES GRID ============================ */}
-      <section id="usecases" className="py-24 lg:py-32 bg-neutral-50 border-y border-neutral-200">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-16 max-w-3xl mx-auto">
-            <motion.span {...fadeUp} className="inline-block text-xs uppercase tracking-[0.2em] text-neutral-500 mb-4 font-medium">
-              Use cases
-            </motion.span>
-            <motion.h2 {...fadeUp} className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-5">
-              One agent. Every kind of call.
-            </motion.h2>
+      {/* ============================ URDU ============================ */}
+      <section id="urdu" className="relative scroll-mt-16 overflow-hidden bg-brand-950 py-24 text-white lg:py-32">
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute -left-32 top-0 size-[28rem] rounded-full bg-brand-600/25 blur-3xl" />
+          <div className="absolute -right-32 bottom-0 size-[26rem] rounded-full bg-saffron-500/10 blur-3xl" />
+        </div>
+
+        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-2 lg:gap-20 lg:px-8">
+          <div>
+            <Eyebrow dark>Urdu first</Eyebrow>
+            <H2 className="mb-10">
+              Sounds like your best order taker, <em className="italic text-saffron-300">not a robot.</em>
+            </H2>
+            <div className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
+              {URDU_POINTS.map((point, i) => (
+                <motion.div key={point.title} {...fadeUp} transition={{ ...fadeUp.transition, delay: i * 0.06 }}>
+                  <h3 className="mb-1.5 text-base font-semibold tracking-tight">{point.title}</h3>
+                  <p className="text-[15px] leading-relaxed text-white/65">{point.body}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
 
-          {/* Top row: 4 visual hero cards */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5 mb-5">
-            {/* Customer Support - phone mockup */}
-            <motion.div
-              {...fadeUp}
-              className="card-lift bg-neutral-100 rounded-3xl border border-neutral-200 hover:border-neutral-400 overflow-hidden p-5 pb-7 group"
-            >
-              <div className="aspect-[3/4] overflow-hidden -mx-5 -mt-5 mb-5 relative">
-                <PhoneMockup label="Support" tone="darker" />
-              </div>
-              <h3 className="text-sm font-semibold tracking-tight mb-1">Customer Support</h3>
-              <p className="text-xs text-neutral-600 leading-relaxed">
-                Resolve 70%+ of inbound issues without escalating. Cut wait time from 4 minutes to under 10 seconds. Empathetic across Urdu, English, and 10 regional dialects.
-              </p>
-            </motion.div>
+          <motion.div {...fadeUp} className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm sm:p-8">
+            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/50">
+              On the menu → on the call
+            </p>
+            <ul className="divide-y divide-white/10">
+              {SAID_AS.map((row) => (
+                <li key={row.written} className="flex items-center justify-between gap-4 py-2.5">
+                  <span className="rounded-lg bg-white/10 px-2.5 py-1 font-mono text-xs text-white/80">
+                    {row.written}
+                  </span>
+                  <span dir="rtl" lang="ur" className="font-urdu text-lg leading-[2.2] text-saffron-200">
+                    {row.spoken}
+                  </span>
+                </li>
+              ))}
+            </ul>
 
-            {/* Inbound Scheduling - calendar mockup */}
-            <motion.div
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: 0.05 }}
-              className="card-lift bg-neutral-100 rounded-3xl border border-neutral-200 hover:border-neutral-400 overflow-hidden p-5 pb-7 group"
-            >
-              <div className="aspect-[3/4] overflow-hidden -mx-5 -mt-5 mb-5 relative">
-                <CalendarMockup />
-              </div>
-              <h3 className="text-sm font-semibold tracking-tight mb-1">Inbound Scheduling</h3>
-              <p className="text-xs text-neutral-600 leading-relaxed">
-                Triple your appointment volume without hiring receptionists. Catches conflicts mid-call, suggests alternatives, and syncs to Google or Outlook calendars.
-              </p>
-            </motion.div>
-
-            {/* Restaurants - order receipt mockup */}
-            <motion.div
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: 0.1 }}
-              className="card-lift bg-neutral-100 rounded-3xl border border-neutral-200 hover:border-neutral-400 overflow-hidden p-5 pb-7 group"
-            >
-              <div className="aspect-[3/4] overflow-hidden -mx-5 -mt-5 mb-5 relative">
-                <OrderReceiptMockup />
-              </div>
-              <h3 className="text-sm font-semibold tracking-tight mb-1">Restaurants & Delivery</h3>
-              <p className="text-xs text-neutral-600 leading-relaxed">
-                Capture every order, even at 2 AM. Confirms address, payment, and ETA before the caller hangs up. Pushes directly to your POS or kitchen display.
-              </p>
-            </motion.div>
-
-            {/* Healthcare - patient card mockup */}
-            <motion.div
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: 0.15 }}
-              className="card-lift bg-neutral-100 rounded-3xl border border-neutral-200 hover:border-neutral-400 overflow-hidden p-5 pb-7 group"
-            >
-              <div className="aspect-[3/4] overflow-hidden -mx-5 -mt-5 mb-5 relative">
-                <PatientCardMockup />
-              </div>
-              <h3 className="text-sm font-semibold tracking-tight mb-1">Healthcare & Clinics</h3>
-              <p className="text-xs text-neutral-600 leading-relaxed">
-                HIPAA-aware triage. Urgent symptoms route to on-call staff in seconds. Routine bookings handled end-to-end, including reminders and follow-ups.
-              </p>
-            </motion.div>
-          </div>
-
-          {/* Bottom row: 3 quote-style cards */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
-            {[
-              { cat: "Real estate", caller: "I want to view the Phase 6 listing.", agent: "Tomorrow 4 PM or Sunday 11 AM. Which works for you?" },
-              { cat: "Law firms", caller: "I need to schedule a consultation.", agent: "Of course. Could you briefly tell me what matter this is regarding?" },
-              { cat: "E-commerce", caller: "Mera order kahan hai?", agent: "Order TRX-7821 is out for delivery. Reaches you in 30 minutes." },
-            ].map((u, i) => (
-              <motion.div
-                key={u.cat}
-                {...fadeUp}
-                transition={{ ...fadeUp.transition, delay: i * 0.05 }}
-                className="card-lift bg-white rounded-3xl border border-neutral-200 p-7 hover:border-neutral-400 group"
-              >
-                <div className="flex items-center justify-between mb-5">
-                  <span className="text-xs uppercase tracking-widest text-neutral-500 font-semibold">{u.cat}</span>
-                  <ChevronRight className="size-4 text-neutral-400 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition-all" />
-                </div>
-                <div className="space-y-2.5 text-[15px]">
-                  <div className="flex gap-2">
-                    <span className="text-neutral-400 font-mono text-xs uppercase shrink-0 mt-0.5">caller</span>
-                    <span className="text-neutral-700">{u.caller}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span className="text-neutral-900 font-mono text-xs uppercase shrink-0 mt-0.5">agent</span>
-                    <span className="text-neutral-950 font-medium">{u.agent}</span>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+            <p className="mb-3 mt-7 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/50">
+              Pick a voice
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {VOICES.map((voice, i) => (
+                <span
+                  key={voice}
+                  className={cn(
+                    "rounded-full border px-3 py-1.5 text-sm",
+                    i === 0
+                      ? "border-saffron-400 bg-saffron-400 font-semibold text-neutral-950"
+                      : "border-white/15 text-white/80"
+                  )}
+                >
+                  {voice}
+                </span>
+              ))}
+              <span className="rounded-full border border-dashed border-white/20 px-3 py-1.5 text-sm text-white/50">
+                + 8 more
+              </span>
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* ============================ FEATURE CARDS (emotionally aware) ============================ */}
+      {/* ============================ CONTROL ============================ */}
       <section className="py-24 lg:py-32">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="mb-16 max-w-3xl">
-            <motion.span {...fadeUp} className="inline-block text-xs uppercase tracking-[0.2em] text-neutral-500 mb-4 font-medium">
-              Built for production
-            </motion.span>
-            <motion.h2 {...fadeUp} className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[1.05]">
-              Listens like a <span className="italic font-light">human.</span> Acts like an expert.
-            </motion.h2>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="mb-14 max-w-3xl">
+            <Eyebrow>Built for owners, not engineers</Eyebrow>
+            <H2>
+              You run the restaurant. <em className="italic text-brand-600">You run the agent.</em>
+            </H2>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {[
-              { icon: Users, title: "White-glove onboarding", body: "Our team helps configure your agent, ingest your knowledge, and validate quality before you go live." },
-              { icon: FileCheck, title: "Custom workflows", body: "Describe procedures in plain English. The agent follows them. No code, no flow-charts." },
-              { icon: BarChart3, title: "Improve over time", body: "Analyze every call, A/B test prompts, correct behaviour with one-line edits." },
-              { icon: Lock, title: "Safety-first AI", body: "Compliance guardrails, consent flows, audit logs, and per-tenant data isolation." },
-            ].map((f) => (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {CONTROL.map((f, i) => (
               <motion.div
                 key={f.title}
                 {...fadeUp}
-                className="card-lift rounded-3xl border border-neutral-200 p-7 hover:border-neutral-400"
+                transition={{ ...fadeUp.transition, delay: i * 0.06 }}
+                className="card-lift rounded-3xl border border-sand-200 bg-white p-7 hover:border-brand-200"
               >
-                <div className="size-10 rounded-xl bg-neutral-100 flex items-center justify-center mb-5">
+                <div className="mb-5 flex size-11 items-center justify-center rounded-2xl bg-brand-50 text-brand-700">
                   <f.icon className="size-5" />
                 </div>
-                <h3 className="text-lg font-bold mb-2 tracking-tight">{f.title}</h3>
-                <p className="text-neutral-600 leading-relaxed text-sm">{f.body}</p>
+                <h3 className="mb-2 text-lg font-semibold tracking-tight">{f.title}</h3>
+                <p className="text-sm leading-relaxed text-neutral-600">{f.body}</p>
               </motion.div>
             ))}
           </div>
+
+          <motion.div
+            {...fadeUp}
+            className="mt-6 flex flex-col gap-3 rounded-3xl border border-dashed border-sand-300 bg-sand-50 px-6 py-5 sm:flex-row sm:items-center sm:gap-5"
+          >
+            <span className="inline-flex w-fit shrink-0 items-center gap-1.5 rounded-full bg-saffron-200 px-3 py-1 text-xs font-semibold text-neutral-900">
+              Coming next in the beta
+            </span>
+            <p className="text-sm leading-relaxed text-neutral-600">
+              Each order sent to your team on WhatsApp, call recordings with transcripts, and a link to your POS.
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      {/* ============================ THREE HIGHLIGHTS ============================ */}
-      <section className="py-24 lg:py-32 bg-neutral-950 text-white">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-16">
-            {[
-              { icon: Zap, big: "<800ms", title: "Sub-second responsiveness", body: "Streaming STT + streaming TTS. The conversation flows like talking to a human." },
-              { icon: MessageCircle, big: "10,000+", title: "Voices to choose from", body: "ElevenLabs voice library. Pick a brand voice, or clone yours." },
-              { icon: Globe, big: "12", title: "Languages, seamlessly", body: "Urdu, English, Punjabi, Sindhi, Pashto, Hindi, Arabic, and more. Switches mid-sentence." },
-            ].map((h, i) => (
-              <motion.div
-                key={h.title}
-                {...fadeUp}
-                transition={{ ...fadeUp.transition, delay: i * 0.08 }}
-              >
-                <h.icon className="size-7 mb-6 text-white/60" />
-                <div className="text-5xl lg:text-6xl font-bold tracking-tight mb-3 tabular-nums">{h.big}</div>
-                <h3 className="text-xl font-bold mb-2 tracking-tight">{h.title}</h3>
-                <p className="text-white/60 leading-relaxed text-[15px]">{h.body}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================ INTEGRATIONS ============================ */}
-      <section id="integrations" className="py-24 lg:py-32">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8 mb-16">
-          <div className="text-center max-w-3xl mx-auto">
-            <motion.span {...fadeUp} className="inline-block text-xs uppercase tracking-[0.2em] text-neutral-500 mb-4 font-medium">
-              Integrations
-            </motion.span>
-            <motion.h2 {...fadeUp} className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-5">
-              Slots into the stack you <span className="italic font-light">already</span> run.
-            </motion.h2>
-            <motion.p {...fadeUp} className="text-lg text-neutral-600 leading-relaxed">
-              Connect your CRM, calendar, payment processor, and telephony provider. Or use our API to build custom workflows.
+      {/* ============================ PRICING ============================ */}
+      <section id="pricing" className="scroll-mt-16 border-y border-sand-200 bg-sand-50 py-24 lg:py-32">
+        <div className="mx-auto max-w-6xl px-6 lg:px-8">
+          <div className="mx-auto mb-14 max-w-3xl text-center">
+            <Eyebrow>Pricing in rupees</Eyebrow>
+            <H2 className="mb-5">
+              Costs less than <em className="italic text-brand-600">one person on the phone.</em>
+            </H2>
+            <motion.p {...fadeUp} className="text-lg leading-relaxed text-neutral-600">
+              Call minutes are included in every plan. Try it free first, and pay only when it is taking real
+              calls for you.
             </motion.p>
           </div>
-        </div>
 
-        <IntegrationsGrid />
-      </section>
+          <div className="grid gap-5 md:grid-cols-3 lg:gap-6">
+            {PLANS.map((plan, i) => (
+              <motion.div
+                key={plan.name}
+                {...fadeUp}
+                transition={{ ...fadeUp.transition, delay: i * 0.08 }}
+                className={cn(
+                  "rounded-3xl p-8",
+                  plan.featured
+                    ? "bg-brand-800 text-white shadow-2xl shadow-brand-950/20"
+                    : "border border-sand-200 bg-white"
+                )}
+              >
+                <div className="mb-5 flex items-center justify-between">
+                  <span
+                    className={cn(
+                      "text-xs font-semibold uppercase tracking-widest",
+                      plan.featured ? "text-saffron-300" : "text-brand-700"
+                    )}
+                  >
+                    {plan.name}
+                  </span>
+                  {plan.featured && (
+                    <span className="rounded-full bg-saffron-400 px-2.5 py-0.5 text-[11px] font-semibold text-neutral-950">
+                      Most restaurants
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="font-display text-4xl font-medium tracking-[-0.02em]">{plan.price}</span>
+                  <span className={cn("text-sm", plan.featured ? "text-white/60" : "text-neutral-500")}>
+                    {plan.per}
+                  </span>
+                </div>
+                <p className={cn("mt-4 text-[15px] leading-relaxed", plan.featured ? "text-white/75" : "text-neutral-600")}>
+                  {plan.line}
+                </p>
+              </motion.div>
+            ))}
+          </div>
 
-      {/* ============================ ENTERPRISE SECURITY ============================ */}
-      <section className="py-24 lg:py-32 bg-neutral-50 border-y border-neutral-200">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8 grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <motion.div {...fadeUp}>
-            <span className="inline-block text-xs uppercase tracking-[0.2em] text-neutral-500 mb-4 font-medium">
-              Enterprise ready
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-[-0.03em] leading-[1.05] mb-5">
-              Procurement-proof from day <span className="italic font-light">one.</span>
-            </h2>
-            <p className="text-lg text-neutral-600 leading-relaxed mb-8">
-              Per-tenant data isolation, encrypted recordings, consent management, audit logs. Engineered to pass procurement at any business, from solo SMB to enterprise.
-            </p>
-            <Link
-              href="#"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-neutral-950 hover:gap-3 transition-all"
-            >
-              Read the trust report <ArrowRight className="size-4" />
+          <motion.div {...fadeUp} className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link href="/signup" className={BTN_BRAND}>
+              Start your free pilot
+              <ArrowRight className="size-4" />
+            </Link>
+            <Link href="/pricing" className={BTN_GHOST_LIGHT}>
+              See full pricing
             </Link>
           </motion.div>
-
-          <motion.div {...fadeUp} className="grid grid-cols-2 gap-3">
-            {[
-              { icon: ShieldCheck, label: "SOC 2", sub: "(in progress)" },
-              { icon: Lock, label: "GDPR", sub: "Data residency" },
-              { icon: FileCheck, label: "Consent flows", sub: "Per-jurisdiction" },
-              { icon: BarChart3, label: "Audit logs", sub: "Every action" },
-            ].map((c) => (
-              <div key={c.label} className="rounded-2xl bg-white border border-neutral-200 p-5">
-                <c.icon className="size-5 mb-3" />
-                <div className="font-semibold tracking-tight">{c.label}</div>
-                <div className="text-xs text-neutral-500 mt-0.5">{c.sub}</div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ============================ GETTING STARTED (2 paths) ============================ */}
-      <section id="pricing" className="py-24 lg:py-32">
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-14 max-w-3xl mx-auto">
-            <motion.span {...fadeUp} className="inline-block text-xs uppercase tracking-[0.2em] text-neutral-500 mb-4 font-medium">
-              Getting started
-            </motion.span>
-            <motion.h2 {...fadeUp} className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-5">
-              Two ways to <span className="italic font-light">go live.</span>
-            </motion.h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-5 lg:gap-6">
-            <motion.div
-              {...fadeUp}
-              className="rounded-3xl border border-neutral-200 p-8 lg:p-10 hover:border-neutral-400 transition-colors"
-            >
-              <span className="inline-block text-xs uppercase tracking-widest text-neutral-500 mb-5 font-semibold">No-code</span>
-              <h3 className="text-2xl lg:text-3xl font-bold mb-4 tracking-tight">Use the platform</h3>
-              <p className="text-neutral-600 leading-relaxed mb-7">
-                Sign up, configure an agent in Agent Studio, upload your knowledge, get a phone number. Live in
-                under 10 minutes. No engineer required.
-              </p>
-              <Link
-                href="/signup"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-neutral-950 text-white text-sm font-semibold hover:bg-neutral-800 transition-colors"
-              >
-                Create your agent <ArrowRight className="size-4" />
-              </Link>
-            </motion.div>
-
-            <motion.div
-              {...fadeUp}
-              className="rounded-3xl bg-neutral-950 text-white p-8 lg:p-10 relative overflow-hidden"
-            >
-              <div className="absolute -top-24 -right-24 w-64 h-64 bg-gradient-to-br from-neutral-100/20 via-neutral-50/20 to-white/30 rounded-full blur-3xl" />
-              <div className="relative">
-                <span className="inline-block text-xs uppercase tracking-widest text-white/60 mb-5 font-semibold">For developers</span>
-                <h3 className="text-2xl lg:text-3xl font-bold mb-4 tracking-tight">Use the API</h3>
-                <p className="text-white/70 leading-relaxed mb-7">
-                  Build custom workflows with our REST and WebSocket APIs. SDKs for Node, Python, Go.
-                  Stream transcripts and trigger tool calls in your own backend.
-                </p>
-                <Link
-                  href="#"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white text-neutral-950 text-sm font-semibold hover:bg-white/90 transition-colors"
-                >
-                  Read the docs <ArrowRight className="size-4" />
-                </Link>
-              </div>
-            </motion.div>
-          </div>
         </div>
       </section>
 
@@ -676,57 +638,22 @@ export default function LandingPage() {
       <TestimonialsSection />
 
       {/* ============================ FAQ ============================ */}
-      <section className="py-24 lg:py-32 bg-neutral-50 border-y border-neutral-200">
-        <div className="max-w-3xl mx-auto px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <motion.span {...fadeUp} className="inline-block text-xs uppercase tracking-[0.2em] text-neutral-500 mb-4 font-medium">
-              FAQ
-            </motion.span>
-            <motion.h2 {...fadeUp} className="text-4xl md:text-5xl font-bold tracking-[-0.03em] leading-[1.05]">
-              Everything you&apos;d ask on a <span className="italic font-light">demo call.</span>
-            </motion.h2>
+      <section id="faq" className="scroll-mt-16 border-y border-sand-200 bg-sand-50 py-24 lg:py-32">
+        <div className="mx-auto max-w-3xl px-6 lg:px-8">
+          <div className="mb-12 text-center">
+            <Eyebrow>Questions</Eyebrow>
+            <H2>
+              What owners ask us <em className="italic text-brand-600">first.</em>
+            </H2>
           </div>
 
-          <Accordion className="w-full">
-            {[
-              {
-                q: "What is Callen.ai?",
-                a: "Callen.ai is a multilingual AI voice agent platform for businesses. Customers call your number; an AI agent answers, holds a natural conversation in Urdu or English, takes actions in your business systems, and logs everything. Built specifically for the Pakistani SMB market.",
-              },
-              {
-                q: "How does Callen handle Urdu calls?",
-                a: "Urdu speech is transcribed by Whisper large-v3 (best-in-class for Urdu accuracy). Language is auto-detected in the first sentence. The LLM understands and responds in the detected language. ElevenLabs synthesises natural Urdu output with the voice you choose.",
-              },
-              {
-                q: "What's the difference between Callen and a regular IVR?",
-                a: "IVR is decision-tree menus (press 1, press 2). Callen is open conversation. Callers say what they want in their own words, the agent understands intent and context, and either resolves the request or escalates to a human.",
-              },
-              {
-                q: "How long does setup take?",
-                a: "Under 10 minutes for a basic agent. Describe your business, upload your menu/FAQs/policies, get a Twilio number, point your line at it. Going from zero to first call typically takes 5 to 15 minutes depending on how much knowledge base content you upload.",
-              },
-              {
-                q: "Can I bring my own phone number?",
-                a: "Yes. Either get a new Twilio number through Callen, or port your existing number, or set up call-forwarding from any number you control. Callen works with any provider that supports SIP or PSTN forwarding.",
-              },
-              {
-                q: "Is there an API for developers?",
-                a: "Yes. REST endpoints for configuration, knowledge base ingestion, and analytics. WebSocket streams for real-time transcript and tool-call events. SDKs for Node, Python, and Go are coming Q2 2026.",
-              },
-              {
-                q: "What does it cost?",
-                a: "Start with a free 14-day pilot that includes 100 call minutes. Paid plans start at PKR 14,900 a month for Starter (600 minutes, one branch) and PKR 34,900 for Growth (1,600 minutes, up to three branches). Chains are priced on call volume.",
-              },
-            ].map((item, i) => (
-              <AccordionItem
-                key={i}
-                value={`item-${i}`}
-                className="border-b border-neutral-200 last:border-0"
-              >
-                <AccordionTrigger className="text-left text-base lg:text-lg font-semibold py-5 hover:no-underline">
+          <Accordion className="w-full rounded-3xl border border-sand-200 bg-white px-6 lg:px-8">
+            {FAQS.map((item, i) => (
+              <AccordionItem key={item.q} value={`item-${i}`} className="border-b border-sand-200 last:border-0">
+                <AccordionTrigger className="py-5 text-left text-base font-semibold hover:text-brand-700 hover:no-underline lg:text-lg">
                   {item.q}
                 </AccordionTrigger>
-                <AccordionContent className="text-neutral-600 leading-relaxed text-[15px] pb-5">
+                <AccordionContent className="pb-5 text-[15px] leading-relaxed text-neutral-600">
                   {item.a}
                 </AccordionContent>
               </AccordionItem>
@@ -736,32 +663,36 @@ export default function LandingPage() {
       </section>
 
       {/* ============================ FINAL CTA ============================ */}
-      <section className="py-28 lg:py-36" id="contact">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-          <motion.h2 {...fadeUp} className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-[-0.04em] leading-[0.95] mb-6">
-            Stop missing calls.<br />Start serving customers.
-          </motion.h2>
-          <motion.p {...fadeUp} className="text-lg text-neutral-600 max-w-xl mx-auto mb-10 leading-relaxed">
-            Free demo. No credit card. Configure your first agent in 10 minutes and hear it speak your language.
-          </motion.p>
-          <motion.div {...fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link
-              href="/signup"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-neutral-950 text-white text-sm font-semibold hover:bg-neutral-800 transition-colors"
-            >
-              Try Callen.ai free <ArrowRight className="size-4" />
-            </Link>
-            <Link
-              href="#contact"
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white border border-neutral-300 text-neutral-950 text-sm font-semibold hover:bg-neutral-50 transition-colors"
-            >
-              Talk to sales
-            </Link>
-          </motion.div>
-        </div>
+      <section id="contact" className="scroll-mt-16 px-4 py-20 sm:px-6 lg:py-28">
+        <motion.div
+          {...fadeUp}
+          className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] bg-brand-800 px-6 py-20 text-center text-white lg:py-28"
+        >
+          <div aria-hidden className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-32 left-1/2 h-80 w-[44rem] -translate-x-1/2 rounded-full bg-brand-500/40 blur-3xl" />
+            <div className="absolute -bottom-32 -right-20 size-80 rounded-full bg-saffron-400/25 blur-3xl" />
+          </div>
+          <div className="relative mx-auto max-w-3xl">
+            <h2 className="mb-6 font-display text-4xl font-medium leading-[1.03] tracking-[-0.025em] sm:text-5xl lg:text-7xl">
+              Stop losing orders to a <em className="italic text-saffron-300">busy line.</em>
+            </h2>
+            <p className="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-white/75">
+              Build your agent in ten minutes, call it yourself, and hear it take an order from your own menu.
+              Free for 14 days.
+            </p>
+            <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link href="/signup" className={BTN_SAFFRON}>
+                Start your free pilot
+                <ArrowRight className="size-4" />
+              </Link>
+              <Link href="/contact" className={BTN_GHOST_DARK}>
+                Talk to us
+              </Link>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
-      {/* ============================ FOOTER ============================ */}
       <MarketingFooter />
     </div>
   );

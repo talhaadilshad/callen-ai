@@ -14,8 +14,8 @@ const COLUMNS: FooterColumn[] = [
   {
     title: "Product",
     links: [
-      { label: "Use cases",    href: "/use-cases" },
-      { label: "Integrations", href: "/#integrations" },
+      { label: "What it does", href: "/#product" },
+      { label: "How it works", href: "/#how" },
       { label: "Pricing",      href: "/pricing" },
       { label: "Changelog",    href: "/changelog" },
     ],
@@ -48,13 +48,13 @@ const LEGAL_LINKS: Array<{ label: string; href: string }> = [
 
 export function MarketingFooter() {
   return (
-    <footer className="border-t border-neutral-200 py-16">
+    <footer className="border-t border-sand-200 bg-sand-50 py-16">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 lg:gap-12 mb-12">
           <div className="col-span-2">
             <Logo />
             <p className="text-sm text-neutral-600 mt-4 max-w-xs leading-relaxed">
-              Multilingual AI voice agents for Pakistani businesses. Voice and chat. Live in 10 minutes.
+              Urdu AI phone agents for Pakistani restaurants. Every call answered, every order taken.
             </p>
           </div>
           {COLUMNS.map((col) => (
@@ -65,7 +65,7 @@ export function MarketingFooter() {
                   <li key={link.href + link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-neutral-600 hover:text-neutral-950 transition-colors"
+                      className="text-sm text-neutral-600 hover:text-brand-700 transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -75,14 +75,14 @@ export function MarketingFooter() {
             </div>
           ))}
         </div>
-        <div className="pt-8 border-t border-neutral-200 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
-          <p>© 2026 Callen.ai · Built for Pakistani SMBs.</p>
+        <div className="pt-8 border-t border-sand-200 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
+          <p>© 2026 Callen.ai · Made in Pakistan, for Pakistani restaurants.</p>
           <div className="flex items-center gap-5">
             {LEGAL_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="hover:text-neutral-950 transition-colors"
+                className="hover:text-brand-700 transition-colors"
               >
                 {link.label}
               </Link>

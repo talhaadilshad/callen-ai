@@ -1,6 +1,8 @@
 // Fixed top nav shared by every marketing page (landing + all footer
 // destinations). Scroll-aware: transparent at the top, white-blurred
-// with a hairline border once the user scrolls.
+// with a hairline border once the user scrolls. `overDark` is for pages
+// that open on a dark hero: until the user scrolls, the nav is light text
+// on that hero.
 
 "use client";
 
@@ -18,8 +20,15 @@ const NAV_LINKS: Array<{ href: string; label: string }> = [
   { href: "/status",     label: "Status" },
 ];
 
-export function MarketingNav() {
+export function MarketingNav({
+  links = NAV_LINKS,
+  overDark = false,
+}: {
+  links?: Array<{ href: string; label: string }>;
+  overDark?: boolean;
+}) {
   const [scrolled, setScrolled] = useState(false);
+  const dark = overDark && !scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -38,34 +47,47 @@ export function MarketingNav() {
       )}
     >
       <nav className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
-        <Link href="/" className="text-neutral-950">
-          <Logo />
+        <Link href="/" aria-label="Callen.ai home">
+          <Logo size="lg" inverse={dark} />
         </Link>
-        <div className="hidden md:flex items-center gap-7 text-sm font-medium text-neutral-600">
-          {NAV_LINKS.map((link) => (
+        <div
+          className={cn(
+            "hidden md:flex items-center gap-7 text-sm font-medium transition-colors",
+            dark ? "text-white/75" : "text-neutral-600"
+          )}
+        >
+          {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="hover:text-neutral-950 transition-colors"
+              className={cn("transition-colors", dark ? "hover:text-white" : "hover:text-brand-700")}
             >
               {link.label}
             </Link>
           ))}
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <Link
             href="/login"
-            className="hidden md:block text-sm font-medium px-3 py-2 text-neutral-700 hover:text-neutral-950 transition-colors"
+            className={cn(
+              "hidden md:block text-sm font-medium px-3 py-2 transition-colors",
+              dark ? "text-white/80 hover:text-white" : "text-neutral-700 hover:text-neutral-950"
+            )}
           >
             Log in
           </Link>
           <Link
             href="/signup"
-            className="text-sm font-semibold px-4 py-2 rounded-full bg-white border border-neutral-200 hover:border-neutral-400 hover:bg-neutral-50 transition-all"
+            className={cn(
+              "text-sm font-semibold px-4 py-2 rounded-full transition-colors",
+              dark
+                ? "bg-saffron-400 text-neutral-950 hover:bg-saffron-300"
+                : "bg-brand-700 text-white hover:bg-brand-800"
+            )}
           >
-            Sign up
+            Start free pilot
           </Link>
-          <MobileMenu links={NAV_LINKS} />
+          <MobileMenu links={links} inverse={dark} />
         </div>
       </nav>
     </header>

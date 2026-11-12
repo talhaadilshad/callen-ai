@@ -12,7 +12,7 @@ const avatar = (name: string) => {
     .slice(0, 2)
     .join("")
     .toUpperCase();
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="128" height="128" rx="64" fill="#171717"/><text x="64" y="64" dy=".36em" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" fill="#fafafa">${initials}</text></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="128" height="128" rx="64" fill="#065f3d"/><text x="64" y="64" dy=".36em" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" fill="#fafafa">${initials}</text></svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 };
 
@@ -89,11 +89,11 @@ export function TestimonialsSection() {
     <section className="py-24 lg:py-32 bg-white relative">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <motion.div {...fadeUp} className="flex flex-col items-center text-center max-w-2xl mx-auto mb-14">
-          <span className="inline-block text-xs uppercase tracking-[0.2em] text-neutral-500 mb-4 font-medium">
+          <span className="inline-block text-xs uppercase tracking-[0.2em] text-brand-700 mb-4 font-semibold">
             Customer stories
           </span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.03em] leading-[1.05] mb-5">
-            Teams that finally <span className="italic font-light">answer</span> every call.
+          <h2 className="font-display text-4xl md:text-5xl lg:text-[3.5rem] font-medium tracking-[-0.02em] leading-[1.05] mb-5">
+            Teams that finally <em className="italic text-brand-600">answer</em> every call.
           </h2>
           <p className="text-lg text-neutral-600 leading-relaxed">
             From Karachi delivery floors to Lahore clinics, here is what changed when Pakistani teams switched on Callen.

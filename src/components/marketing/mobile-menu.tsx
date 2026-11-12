@@ -1,6 +1,7 @@
 // Mobile nav menu shared by the landing header and MarketingNav.
 // Hamburger toggle (visible below md) that drops a white panel with the
-// page links stacked above Log in / Sign up. Monochrome, hairline borders.
+// page links stacked above Log in / Start free pilot. `inverse` makes the
+// toggle light, for a nav sitting on a dark hero.
 
 "use client";
 
@@ -11,7 +12,7 @@ import { AnimatePresence, motion } from "motion/react";
 
 type MobileMenuLink = { href: string; label: string };
 
-export function MobileMenu({ links }: { links: MobileMenuLink[] }) {
+export function MobileMenu({ links, inverse = false }: { links: MobileMenuLink[]; inverse?: boolean }) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
@@ -22,7 +23,11 @@ export function MobileMenu({ links }: { links: MobileMenuLink[] }) {
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex items-center justify-center size-9 rounded-full text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 transition-colors"
+        className={
+          inverse && !open
+            ? "inline-flex items-center justify-center size-9 rounded-full text-white hover:bg-white/10 transition-colors"
+            : "inline-flex items-center justify-center size-9 rounded-full text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 transition-colors"
+        }
       >
         {open ? <X className="size-5" /> : <Menu className="size-5" />}
       </button>
@@ -42,7 +47,7 @@ export function MobileMenu({ links }: { links: MobileMenuLink[] }) {
                   key={link.href}
                   href={link.href}
                   onClick={close}
-                  className="py-3 text-base font-medium text-neutral-700 hover:text-neutral-950 transition-colors border-b border-neutral-100 last:border-b-0"
+                  className="py-3 text-base font-medium text-neutral-700 hover:text-brand-700 transition-colors border-b border-neutral-100 last:border-b-0"
                 >
                   {link.label}
                 </Link>
@@ -58,9 +63,9 @@ export function MobileMenu({ links }: { links: MobileMenuLink[] }) {
                 <Link
                   href="/signup"
                   onClick={close}
-                  className="flex-1 text-center text-sm font-semibold px-4 py-2.5 rounded-full bg-neutral-950 text-white hover:bg-neutral-800 transition-colors"
+                  className="flex-1 text-center text-sm font-semibold px-4 py-2.5 rounded-full bg-brand-700 text-white hover:bg-brand-800 transition-colors"
                 >
-                  Sign up
+                  Start free pilot
                 </Link>
               </div>
             </nav>
