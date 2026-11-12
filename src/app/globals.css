@@ -10,14 +10,14 @@
    for the AI signature accent.
    ========================================================================= */
 
-/* Marketing surfaces. The brand has no primary colour: pages are warm
+/* Marketing surfaces. The brand has no primary colour: pages are neutral
    off-white with black type, and colour only appears inside the gradient
    orbs (src/components/brand/orb.tsx). */
 @theme {
-  --color-paper: #fcfbfa;      /* page background */
-  --color-shell: #f4f2ef;      /* cards and panels */
-  --color-shell-deep: #eae7e2; /* pressed / nested surfaces */
-  --color-ink-soft: #5c5750;   /* secondary text */
+  --color-paper: #fdfdfd;      /* page background: neutral, slightly grey white */
+  --color-shell: #f5f5f5;      /* cards and panels */
+  --color-shell-deep: #ebebeb; /* pressed / nested surfaces */
+  --color-ink-soft: #5e5e5e;   /* secondary text */
   --color-hairline: rgb(0 0 0 / 0.07);
 }
 

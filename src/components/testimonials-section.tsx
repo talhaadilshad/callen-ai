@@ -30,7 +30,7 @@ const testimonials: Testimonial[] = [
     image: avatar("Saman Malik"),
   },
   {
-    text: "Setup took an afternoon. By the next morning our reception line was answering in Urdu and English, twenty four hours a day.",
+    text: "Setup took an afternoon. By the next morning our reception line was answering in Urdu and English, twenty-four hours a day.",
     name: "Omar Raza",
     role: "Operations Director, Domino's Pakistan",
     image: avatar("Omar Raza"),
@@ -48,13 +48,13 @@ const testimonials: Testimonial[] = [
     image: avatar("Farhan Siddiqui"),
   },
   {
-    text: "What sold me was the analytics. Every intent, every drop off, every escalation reason, all filterable in one view.",
+    text: "What sold me was the analytics. Every intent, every drop-off, every escalation reason, all filterable in one view.",
     name: "Aliza Khan",
     role: "Product Lead, Telenor Microfinance",
     image: avatar("Aliza Khan"),
   },
   {
-    text: "After hours leads used to die in voicemail. Now every call is answered, qualified, and pushed to our CRM with notes.",
+    text: "After-hours leads used to die in voicemail. Now every call is answered, qualified, and pushed to our CRM with notes.",
     name: "Hassan Ali",
     role: "Sales Director, Imlaak Realty",
     image: avatar("Hassan Ali"),
@@ -66,7 +66,7 @@ const testimonials: Testimonial[] = [
     image: avatar("Sana Sheikh"),
   },
   {
-    text: "Compliance aware booking for our clinic. Callen handles consent prompts and routes urgent symptoms to on call instantly.",
+    text: "Compliance-aware booking for our clinic. Callen handles consent prompts and routes urgent symptoms to on call instantly.",
     name: "Asma Tariq",
     role: "IT Director, Shifa Care",
     image: avatar("Asma Tariq"),
