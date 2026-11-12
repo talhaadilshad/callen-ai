@@ -8,7 +8,7 @@ import { MarketingFooter } from "./marketing-footer";
 
 export function MarketingShell({ children }: { children: ReactNode }) {
   return (
-    <div className="bg-white text-neutral-950 min-h-screen flex flex-col">
+    <div className="bg-white text-neutral-950 selection:bg-neutral-950 selection:text-white min-h-screen flex flex-col">
       <MarketingNav />
       <main className="flex-1 pt-16">{children}</main>
       <MarketingFooter />

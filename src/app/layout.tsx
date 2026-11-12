@@ -20,11 +20,11 @@ export const metadata: Metadata = {
   // Default tab title + template so child pages can set their own title
   // and have "Callen.ai" appended automatically.
   title: {
-    default: "Callen.ai · Urdu AI phone agents for Pakistani restaurants",
+    default: "Callen.ai · AI voice agents for every business call",
     template: "%s · Callen.ai",
   },
   description:
-    "Callen.ai is the Urdu AI phone agent for Pakistani restaurants. It answers every call, takes delivery and takeaway orders in natural Urdu, and knows your menu and deals.",
+    "Callen.ai is the multilingual AI voice agent platform for Pakistani businesses. Handle customer calls in Urdu and English, 24/7. Built on Twilio, Whisper, GPT-4o, and ElevenLabs.",
   // Canonical origin for og/twitter URLs. Defaults to the Vercel deploy;
   // set NEXT_PUBLIC_SITE_URL=https://callen.ai once the domain is live.
   metadataBase: new URL(SITE_URL),
@@ -35,17 +35,17 @@ export const metadata: Metadata = {
     shortcut: "/icon.svg",
   },
   openGraph: {
-    title: "Callen.ai · Urdu AI phone agents for Pakistani restaurants",
+    title: "Callen.ai · AI voice agents for every business call",
     description:
-      "Callen answers your restaurant's phone in natural Urdu, takes delivery and takeaway orders, and knows your menu and deals. Free 14-day pilot.",
+      "Multilingual AI voice agent platform. Urdu + English calls, 24/7, integrated with your business systems.",
     siteName: "Callen.ai",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Callen.ai · Urdu AI phone agents for Pakistani restaurants",
+    title: "Callen.ai · AI voice agents for every business call",
     description:
-      "Callen answers your restaurant's phone in natural Urdu, takes delivery and takeaway orders, and knows your menu and deals. Free 14-day pilot.",
+      "Multilingual AI voice agent platform. Urdu + English calls, 24/7, integrated with your business systems.",
   },
 };
 

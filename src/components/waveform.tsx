@@ -17,8 +17,6 @@ type WaveformProps = {
   barWidth?: number;
   // Max bar height in pixels
   maxHeight?: number;
-  // Colour class for the bars (e.g. "bg-brand-500"); replaces the default
-  barClassName?: string;
 };
 
 export function Waveform({
@@ -28,7 +26,6 @@ export function Waveform({
   gradient = false,
   barWidth = 3,
   maxHeight = 64,
-  barClassName,
 }: WaveformProps) {
   // Generate heights that look organic (mix of mid + tall + short).
   // Values are rounded to whole pixels at render time so the server and
@@ -52,10 +49,9 @@ export function Waveform({
           key={i}
           className={cn(
             "rounded-full",
-            barClassName ??
-              (gradient
-                ? "bg-gradient-to-t from-neutral-900 via-neutral-700 to-neutral-400"
-                : "bg-foreground/80")
+            gradient
+              ? "bg-gradient-to-t from-neutral-900 via-neutral-700 to-neutral-400"
+              : "bg-foreground/80"
           )}
           style={{ width: `${barWidth}px` }}
           initial={{ height: px(h * maxHeight * 0.4) }}
