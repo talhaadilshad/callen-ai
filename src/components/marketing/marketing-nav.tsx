@@ -56,7 +56,7 @@ export function MarketingNav() {
             <Link href="/" aria-label="Callen.ai home">
               <Logo size="lg" />
             </Link>
-            <div className="hidden items-center gap-7 text-[15px] text-black md:flex">
+            <div className="hidden items-center gap-7 whitespace-nowrap text-[15px] text-black lg:flex">
               {NAV_LINKS.map((link) => (
                 <Link key={link.href} href={link.href} className="transition-opacity hover:opacity-60">
                   {link.label}
@@ -67,13 +67,13 @@ export function MarketingNav() {
           <div className="flex items-center gap-2">
             <Link
               href="/login"
-              className="hidden h-9 items-center rounded-full border border-hairline bg-white px-4 text-sm text-black shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-colors hover:bg-shell md:inline-flex"
+              className="hidden h-9 items-center rounded-full border border-hairline bg-white px-4 text-sm text-black shadow-[0_1px_2px_rgba(0,0,0,0.04)] whitespace-nowrap transition-colors hover:bg-shell lg:inline-flex"
             >
               Log in
             </Link>
             <Link
               href="/signup"
-              className="inline-flex h-9 items-center rounded-full bg-black px-4 text-sm text-white transition-colors hover:bg-neutral-800"
+              className="inline-flex h-9 items-center whitespace-nowrap rounded-full bg-black px-4 text-sm text-white transition-colors hover:bg-neutral-800"
             >
               Sign up
             </Link>
