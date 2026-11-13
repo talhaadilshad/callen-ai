@@ -108,7 +108,7 @@ export function ValueCalculator() {
       </div>
 
       {/* Result */}
-      <GrainSurface palette="berry" className="rounded-3xl text-white">
+      <GrainSurface palette="ember" className="rounded-3xl text-white">
         <div className="flex h-full min-h-[26rem] flex-col p-6 sm:p-8">
           <p className="text-[15px] text-white/85">Left on the table every month</p>
           <p className="mt-3 text-5xl font-light leading-none tracking-[-0.03em] sm:text-6xl lg:text-[4.25rem]">

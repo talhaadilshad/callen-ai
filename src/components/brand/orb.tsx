@@ -2,7 +2,7 @@
 // stays black, white and neutral grey; colour only ever appears inside
 // these orbs and the grain surfaces below. Each agent voice has its own,
 // and each section of the site that uses a surface has its own colour:
-// ocean (order demo), berry (cost calculator), forest (two nights),
+// ocean (order demo), ember (cost calculator), forest (two nights),
 // plum (featured plan), ember (the brand orb).
 //
 // How it is drawn (all inline SVG and CSS, no image files):
