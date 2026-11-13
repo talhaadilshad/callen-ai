@@ -310,58 +310,7 @@
   .orb-drift-slow { animation: orb-drift 60s linear infinite; }
   .orb-breathe { animation: orb-breathe 1.6s ease-in-out infinite; }
 
-  /* Speaking: the colours swirl around the middle of the orb like liquid
-     being stirred, while the centre (under the play button) stays calm.
-     Every blob circles the orb's centre: some clockwise, some the other
-     way, each at its own pace. The uneven angles make a blob surge, slow
-     and drift in and out as it goes round, so the flow never looks like a
-     wheel turning. Angles are around the centre of the 200-unit drawing. */
-  @keyframes orb-swirl-a {
-    0%   { transform: rotate(0deg) scale(1); }
-    16%  { transform: rotate(74deg) scale(1.14); }
-    33%  { transform: rotate(118deg) scale(0.9); }
-    51%  { transform: rotate(205deg) scale(1.2); }
-    69%  { transform: rotate(262deg) scale(0.94); }
-    85%  { transform: rotate(331deg) scale(1.1); }
-    100% { transform: rotate(360deg) scale(1); }
-  }
-  @keyframes orb-swirl-b {
-    0%   { transform: rotate(0deg) scale(1); }
-    19%  { transform: rotate(-48deg) scale(0.88); }
-    37%  { transform: rotate(-141deg) scale(1.16); }
-    58%  { transform: rotate(-196deg) scale(0.96); }
-    77%  { transform: rotate(-298deg) scale(1.22); }
-    100% { transform: rotate(-360deg) scale(1); }
-  }
-  @keyframes orb-swirl-c {
-    0%   { transform: rotate(0deg) scale(1); }
-    22%  { transform: rotate(96deg) scale(0.86); }
-    41%  { transform: rotate(132deg) scale(1.18); }
-    63%  { transform: rotate(248deg) scale(1.02); }
-    82%  { transform: rotate(301deg) scale(0.9); }
-    100% { transform: rotate(360deg) scale(1); }
-  }
-  @keyframes orb-swirl-d {
-    0%   { transform: rotate(0deg) scale(1); }
-    14%  { transform: rotate(-82deg) scale(1.2); }
-    35%  { transform: rotate(-121deg) scale(0.92); }
-    56%  { transform: rotate(-227deg) scale(1.12); }
-    79%  { transform: rotate(-279deg) scale(0.88); }
-    100% { transform: rotate(-360deg) scale(1); }
-  }
-  /* the pale highlight near the middle only sways, so the centre stays calm */
-  @keyframes orb-swirl-e {
-    0%, 100% { transform: rotate(0deg) scale(1); }
-    27% { transform: rotate(38deg) scale(1.25); }
-    55% { transform: rotate(-24deg) scale(0.85); }
-    79% { transform: rotate(52deg) scale(1.15); }
-  }
-  [class^="orb-flow-"] { transform-box: view-box; transform-origin: 50% 50%; will-change: transform; }
-  .orb-flow-1 { animation: orb-swirl-a 5.2s linear infinite; }
-  .orb-flow-2 { animation: orb-swirl-b 6.7s linear infinite; }
-  .orb-flow-3 { animation: orb-swirl-c 4.4s linear infinite; }
-  .orb-flow-4 { animation: orb-swirl-d 7.9s linear infinite; }
-  .orb-flow-5 { animation: orb-swirl-e 3.6s ease-in-out infinite; }
+  /* The speaking motion of the orb is simulated in orb.tsx, not here. */
 
   /* Range slider used by the cost calculator. --fill is set inline. */
   .range-ink {
@@ -410,7 +359,7 @@
     opacity: 0.9;
   }
   @media (prefers-reduced-motion: reduce) {
-    .orb-drift, .orb-drift-slow, .orb-breathe, [class^="orb-flow-"] { animation: none; }
+    .orb-drift, .orb-drift-slow, .orb-breathe { animation: none; }
   }
 
   /* Cream surface utility */

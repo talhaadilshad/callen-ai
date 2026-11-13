@@ -1,7 +1,8 @@
 // The hero panel: hear the agent. Tabs pick the kind of call, the orbs are
 // the agent's voices, and Play plays that call out loud, line by line: the
 // agent in its own voice and the caller in a contrasting one. While the
-// agent speaks, its orb moves; while the caller speaks, it rests.
+// agent speaks, the liquid in its orb moves with the real volume of the
+// voice; when it stops, or the caller speaks, the liquid comes to rest.
 //
 // The audio comes from /api/demo-audio (Soniox, the same voices the real
 // agents use). If a line cannot be played (no credit, offline), the panel
@@ -56,6 +57,9 @@ export function VoiceStage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   // Bumped whenever playback is redirected, so stale audio events are ignored.
   const token = useRef(0);
+  // Listens to the audio as it plays, so the orb can move with the voice.
+  const meter = useRef<{ ctx: AudioContext; analyser: AnalyserNode; samples: Uint8Array<ArrayBuffer> } | null>(null);
+  const meterFailed = useRef(false);
 
   const call = DEMO_CALLS[callIdx];
   const voice = DEMO_VOICES[voiceIdx];
@@ -63,9 +67,45 @@ export function VoiceStage() {
   const turn = turns[Math.min(step, turns.length - 1)];
   const active = status === "playing" || status === "loading";
 
+  // Route the audio element through a level meter. Done once, inside the
+  // first click, because browsers only let sound start from a user action.
+  // If it cannot be set up, the sound still plays; the orb just falls back
+  // to its built-in rhythm.
+  const listenTo = (audio: HTMLAudioElement) => {
+    if (meter.current) return void meter.current.ctx.resume().catch(() => {});
+    if (meterFailed.current) return;
+    try {
+      const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      const ctx = new Ctx();
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 1024;
+      ctx.createMediaElementSource(audio).connect(analyser);
+      analyser.connect(ctx.destination);
+      meter.current = { ctx, analyser, samples: new Uint8Array(analyser.fftSize) };
+      void ctx.resume().catch(() => {});
+    } catch {
+      meterFailed.current = true;
+    }
+  };
+
+  // How loud the voice is right now, 0 to 1. null = no real audio to read.
+  const voiceLevel = () => {
+    const m = meter.current;
+    if (!audioOk || !m) return null;
+    m.analyser.getByteTimeDomainData(m.samples);
+    let sum = 0;
+    for (let i = 0; i < m.samples.length; i++) {
+      const x = (m.samples[i] - 128) / 128;
+      sum += x * x;
+    }
+    // speech sits around 0.05 to 0.25 RMS; stretch that to fill 0..1
+    return Math.min(1, Math.sqrt(sum / m.samples.length) * 4.5);
+  };
+
   // Play one line; when it ends, play the next, until the call is over.
   const playLine = (c: number, v: number, s: number) => {
     const audio = (audioRef.current ??= new Audio());
+    listenTo(audio);
     const mine = ++token.current;
     const lines = DEMO_CALLS[c].turns(DEMO_VOICES[v]);
 
@@ -136,6 +176,7 @@ export function VoiceStage() {
     if (status === "paused") {
       if (!audioOk) return setStatus("playing");
       setStatus("loading");
+      void meter.current?.ctx.resume().catch(() => {});
       audioRef.current?.play().catch(() => setStatus("paused"));
       return;
     }
@@ -250,7 +291,7 @@ export function VoiceStage() {
                 exit="exit"
                 transition={{ duration: 0.45, ease: EASE }}
               >
-                <Orb palette={voice.palette} active={agentSpeaking} className="size-48 sm:size-52 lg:size-60" />
+                <Orb palette={voice.palette} active={agentSpeaking} level={voiceLevel} className="size-48 sm:size-52 lg:size-60" />
               </motion.span>
             </AnimatePresence>
             <span className="absolute left-1/2 top-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-[0_8px_24px_-6px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-110">
