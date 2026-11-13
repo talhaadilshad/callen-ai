@@ -1,127 +1,28 @@
-// The hero panel: how Callen presents the product. Tabs pick the kind of
-// call, the orbs are the agent's voices, and the sample call plays as live
-// captions (Roman Urdu or Urdu script). It starts by itself when it scrolls
-// into view and moves on to the next kind of call, until the visitor takes
-// over. The agent's grammar follows the voice: a female voice says "rahi
-// hoon", a male one "raha hoon", exactly as the real agent does.
+// The hero panel: hear the agent. Tabs pick the kind of call, the orbs are
+// the agent's voices, and Play plays that call out loud, line by line: the
+// agent in its own voice and the caller in a contrasting one. While the
+// agent speaks, its orb moves; while the caller speaks, it rests.
 //
-// The restaurant ("Karachi Bites") is made up so no real brand is implied.
+// The audio comes from /api/demo-audio (Soniox, the same voices the real
+// agents use). If a line cannot be played (no credit, offline), the panel
+// falls back to showing the call as captions on a timer, so it never just
+// sits there silent. Captions can also be turned on by hand (CC).
+//
+// One <audio> element is reused for every line and is first started inside
+// the click handler, which is what lets Safari and phones keep playing the
+// following lines without another tap.
 
 "use client";
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useInView } from "motion/react";
-import { ArrowUpRight, Check, ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
-import { Orb, type OrbPalette } from "@/components/brand/orb";
+import { AnimatePresence, motion } from "motion/react";
+import { ArrowUpRight, Captions, Check, ChevronLeft, ChevronRight, Loader2, Pause, Play } from "lucide-react";
+import { Orb } from "@/components/brand/orb";
+import { DEMO_CALLS, DEMO_VOICES, demoAudioUrl } from "@/lib/demo-calls";
 import { cn } from "@/lib/utils";
 
-type Voice = { name: string; ur: string; female: boolean; palette: OrbPalette };
-
-const VOICES: Voice[] = [
-  { name: "Ayesha", ur: "عائشہ", female: true, palette: "ember" },
-  { name: "Ahmed", ur: "احمد", female: false, palette: "ocean" },
-  { name: "Hira", ur: "حرا", female: true, palette: "lilac" },
-  { name: "Bilal", ur: "بلال", female: false, palette: "moss" },
-  { name: "Sana", ur: "ثنا", female: true, palette: "rose" },
-  { name: "Usman", ur: "عثمان", female: false, palette: "dusk" },
-];
-
-type Turn = { agent: boolean; roman: string; ur: string };
-
-type CallKind = {
-  id: string;
-  label: string;
-  dot: OrbPalette;
-  blurb: string;
-  outcome: string;
-  turns: (v: Voice) => Turn[];
-};
-
-const CALLS: CallKind[] = [
-  {
-    id: "orders",
-    label: "Orders",
-    dot: "ember",
-    blurb: "Delivery and takeaway orders, read back to the caller before they are confirmed.",
-    outcome: "Order taken · PKR 2,300 · DHA Phase 6",
-    turns: (v) => [
-      {
-        agent: true,
-        roman: `Assalam-o-Alaikum, Karachi Bites! Main ${v.name} baat kar ${v.female ? "rahi" : "raha"} hoon. Ji, farmaiye?`,
-        ur: `السلام علیکم، کراچی بائٹس! میں ${v.ur} بات کر ${v.female ? "رہی" : "رہا"} ہوں۔ جی، فرمائیے؟`,
-      },
-      {
-        agent: false,
-        roman: "Ek large chicken tikka pizza aur ek zinger burger. Delivery DHA Phase 6 mein.",
-        ur: "ایک لارج چکن تکہ پیزا اور ایک زنگر برگر۔ ڈیلیوری ڈی ایچ اے فیز چھ میں۔",
-      },
-      {
-        agent: true,
-        roman: "Ji bilkul. Ek large chicken tikka pizza aur ek zinger burger. Total 2,300 rupay, cash on delivery. Confirm kar doon?",
-        ur: "جی بالکل۔ ایک لارج چکن تکہ پیزا اور ایک زنگر برگر۔ ٹوٹل تئیس سو روپے، کیش آن ڈیلیوری۔ کنفرم کر دوں؟",
-      },
-      { agent: false, roman: "Ji, kar dein.", ur: "جی، کر دیں۔" },
-      {
-        agent: true,
-        roman: "Order confirm ho gaya. 35 se 40 minute mein pohanch jaye ga. Shukriya!",
-        ur: "آرڈر کنفرم ہو گیا۔ پینتیس سے چالیس منٹ میں پہنچ جائے گا۔ شکریہ!",
-      },
-    ],
-  },
-  {
-    id: "deals",
-    label: "Deals",
-    dot: "ocean",
-    blurb: "Every caller hears today's deal, and the add-on that fits the order.",
-    outcome: "Deal applied · PKR 1,999",
-    turns: () => [
-      { agent: false, roman: "Aaj koi deal chal rahi hai?", ur: "آج کوئی ڈیل چل رہی ہے؟" },
-      {
-        agent: true,
-        roman: "Ji bilkul. Aaj Family Deal hai: 2 medium pizza aur 1.5 litre drink, sirf 1,999 rupay mein.",
-        ur: "جی بالکل۔ آج فیملی ڈیل ہے: دو میڈیم پیزا اور ڈیڑھ لیٹر ڈرنک، صرف انیس سو ننانوے روپے میں۔",
-      },
-      { agent: false, roman: "Theek hai, yehi kar dein.", ur: "ٹھیک ہے، یہی کر دیں۔" },
-      {
-        agent: true,
-        roman: "Ji, note kar liya. Saath garlic bread sirf 200 rupay mein shamil kar doon?",
-        ur: "جی، نوٹ کر لیا۔ ساتھ گارلک بریڈ صرف دو سو روپے میں شامل کر دوں؟",
-      },
-    ],
-  },
-  {
-    id: "questions",
-    label: "Questions",
-    dot: "lilac",
-    blurb: "Timings, delivery areas and table bookings, answered from your own restaurant info.",
-    outcome: "Answered from your restaurant info",
-    turns: (v) => [
-      {
-        agent: false,
-        roman: "Kya aap G-11 mein delivery karte hain? Aur kab tak khule hain?",
-        ur: "کیا آپ جی الیون میں ڈیلیوری کرتے ہیں؟ اور کب تک کھلے ہیں؟",
-      },
-      {
-        agent: true,
-        roman: "Ji, G-11 mein delivery hoti hai, charges 100 rupay hain. Hum raat 2 baje tak khule hain.",
-        ur: "جی، جی الیون میں ڈیلیوری ہوتی ہے، چارجز ایک سو روپے ہیں۔ ہم رات دو بجے تک کھلے ہیں۔",
-      },
-      {
-        agent: false,
-        roman: "Hafte ki raat 8 baje 6 logon ki table mil jaye gi?",
-        ur: "ہفتے کی رات آٹھ بجے چھ لوگوں کی ٹیبل مل جائے گی؟",
-      },
-      {
-        agent: true,
-        roman: `Ji, Hafta, raat 8 baje, 6 afraad. Main abhi book kar ${v.female ? "deti" : "deta"} hoon. Kis naam se?`,
-        ur: `جی، ہفتہ، رات آٹھ بجے، چھ افراد۔ میں ابھی بُک کر ${v.female ? "دیتی" : "دیتا"} ہوں۔ کس نام سے؟`,
-      },
-    ],
-  },
-];
-
-const TURN_MS = 3200;
+const FALLBACK_TURN_MS = 3200;
 const EASE = [0.2, 0.65, 0.3, 0.9] as [number, number, number, number];
 
 const slide = {
@@ -130,79 +31,156 @@ const slide = {
   exit: (d: number) => ({ opacity: 0, x: d * -70, scale: 0.82 }),
 };
 
-export function VoiceStage() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-120px" });
+const INVITE: Record<string, string> = {
+  orders: "take an order",
+  deals: "offer today's deal",
+  questions: "answer a caller's questions",
+};
 
+// Bar heights for the little level meter (fractions of full height).
+const METER = [0.35, 0.7, 0.5, 0.95, 0.6, 0.4, 0.85, 0.55, 1, 0.65, 0.45, 0.8, 0.5, 0.9, 0.6, 0.35, 0.75, 0.5];
+
+type Status = "idle" | "loading" | "playing" | "paused" | "done";
+
+export function VoiceStage() {
   const [callIdx, setCallIdx] = useState(0);
   const [voiceIdx, setVoiceIdx] = useState(0);
   const [dir, setDir] = useState(1);
-  const [urdu, setUrdu] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  // "auto" = the demo is driving itself; any click on play/pause ends that.
-  const [auto, setAuto] = useState(true);
   const [step, setStep] = useState(0);
+  const [status, setStatus] = useState<Status>("idle");
+  // false once a line has failed to play: from then on, captions on a timer
+  const [audioOk, setAudioOk] = useState(true);
+  const [captions, setCaptions] = useState(false);
+  const [urdu, setUrdu] = useState(false);
 
-  const call = CALLS[callIdx];
-  const voice = VOICES[voiceIdx];
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Bumped whenever playback is redirected, so stale audio events are ignored.
+  const token = useRef(0);
+
+  const call = DEMO_CALLS[callIdx];
+  const voice = DEMO_VOICES[voiceIdx];
   const turns = call.turns(voice);
-  const finished = step >= turns.length;
   const turn = turns[Math.min(step, turns.length - 1)];
+  const active = status === "playing" || status === "loading";
 
-  // Start once, when the panel first comes into view.
-  useEffect(() => {
-    if (!inView) return;
-    const t = setTimeout(() => setPlaying(true), 900);
-    return () => clearTimeout(t);
-  }, [inView]);
+  // Play one line; when it ends, play the next, until the call is over.
+  const playLine = (c: number, v: number, s: number) => {
+    const audio = (audioRef.current ??= new Audio());
+    const mine = ++token.current;
+    const lines = DEMO_CALLS[c].turns(DEMO_VOICES[v]);
 
-  useEffect(() => {
-    if (!playing) return;
-    if (step < turns.length) {
-      const t = setTimeout(() => setStep((s) => s + 1), TURN_MS);
-      return () => clearTimeout(t);
+    setCallIdx(c);
+    setVoiceIdx(v);
+    setStep(s);
+    if (s >= lines.length) {
+      audio.pause();
+      setStatus("done");
+      return;
     }
-    // Call finished: in auto mode move on to the next kind of call.
-    const t = setTimeout(() => {
-      if (auto) {
-        setCallIdx((i) => (i + 1) % CALLS.length);
-        setStep(0);
-      } else {
-        setPlaying(false);
-      }
-    }, auto ? 3400 : 400);
-    return () => clearTimeout(t);
-  }, [playing, step, turns.length, auto]);
+    setStatus("loading");
 
-  const pickCall = (i: number) => {
-    setCallIdx(i);
+    const fail = (err?: unknown) => {
+      if (mine !== token.current) return;
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      // No audio available: carry on as captions (the effect below drives it).
+      setAudioOk(false);
+      setCaptions(true);
+      setStatus("playing");
+    };
+    audio.onplaying = () => mine === token.current && setStatus("playing");
+    audio.onwaiting = () => mine === token.current && setStatus("loading");
+    audio.onended = () => mine === token.current && playLine(c, v, s + 1);
+    audio.onerror = () => fail();
+    audio.src = demoAudioUrl(DEMO_CALLS[c], DEMO_VOICES[v], s);
+    audio.play().catch(fail);
+
+    // warm the next line so there is no gap between speakers
+    if (s + 1 < lines.length) fetch(demoAudioUrl(DEMO_CALLS[c], DEMO_VOICES[v], s + 1)).catch(() => {});
+  };
+
+  // Captions-only fallback: step through the call on a timer.
+  useEffect(() => {
+    if (audioOk || status !== "playing") return;
+    const t = setTimeout(() => {
+      if (step + 1 >= turns.length) {
+        setStep(turns.length);
+        setStatus("done");
+      } else {
+        setStep(step + 1);
+      }
+    }, FALLBACK_TURN_MS);
+    return () => clearTimeout(t);
+  }, [audioOk, status, step, turns.length]);
+
+  // Stop the sound if the visitor leaves the page.
+  useEffect(() => {
+    return () => {
+      // Deliberately the live values: whatever is playing when the page goes.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      token.current++;
+      audioRef.current?.pause();
+    };
+  }, []);
+
+  const start = (c: number, v: number, s: number) => {
+    if (audioOk) return playLine(c, v, s);
+    token.current++;
+    setCallIdx(c);
+    setVoiceIdx(v);
+    setStep(s);
+    setStatus("playing");
+  };
+
+  const toggle = () => {
+    if (status === "idle" || status === "done") return start(callIdx, voiceIdx, 0);
+    if (status === "paused") {
+      if (!audioOk) return setStatus("playing");
+      setStatus("loading");
+      audioRef.current?.play().catch(() => setStatus("paused"));
+      return;
+    }
+    // playing or loading -> pause
+    audioRef.current?.pause();
+    setStatus("paused");
+  };
+
+  // Changing the call or the voice restarts from the first line, and keeps
+  // playing if it was playing.
+  const change = (c: number, v: number) => {
+    if (active) return start(c, v, 0);
+    token.current++;
+    audioRef.current?.pause();
+    setCallIdx(c);
+    setVoiceIdx(v);
     setStep(0);
+    setStatus("idle");
   };
   const pickVoice = (i: number, d: number) => {
     setDir(d);
-    setVoiceIdx((i + VOICES.length) % VOICES.length);
-    setStep(0);
-  };
-  const toggle = () => {
-    setAuto(false);
-    if (finished) {
-      setStep(0);
-      setPlaying(true);
-      return;
-    }
-    setPlaying((p) => !p);
+    change(callIdx, (i + DEMO_VOICES.length) % DEMO_VOICES.length);
   };
 
-  const prev = VOICES[(voiceIdx - 1 + VOICES.length) % VOICES.length];
-  const next = VOICES[(voiceIdx + 1) % VOICES.length];
-  const live = playing && !finished;
-  const agentSpeaking = live && turn.agent;
+  const prev = DEMO_VOICES[(voiceIdx - 1 + DEMO_VOICES.length) % DEMO_VOICES.length];
+  const next = DEMO_VOICES[(voiceIdx + 1) % DEMO_VOICES.length];
+  const sounding = status === "playing";
+  const agentSpeaking = sounding && turn.agent;
+
+  const statusLine =
+    status === "idle"
+      ? `Press play to hear ${voice.name} ${INVITE[call.id]}`
+      : status === "loading"
+        ? "Connecting"
+        : status === "paused"
+          ? "Paused"
+          : turn.agent
+            ? `${voice.name} is speaking`
+            : "The caller is speaking";
 
   return (
-    <div ref={ref} className="rounded-[1.75rem] border border-hairline bg-shell p-1.5">
+    <div className="rounded-[1.75rem] border border-hairline bg-shell p-1.5">
       {/* Kind of call */}
       <div role="tablist" aria-label="Kind of call" className="relative grid grid-cols-3 gap-1">
-        {CALLS.map((c, i) => {
+        {DEMO_CALLS.map((c, i) => {
           const on = i === callIdx;
           return (
             <button
@@ -210,7 +188,7 @@ export function VoiceStage() {
               role="tab"
               type="button"
               aria-selected={on}
-              onClick={() => pickCall(i)}
+              onClick={() => change(i, voiceIdx)}
               className={cn(
                 "relative flex items-center justify-center gap-2 rounded-[1.1rem] px-3 py-3 text-[15px] transition-colors",
                 on ? "text-black" : "text-ink-soft hover:text-black"
@@ -240,8 +218,9 @@ export function VoiceStage() {
             className="hidden transition-transform duration-300 hover:scale-105 sm:block"
           >
             <AnimatePresence mode="popLayout" custom={dir} initial={false}>
-              <motion.div
+              <motion.span
                 key={prev.name}
+                className="block"
                 custom={dir}
                 variants={slide}
                 initial="enter"
@@ -250,39 +229,40 @@ export function VoiceStage() {
                 transition={{ duration: 0.45, ease: EASE }}
               >
                 <Orb palette={prev.palette} className="size-32 lg:size-40" />
-              </motion.div>
+              </motion.span>
             </AnimatePresence>
           </button>
 
-          <div className="relative">
-            <button
-              type="button"
-              onClick={toggle}
-              aria-label={playing ? "Pause the sample call" : "Play a sample call"}
-              className="group relative block"
-            >
-              <AnimatePresence mode="popLayout" custom={dir} initial={false}>
-                <motion.div
-                  key={voice.name}
-                  custom={dir}
-                  variants={slide}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ duration: 0.45, ease: EASE }}
-                >
-                  <Orb
-                    palette={voice.palette}
-                    active={agentSpeaking}
-                    className="size-48 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.35)] sm:size-52 lg:size-60"
-                  />
-                </motion.div>
-              </AnimatePresence>
-              <span className="absolute left-1/2 top-1/2 flex size-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-lg transition-transform duration-200 group-hover:scale-110">
-                {playing ? <Pause className="size-4 fill-current" /> : <Play className="ml-0.5 size-4 fill-current" />}
-              </span>
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={toggle}
+            aria-label={active ? "Pause" : `Play: hear ${voice.name} ${INVITE[call.id]}`}
+            className="group relative block"
+          >
+            <AnimatePresence mode="popLayout" custom={dir} initial={false}>
+              <motion.span
+                key={voice.name}
+                className="block"
+                custom={dir}
+                variants={slide}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.45, ease: EASE }}
+              >
+                <Orb palette={voice.palette} active={agentSpeaking} className="size-48 sm:size-52 lg:size-60" />
+              </motion.span>
+            </AnimatePresence>
+            <span className="absolute left-1/2 top-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-[0_8px_24px_-6px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-110">
+              {status === "loading" ? (
+                <Loader2 className="size-5 animate-spin" />
+              ) : active ? (
+                <Pause className="size-5 fill-current" />
+              ) : (
+                <Play className="ml-0.5 size-5 fill-current" />
+              )}
+            </span>
+          </button>
 
           <button
             type="button"
@@ -291,8 +271,9 @@ export function VoiceStage() {
             className="hidden transition-transform duration-300 hover:scale-105 sm:block"
           >
             <AnimatePresence mode="popLayout" custom={dir} initial={false}>
-              <motion.div
+              <motion.span
                 key={next.name}
+                className="block"
                 custom={dir}
                 variants={slide}
                 initial="enter"
@@ -301,7 +282,7 @@ export function VoiceStage() {
                 transition={{ duration: 0.45, ease: EASE }}
               >
                 <Orb palette={next.palette} className="size-32 lg:size-40" />
-              </motion.div>
+              </motion.span>
             </AnimatePresence>
           </button>
         </div>
@@ -330,35 +311,57 @@ export function VoiceStage() {
           </button>
         </div>
 
-        {/* Live captions */}
-        <div className="mx-auto mt-7 flex min-h-[7.5rem] max-w-xl flex-col items-center justify-center text-center">
-          <AnimatePresence mode="wait" initial={false}>
-            {finished ? (
-              <motion.div
-                key="done"
-                initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[15px] text-black shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
-              >
-                <span className="flex size-4 items-center justify-center rounded-full bg-black text-white">
-                  <Check className="size-2.5" strokeWidth={3} />
-                </span>
-                {call.outcome}
-              </motion.div>
-            ) : (
+        {/* Now playing: who is speaking, and a level meter */}
+        <div className="mx-auto mt-7 flex min-h-[5.5rem] max-w-xl flex-col items-center justify-center text-center">
+          {status === "done" ? (
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[15px] text-black shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
+            >
+              <span className="flex size-4 items-center justify-center rounded-full bg-black text-white">
+                <Check className="size-2.5" strokeWidth={3} />
+              </span>
+              {call.outcome}
+            </motion.div>
+          ) : (
+            <>
+              <div className="flex h-7 items-center gap-[3px]" aria-hidden>
+                {METER.map((h, i) => (
+                  <motion.span
+                    key={i}
+                    className={cn("w-[3px] rounded-full", turn.agent || !sounding ? "bg-black" : "bg-black/40")}
+                    animate={
+                      sounding
+                        ? { height: [5, h * 28, 8, h * 18, 5], opacity: 1 }
+                        : { height: 4, opacity: status === "idle" ? 0.25 : 0.4 }
+                    }
+                    transition={
+                      sounding
+                        ? { duration: 0.9 + (i % 5) * 0.12, repeat: Infinity, ease: "easeInOut", delay: (i % 7) * 0.06 }
+                        : { duration: 0.3 }
+                    }
+                  />
+                ))}
+              </div>
+              <p className="mt-3 text-[15px] text-ink-soft" aria-live="polite">
+                {statusLine}
+              </p>
+            </>
+          )}
+
+          {/* Captions, only when asked for (or when there is no audio) */}
+          <AnimatePresence initial={false} mode="wait">
+            {captions && status !== "idle" && status !== "done" && (
               <motion.div
                 key={`${call.id}-${voiceIdx}-${step}-${urdu}`}
-                initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, filter: "blur(4px)" }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="mt-3"
               >
-                <p className="mb-1.5 flex items-center justify-center gap-2 text-[13px] text-ink-soft">
-                  {live && <span className="size-1.5 animate-pulse rounded-full bg-black" />}
-                  {turn.agent ? voice.name : "Caller"}
-                </p>
                 {urdu ? (
                   <p dir="rtl" lang="ur" className="font-urdu text-lg leading-[2.2] text-black">
                     {turn.ur}
@@ -373,47 +376,59 @@ export function VoiceStage() {
 
         {/* Progress: one bar per line of the call */}
         <div className="mt-4 flex items-center justify-center gap-1.5" aria-hidden>
-          {turns.map((_, i) => (
-            <span key={i} className="relative h-0.5 w-7 overflow-hidden rounded-full bg-black/12">
-              {i < step && <span className="absolute inset-0 bg-black" />}
-              {i === step && live && (
-                <motion.span
-                  key={`${callIdx}-${voiceIdx}-${step}`}
-                  className="absolute inset-0 origin-left bg-black"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: 1 }}
-                  transition={{ duration: TURN_MS / 1000, ease: "linear" }}
-                />
+          {turns.map((t, i) => (
+            <span
+              key={i}
+              className={cn(
+                "h-0.5 rounded-full transition-all duration-300",
+                t.agent ? "w-8" : "w-4",
+                i < step || (i === step && active) ? "bg-black" : "bg-black/15"
               )}
-            </span>
+            />
           ))}
         </div>
 
         {/* Footer row */}
         <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-hairline pt-5 sm:flex-row">
-          <p className="max-w-sm text-center text-[15px] leading-relaxed text-ink-soft sm:text-left">{call.blurb}</p>
+          <p className="max-w-sm text-center text-[15px] leading-relaxed text-ink-soft sm:text-left">
+            {audioOk ? call.blurb : "Sound is not available right now, so this call is shown as captions."}
+          </p>
           <div className="flex shrink-0 items-center gap-2">
-            <div role="group" aria-label="Caption script" className="flex rounded-full bg-shell-deep p-0.5 text-sm">
-              <button
-                type="button"
-                aria-pressed={!urdu}
-                onClick={() => setUrdu(false)}
-                className={cn("rounded-full px-3 py-1.5 transition-colors", !urdu ? "bg-white text-black shadow-sm" : "text-ink-soft")}
-              >
-                Roman
-              </button>
-              <button
-                type="button"
-                aria-pressed={urdu}
-                onClick={() => setUrdu(true)}
-                className={cn(
-                  "rounded-full px-3 pb-2 pt-0 font-urdu text-[13px] leading-[2] transition-colors",
-                  urdu ? "bg-white text-black shadow-sm" : "text-ink-soft"
-                )}
-              >
-                اردو
-              </button>
-            </div>
+            {captions && (
+              <div role="group" aria-label="Caption script" className="flex rounded-full bg-shell-deep p-0.5 text-sm">
+                <button
+                  type="button"
+                  aria-pressed={!urdu}
+                  onClick={() => setUrdu(false)}
+                  className={cn("rounded-full px-3 py-1.5 transition-colors", !urdu ? "bg-white text-black shadow-sm" : "text-ink-soft")}
+                >
+                  Roman
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={urdu}
+                  onClick={() => setUrdu(true)}
+                  className={cn(
+                    "rounded-full px-3 pb-2 pt-0 font-urdu text-[13px] leading-[2] transition-colors",
+                    urdu ? "bg-white text-black shadow-sm" : "text-ink-soft"
+                  )}
+                >
+                  اردو
+                </button>
+              </div>
+            )}
+            <button
+              type="button"
+              aria-pressed={captions}
+              aria-label="Captions"
+              onClick={() => setCaptions((c) => !c)}
+              className={cn(
+                "flex size-9 items-center justify-center rounded-full border transition-colors",
+                captions ? "border-black bg-black text-white" : "border-hairline bg-white text-black hover:bg-paper"
+              )}
+            >
+              <Captions className="size-4" strokeWidth={1.75} />
+            </button>
             <Link
               href="/signup"
               className="inline-flex h-9 items-center gap-1.5 rounded-full bg-black px-4 text-sm text-white transition-colors hover:bg-neutral-800"

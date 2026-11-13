@@ -310,48 +310,58 @@
   .orb-drift-slow { animation: orb-drift 60s linear infinite; }
   .orb-breathe { animation: orb-breathe 1.6s ease-in-out infinite; }
 
-  /* Speaking: the colour blobs inside the orb flow like liquid. Five
-     different paths with five different loop lengths, so the gradient
-     keeps reshaping without an obvious rhythm. Units are the orb's own
-     200-unit drawing space. */
-  @keyframes orb-flow-a {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    21% { transform: translate(46px, 22px) scale(1.18); }
-    43% { transform: translate(-14px, 52px) scale(0.88); }
-    68% { transform: translate(34px, -26px) scale(1.12); }
-    86% { transform: translate(-22px, -8px) scale(0.95); }
+  /* Speaking: the colours swirl around the middle of the orb like liquid
+     being stirred, while the centre (under the play button) stays calm.
+     Every blob circles the orb's centre: some clockwise, some the other
+     way, each at its own pace. The uneven angles make a blob surge, slow
+     and drift in and out as it goes round, so the flow never looks like a
+     wheel turning. Angles are around the centre of the 200-unit drawing. */
+  @keyframes orb-swirl-a {
+    0%   { transform: rotate(0deg) scale(1); }
+    16%  { transform: rotate(74deg) scale(1.14); }
+    33%  { transform: rotate(118deg) scale(0.9); }
+    51%  { transform: rotate(205deg) scale(1.2); }
+    69%  { transform: rotate(262deg) scale(0.94); }
+    85%  { transform: rotate(331deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
   }
-  @keyframes orb-flow-b {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    17% { transform: translate(-48px, 30px) scale(0.86); }
-    39% { transform: translate(-20px, -34px) scale(1.2); }
-    61% { transform: translate(28px, 44px) scale(1.05); }
-    83% { transform: translate(-36px, 12px) scale(0.92); }
+  @keyframes orb-swirl-b {
+    0%   { transform: rotate(0deg) scale(1); }
+    19%  { transform: rotate(-48deg) scale(0.88); }
+    37%  { transform: rotate(-141deg) scale(1.16); }
+    58%  { transform: rotate(-196deg) scale(0.96); }
+    77%  { transform: rotate(-298deg) scale(1.22); }
+    100% { transform: rotate(-360deg) scale(1); }
   }
-  @keyframes orb-flow-c {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(40px, -48px) scale(1.15); }
-    52% { transform: translate(64px, 10px) scale(0.84); }
-    77% { transform: translate(-18px, -30px) scale(1.1); }
+  @keyframes orb-swirl-c {
+    0%   { transform: rotate(0deg) scale(1); }
+    22%  { transform: rotate(96deg) scale(0.86); }
+    41%  { transform: rotate(132deg) scale(1.18); }
+    63%  { transform: rotate(248deg) scale(1.02); }
+    82%  { transform: rotate(301deg) scale(0.9); }
+    100% { transform: rotate(360deg) scale(1); }
   }
-  @keyframes orb-flow-d {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    19% { transform: translate(-52px, -40px) scale(1.25); }
-    46% { transform: translate(-70px, 14px) scale(0.9); }
-    72% { transform: translate(-10px, -58px) scale(1.14); }
+  @keyframes orb-swirl-d {
+    0%   { transform: rotate(0deg) scale(1); }
+    14%  { transform: rotate(-82deg) scale(1.2); }
+    35%  { transform: rotate(-121deg) scale(0.92); }
+    56%  { transform: rotate(-227deg) scale(1.12); }
+    79%  { transform: rotate(-279deg) scale(0.88); }
+    100% { transform: rotate(-360deg) scale(1); }
   }
-  @keyframes orb-flow-e {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    23% { transform: translate(-38px, 34px) scale(1.5); }
-    49% { transform: translate(30px, 46px) scale(0.8); }
-    74% { transform: translate(44px, -36px) scale(1.35); }
+  /* the pale highlight near the middle only sways, so the centre stays calm */
+  @keyframes orb-swirl-e {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    27% { transform: rotate(38deg) scale(1.25); }
+    55% { transform: rotate(-24deg) scale(0.85); }
+    79% { transform: rotate(52deg) scale(1.15); }
   }
-  [class^="orb-flow-"] { transform-box: fill-box; transform-origin: center; will-change: transform; }
-  .orb-flow-1 { animation: orb-flow-a 3.7s ease-in-out infinite; }
-  .orb-flow-2 { animation: orb-flow-b 4.9s ease-in-out infinite; }
-  .orb-flow-3 { animation: orb-flow-c 4.3s ease-in-out infinite; }
-  .orb-flow-4 { animation: orb-flow-d 5.6s ease-in-out infinite; }
-  .orb-flow-5 { animation: orb-flow-e 3.1s ease-in-out infinite; }
+  [class^="orb-flow-"] { transform-box: view-box; transform-origin: 50% 50%; will-change: transform; }
+  .orb-flow-1 { animation: orb-swirl-a 5.2s linear infinite; }
+  .orb-flow-2 { animation: orb-swirl-b 6.7s linear infinite; }
+  .orb-flow-3 { animation: orb-swirl-c 4.4s linear infinite; }
+  .orb-flow-4 { animation: orb-swirl-d 7.9s linear infinite; }
+  .orb-flow-5 { animation: orb-swirl-e 3.6s ease-in-out infinite; }
 
   /* Range slider used by the cost calculator. --fill is set inline. */
   .range-ink {

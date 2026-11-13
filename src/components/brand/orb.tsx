@@ -11,10 +11,10 @@
 //   2. fine film grain
 //   3. lighting that makes it a sphere: a lit side, a shaded side, darker
 //      edges, a soft rim of light and a coloured shadow on the "floor"
-//   4. while `active` (the agent is speaking) the colours inside flow like
-//      liquid: each blob wanders on its own path at its own pace, so the
-//      gradient keeps reshaping and never repeats in an obvious way.
-//      Nothing outside the orb moves or glows.
+//   4. while `active` (the agent is speaking) the colours swirl around the
+//      middle like liquid being stirred: every blob circles the centre in
+//      its own direction and at its own uneven pace, while the centre,
+//      under the play button, stays calm. Nothing outside the orb moves.
 //
 // Sizes inside use container-query units (cqw), so the lighting and
 // shadows scale with the orb, from a 12px dot to a 240px hero orb.
@@ -86,7 +86,7 @@ function Texture({
       </defs>
       <g filter={`url(#${id})`}>
         <rect x="-60" y="-60" width="320" height="320" fill={p.base} />
-        {/* each blob sits in its own group so it can flow on its own path */}
+        {/* each blob sits in its own group so it can circle the centre on its own */}
         <g className={liquid ? "orb-flow-1" : undefined}>
           <circle cx="52" cy="50" r="64" fill={light} />
         </g>
