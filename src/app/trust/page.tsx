@@ -91,7 +91,7 @@ const FAQS = [
 export default function TrustPage() {
   return (
     <MarketingShell>
-      <MarketingHero
+      <MarketingHero orb="moss"
         eyebrow="Trust"
         title={
           <>

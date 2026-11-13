@@ -93,7 +93,7 @@ const WEBHOOK_EXAMPLE = `// POST to your configured webhook on every meaningful 
 export default function ApiDocsPage() {
   return (
     <MarketingShell>
-      <MarketingHero
+      <MarketingHero orb="lilac"
         eyebrow="API"
         title={
           <>

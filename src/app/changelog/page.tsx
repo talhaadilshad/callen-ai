@@ -116,7 +116,7 @@ const ENTRIES: Array<{
 export default function ChangelogPage() {
   return (
     <MarketingShell>
-      <MarketingHero
+      <MarketingHero orb="mint"
         eyebrow="Changelog"
         title={
           <>

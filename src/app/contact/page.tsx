@@ -82,7 +82,7 @@ export default function ContactPage() {
 
   return (
     <MarketingShell>
-      <MarketingHero
+      <MarketingHero orb="rose"
         eyebrow="Contact"
         title={
           <>

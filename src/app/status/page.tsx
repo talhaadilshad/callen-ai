@@ -83,7 +83,7 @@ export default function StatusPage() {
   const lastChecked = new Date();
   return (
     <MarketingShell>
-      <MarketingHero
+      <MarketingHero orb="mint"
         eyebrow="Status"
         title={
           <>

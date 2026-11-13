@@ -47,7 +47,7 @@ const FACTS = [
 export default function AboutPage() {
   return (
     <MarketingShell>
-      <MarketingHero
+      <MarketingHero orb="ember"
         eyebrow="About"
         title={
           <>

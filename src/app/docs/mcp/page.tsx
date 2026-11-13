@@ -59,7 +59,7 @@ const SCHEMA_EXAMPLE = `// The agent's runtime auto-discovers tools from the MCP
 export default function McpPage() {
   return (
     <MarketingShell>
-      <MarketingHero
+      <MarketingHero orb="lilac"
         eyebrow="MCP support"
         title={
           <>

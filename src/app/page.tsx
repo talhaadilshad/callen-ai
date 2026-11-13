@@ -83,7 +83,7 @@ const CONTROL = [
 
 const PLANS: Array<{ name: string; price: string; per: string; line: string; palette: OrbPalette | null }> = [
   { name: "Free pilot", price: "PKR 0", per: "for 14 days", line: "100 call minutes to build and test your agent.", palette: null },
-  { name: "Starter", price: "PKR 14,900", per: "per month", line: "600 minutes included. One branch.", palette: "ember" },
+  { name: "Starter", price: "PKR 14,900", per: "per month", line: "600 minutes included. One branch.", palette: "plum" },
   { name: "Growth", price: "PKR 34,900", per: "per month", line: "1,600 minutes included. Up to three branches.", palette: null },
 ];
 

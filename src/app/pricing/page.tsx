@@ -121,7 +121,7 @@ const FAQS: Array<{ q: string; a: string }> = [
 export default function PricingPage() {
   return (
     <MarketingShell>
-      <MarketingHero
+      <MarketingHero orb="plum"
         eyebrow="Pricing"
         title={
           <>
@@ -169,7 +169,7 @@ export default function PricingPage() {
             return (
               <div key={tier.id} className="flex flex-col">
                 {tier.featured ? (
-                  <GrainSurface palette="ember" className="rounded-3xl text-white">
+                  <GrainSurface palette="plum" className="rounded-3xl text-white">
                     {tile}
                   </GrainSurface>
                 ) : (

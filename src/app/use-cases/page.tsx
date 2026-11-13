@@ -119,7 +119,7 @@ const VERTICALS = [
 export default function UseCasesPage() {
   return (
     <MarketingShell>
-      <MarketingHero
+      <MarketingHero orb="ocean"
         eyebrow="Use cases"
         title={
           <>

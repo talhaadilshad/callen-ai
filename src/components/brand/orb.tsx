@@ -1,6 +1,9 @@
 // Callen's brand visual: a textured, lit gradient orb. The site itself
 // stays black, white and neutral grey; colour only ever appears inside
-// these orbs and the grain surfaces below. Each agent voice has its own.
+// these orbs and the grain surfaces below. Each agent voice has its own,
+// and each section of the site that uses a surface has its own colour:
+// ocean (order demo), berry (cost calculator), forest (two nights),
+// plum (featured plan), ember (the brand orb).
 //
 // How it is drawn (all inline SVG and CSS, no image files):
 //   1. saturated colour blobs, warped by a turbulence filter and melted
@@ -19,7 +22,10 @@
 import { useId, type CSSProperties, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-export type OrbPalette = "ember" | "ocean" | "lilac" | "moss" | "rose" | "dusk" | "sun" | "mint";
+export type OrbPalette =
+  | "ember" | "ocean" | "lilac" | "moss" | "rose" | "dusk" | "sun" | "mint"
+  // deeper palettes, made for large surfaces with white text on top
+  | "berry" | "forest" | "plum";
 
 type Palette = {
   base: string;
@@ -37,6 +43,9 @@ const PALETTES: Record<OrbPalette, Palette> = {
   dusk:  { base: "#8f8a94", blobs: ["#f2b59a", "#6f86c4", "#ece7e2", "#c98f8a", "#34323f"], seed: 5 },
   sun:   { base: "#f4a91f", blobs: ["#fff0a8", "#ee6f12", "#fff8dc", "#ffc94a", "#a8400c"], seed: 29 },
   mint:  { base: "#3fb99b", blobs: ["#c9f7d8", "#177f8f", "#f5fbc4", "#6fd6c1", "#0d4b55"], seed: 13 },
+  berry:  { base: "#d6396a", blobs: ["#ff9a78", "#9a1650", "#ffd4c2", "#ff5a8c", "#560f48"], seed: 31 },
+  forest: { base: "#1f8a6b", blobs: ["#7fe0ae", "#0d5a52", "#e2f5b4", "#2fb389", "#063a36"], seed: 17 },
+  plum:   { base: "#6a40d2", blobs: ["#b58cff", "#3a1a9a", "#eec6ff", "#de55c6", "#1c0f5a"], seed: 37 },
 };
 
 function Texture({

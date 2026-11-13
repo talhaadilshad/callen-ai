@@ -68,7 +68,7 @@ const CULTURE = [
 export default function CareersPage() {
   return (
     <MarketingShell>
-      <MarketingHero
+      <MarketingHero orb="sun"
         eyebrow="Careers"
         title={
           <>

@@ -169,12 +169,12 @@ export function TwoNights() {
         </div>
 
         {/* ---------------- With Callen ---------------- */}
-        <GrainSurface palette="ember" className="rounded-3xl text-white">
+        <GrainSurface palette="forest" className="rounded-3xl text-white">
           <div className="flex h-full flex-col p-5 sm:p-7">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="flex items-center gap-2 text-[13px] text-white/85">
-                  <Orb palette="sun" className="size-4" active={!done && step > 0} />
+                  <Orb palette="mint" className="size-4" active={!done && step > 0} />
                   With Callen
                 </p>
                 <p className="mt-1 text-2xl font-light tracking-[-0.02em]">Every call picked up</p>

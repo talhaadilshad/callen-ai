@@ -83,7 +83,7 @@ const STATUS_STYLES: Record<string, string> = {
 export default function SdksPage() {
   return (
     <MarketingShell>
-      <MarketingHero
+      <MarketingHero orb="lilac"
         eyebrow="SDKs"
         title={
           <>
