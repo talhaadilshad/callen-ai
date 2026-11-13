@@ -4,8 +4,7 @@
 // agent speaks, the liquid in its orb moves with the real volume of the
 // voice; when it stops, or the caller speaks, the liquid comes to rest.
 //
-// The audio comes from /api/demo-audio (Soniox, the same voices the real
-// agents use). If a line cannot be played (no credit, offline), the panel
+// The audio comes from /api/demo-audio (Uplift AI's Pakistani voices). If a line cannot be played (no credit, offline), the panel
 // falls back to showing the call as captions on a timer, so it never just
 // sits there silent. Captions can also be turned on by hand (CC).
 //
@@ -339,9 +338,9 @@ export function VoiceStage() {
           >
             <ChevronLeft className="size-4" />
           </button>
-          <div className="w-44 text-center">
+          <div className="w-56 text-center">
             <p className="text-base text-black">{voice.name}</p>
-            <p className="text-sm text-ink-soft">{voice.female ? "Female" : "Male"} Urdu voice</p>
+            <p className="text-sm text-ink-soft">{voice.style}</p>
           </div>
           <button
             type="button"

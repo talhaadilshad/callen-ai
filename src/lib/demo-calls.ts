@@ -3,32 +3,46 @@
 // /api/demo-audio route (which turns each line into speech), so the audio
 // can only ever be these exact lines.
 //
-// The agent's grammar follows the voice: a female voice says "rahi hoon",
-// a male one "raha hoon", exactly as the real agent does. The restaurant
-// ("Karachi Bites") is made up so no real brand is implied.
+// The voices are Uplift AI's Pakistani voices under Pakistani names (see
+// src/lib/callen-voices.ts). The agent's grammar follows the voice: a
+// female voice says "rahi hoon", a male one "raha hoon", exactly as the
+// real agent does. The restaurant ("Karachi Bites") is made up so no real
+// brand is implied.
+
+import { callenVoiceByName } from "@/lib/callen-voices";
 
 export type DemoPalette = "ember" | "ocean" | "lilac" | "moss" | "rose" | "dusk";
 
 export type DemoVoice = {
+  id: string;       // used in the audio URL
   name: string;     // shown on the site
   ur: string;       // the name in Urdu script, said in the greeting
   female: boolean;
-  soniox: string;   // the Soniox voice that speaks for this agent
+  voiceId: string;  // the Uplift voice that speaks for this agent
+  style: string;
   palette: DemoPalette;
 };
 
+const voice = (name: string, ur: string, palette: DemoPalette): DemoVoice => {
+  const v = callenVoiceByName(name);
+  if (!v) throw new Error(`Unknown Callen voice: ${name}`);
+  return { id: name.toLowerCase(), name, ur, female: v.gender === "Female", voiceId: v.voiceId, style: v.style, palette };
+};
+
 export const DEMO_VOICES: DemoVoice[] = [
-  { name: "Ayesha", ur: "عائشہ", female: true, soniox: "Maya", palette: "ember" },
-  { name: "Ahmed", ur: "احمد", female: false, soniox: "Daniel", palette: "ocean" },
-  { name: "Hira", ur: "حرا", female: true, soniox: "Nina", palette: "lilac" },
-  { name: "Bilal", ur: "بلال", female: false, soniox: "Jack", palette: "moss" },
-  { name: "Sana", ur: "ثنا", female: true, soniox: "Emma", palette: "rose" },
-  { name: "Usman", ur: "عثمان", female: false, soniox: "Adrian", palette: "dusk" },
+  voice("Ayesha", "عائشہ", "ember"),
+  voice("Ahmed", "احمد", "ocean"),
+  voice("Hira", "حرا", "lilac"),
+  voice("Bilal", "بلال", "moss"),
+  voice("Sana", "ثنا", "rose"),
+  voice("Usman", "عثمان", "dusk"),
 ];
 
 // The caller is always the opposite gender to the agent, so the two voices
-// are easy to tell apart by ear.
-export const callerVoiceFor = (agent: DemoVoice) => (agent.female ? "Noah" : "Priya");
+// are easy to tell apart by ear. (Imran: a steady everyday male voice;
+// Zainab: a soft everyday female one.)
+export const callerVoiceFor = (agent: DemoVoice) =>
+  (agent.female ? callenVoiceByName("Imran") : callenVoiceByName("Zainab"))!.voiceId;
 
 export type DemoTurn = { agent: boolean; roman: string; ur: string };
 
@@ -126,4 +140,4 @@ export const DEMO_CALLS: DemoCall[] = [
 
 // Where the hero panel fetches the speech for one line of one call.
 export const demoAudioUrl = (call: DemoCall, voice: DemoVoice, turn: number) =>
-  `/api/demo-audio/${call.id}/${voice.soniox}/${turn}`;
+  `/api/demo-audio/${call.id}/${voice.id}/${turn}`;
