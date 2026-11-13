@@ -117,10 +117,12 @@ export function Orb({
   style?: CSSProperties;
 }) {
   const p = PALETTES[palette];
+  // Built from <span>s (not <div>s) so an orb is valid HTML inside a <p>,
+  // a <button> or another <span>.
   return (
-    <div
+    <span
       aria-hidden
-      className={cn("relative shrink-0 rounded-full [container-type:size]", className)}
+      className={cn("relative block shrink-0 rounded-full [container-type:size]", className)}
       style={{ width: size, height: size, ...style }}
     >
       {/* soft neutral shadow on the "floor" under the sphere */}
@@ -137,14 +139,14 @@ export function Orb({
         }}
       />
 
-      <div className="absolute inset-0 overflow-hidden rounded-full" style={{ backgroundColor: p.base }}>
+      <span className="absolute inset-0 overflow-hidden rounded-full" style={{ backgroundColor: p.base }}>
         {/* the gradient: turns slowly; while speaking the colours flow like liquid */}
         <Texture palette={palette} liquid={active} className="orb-drift absolute inset-0 size-full" />
 
-        <div className="grain-overlay absolute inset-0" />
+        <span className="grain-overlay absolute inset-0" />
 
         {/* fixed lighting: lit top left, shaded bottom right, darker edge */}
-        <div
+        <span
           className="absolute inset-0 rounded-full"
           style={{
             backgroundImage: [
@@ -157,7 +159,7 @@ export function Orb({
           }}
         />
         {/* soft specular spot */}
-        <div
+        <span
           className="absolute rounded-[50%]"
           style={{
             left: "20cqw",
@@ -170,12 +172,12 @@ export function Orb({
           }}
         />
         {/* bounce light on the lower rim */}
-        <div
+        <span
           className="absolute inset-0 rounded-full"
           style={{ backgroundImage: "radial-gradient(circle at 62% 104%, rgba(255,255,255,0.30), transparent 34%)" }}
         />
-      </div>
-    </div>
+      </span>
+    </span>
   );
 }
 

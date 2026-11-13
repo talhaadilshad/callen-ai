@@ -18,8 +18,8 @@ import {
 import { GrainSurface, Orb, type OrbPalette } from "@/components/brand/orb";
 import { CountUp } from "@/components/count-up";
 import { CallFlow } from "@/components/landing/call-flow";
-import { DayTimeline } from "@/components/landing/day-timeline";
 import { OrderDemo } from "@/components/landing/order-demo";
+import { TwoNights } from "@/components/landing/two-nights";
 import { ValueCalculator } from "@/components/landing/value-calculator";
 import { VoiceStage } from "@/components/landing/voice-stage";
 import {
@@ -335,12 +335,12 @@ export default function LandingPage() {
         <Reveal>
           <SectionHead
             label="Always on"
-            title="Your staff cannot always reach the phone. Callen can."
-            body="Calls peak exactly when your team is busiest. Follow one day, from the lunch rush to the last order of the night, and see who is free to answer."
+            title="Same calls. Two very different nights."
+            body="It is 9 pm on a Friday and the phone will not stop. Watch the same hour twice: once with the phone left to a busy counter, and once with Callen answering."
           />
         </Reveal>
         <Reveal>
-          <DayTimeline />
+          <TwoNights />
         </Reveal>
       </Band>
 
