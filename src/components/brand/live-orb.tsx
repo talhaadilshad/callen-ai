@@ -1,16 +1,23 @@
 // The hero's voice orbs: the same Callen orb, drawn by a small WebGL
-// shader so it can do what a filter cannot: twist.
+// shader so the colour inside can behave like liquid.
 //
-// At rest it is a calm, softly clouded gradient on a lit sphere, barely
-// drifting. When the voice speaks, three things follow its volume:
-//   - twist: the gradient is wound around the centre, most in the middle
-//     and not at all at the rim, so loud syllables pull the colours into
-//     spiral arms and quiet moments let them unwind
-//   - rings: faint ripples travel outward from the centre
-//   - flow: the colour field itself moves faster
-// Because the twist is tied to the level, the picture relaxes back to the
-// calm gradient by itself when the voice stops. It is always the same
-// picture being wound and unwound, so nothing ever jumps.
+// Not speaking: a calm, softly clouded gradient on a lit sphere. Still.
+//
+// Speaking: the liquid is stirred. It flows round and round the orb, in a
+// ring around the play button: fastest in that ring, slower at the rim,
+// and calm in the very middle. How fast it flows follows the voice, so it
+// surges on loud syllables and eases in the gaps between words. A light
+// extra twist and faint ripples ride on each syllable.
+//
+// Stopping: the flow coasts to a halt, the way stirred liquid does, and
+// stays exactly where it stopped. Nothing winds back or resets, so the orb
+// never changes its picture between speaking and resting.
+//
+// How the endless flow is done: liquid that keeps circling would wind the
+// picture into ever-tighter spirals. So two copies of the colour field are
+// carried along the flow, half a cycle apart; each is faded out before it
+// has wound too far and faded back in fresh, while the other covers for it.
+// The eye sees one liquid flowing without end.
 //
 // If WebGL is not available the ordinary SVG orb is shown instead.
 
@@ -28,9 +35,9 @@ void main() { gl_Position = vec4(aPos, 0.0, 1.0); }
 const FRAG = `
 precision highp float;
 uniform vec2 uRes;
-uniform float uFlow;   // how far the colour field has travelled
+uniform float uFlow;   // how far the liquid has flowed, in cycles
 uniform float uLevel;  // the voice right now, 0..1
-uniform float uTwist;  // how far the centre is wound, in radians
+uniform float uTwist;  // extra twist on each syllable, in radians
 uniform float uSeed;
 uniform vec3 uBase, uLight, uDeep, uPale, uVivid, uDark;
 
@@ -53,6 +60,18 @@ float fbm(vec2 p) {
   return v / 0.78;
 }
 
+// the colour field: broad, soft noise, gently warped by more noise
+float field(vec2 q, float shift) {
+  vec2 w = q * 1.05 + uSeed + shift;
+  float n1 = fbm(w);
+  return fbm(w * 1.15 + 0.7 * vec2(n1, 1.0 - n1));
+}
+// turn a point about the centre
+vec2 spin(vec2 v, float a) {
+  float c = cos(a), sn = sin(a);
+  return vec2(c * v.x - sn * v.y, sn * v.x + c * v.y);
+}
+
 void main() {
   vec2 p = (gl_FragCoord.xy / uRes - 0.5) * 2.0;
   float r = length(p);
@@ -64,20 +83,28 @@ void main() {
   float z = sqrt(max(0.0, 1.0 - r * r));
   vec2 s = p * (1.0 - 0.26 * z);
 
-  // twist: wound most at the centre, not at all at the rim
-  float ang = uTwist * max(0.0, 1.0 - r);
-  float cs = cos(ang), sn = sin(ang);
-  vec2 q = vec2(cs * s.x - sn * s.y, sn * s.x + cs * s.y);
+  // How fast the liquid circles at this distance from the centre: calm in
+  // the very middle (under the play button), fastest in a ring around it,
+  // slower again towards the rim.
+  float speed = smoothstep(0.04, 0.42, r) * (1.0 - 0.7 * smoothstep(0.5, 1.0, r));
+  // the syllable twist, strongest near the middle
+  float pulse = uTwist * max(0.0, 1.0 - r);
 
-  // the colour field: broad, soft noise, gently warped by more noise,
-  // drifting with uFlow
-  vec2 w = q * 1.05 + uSeed;
-  float n1 = fbm(w + vec2(uFlow * 0.35, -uFlow * 0.22));
-  float n2 = fbm(w * 1.15 + 0.7 * vec2(n1, 1.0 - n1) + vec2(-uFlow * 0.27, uFlow * 0.31));
+  // Two copies of the field ride the flow half a cycle apart. Each is
+  // carried from -half to +half of its sweep, and is invisible at both ends.
+  float ph0 = fract(uFlow);
+  float ph1 = fract(uFlow + 0.5);
+  float w1 = abs(1.0 - 2.0 * ph0);
+  float w0 = 1.0 - w1;
+  const float SWEEP = 3.4; // radians of travel in one life of a copy
+  float t0 = field(spin(s, speed * (ph0 - 0.5) * SWEEP + pulse), 0.0);
+  float t1 = field(spin(s, speed * (ph1 - 0.5) * SWEEP + pulse), 7.31);
+  // blend them, keeping the contrast the same all the way through
+  float n2 = 0.5 + ((t0 - 0.5) * w0 + (t1 - 0.5) * w1) / sqrt(w0 * w0 + w1 * w1);
 
-  // ripples riding outward while the voice is up
-  float ring = sin(r * 9.0 - uFlow * 5.0 + n1 * 3.0);
-  float t = n2 + 0.07 * ring * uLevel * (1.0 - 0.5 * r);
+  // faint ripples riding outward on each syllable
+  float ring = sin(r * 9.0 - uFlow * 12.0 + n2 * 3.0);
+  float t = n2 + 0.06 * ring * uLevel * (1.0 - 0.5 * r);
   t = smoothstep(0.24, 0.76, t);
 
   // mostly the middle of the palette, in wide bands that melt into each
@@ -191,7 +218,7 @@ export function LiveOrb({
     let raf = 0;
     let last = performance.now();
     let t = 0;
-    let flow = p.seed; // start each palette somewhere different
+    let flow = (p.seed * 0.37) % 1; // start each palette at a different point of the flow
     let fast = 0;
     let slow = 0;
     let drawn = false;
@@ -213,25 +240,25 @@ export function LiveOrb({
       slow = follow(slow, target, 0.3, 0.9);
 
       const moving = fast > 0.001 || slow > 0.001;
-      // at rest the field only drifts, very slowly
-      flow += dt * (still ? 0 : 0.018 + 0.5 * slow + 0.3 * fast);
-      if (still && drawn) return;
+      // The liquid flows only while there is voice: steady with the overall
+      // energy, surging on each syllable. With no voice it does not move.
+      flow += dt * (0.3 * slow + 0.16 * fast);
 
       // keep the drawing buffer in step with the element's size
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       const size = Math.max(2, Math.round(el.clientWidth * dpr));
-      if (el.width !== size || el.height !== size) {
+      const resized = el.width !== size || el.height !== size;
+      if (resized) {
         el.width = size;
         el.height = size;
         gl.viewport(0, 0, size, size);
       }
-      // at rest a redraw every few frames is plenty
-      if (!moving && drawn && Math.floor(t * 60) % 4 !== 0) return;
-
+      // at rest nothing changes, so there is nothing to redraw
+      if (!moving && drawn && !resized) return;
       gl.uniform2f(uRes, el.width, el.height);
       gl.uniform1f(uFlow, flow);
       gl.uniform1f(uLevel, fast);
-      gl.uniform1f(uTwist, 3.6 * fast + 0.9 * slow);
+      gl.uniform1f(uTwist, 0.9 * fast);
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
