@@ -42,7 +42,7 @@ type Palette = {
   seed: number;
 };
 
-const PALETTES: Record<OrbPalette, Palette> = {
+export const ORB_PALETTES: Record<OrbPalette, Palette> = {
   ember: { base: "#f2551c", blobs: ["#ffb347", "#b5170a", "#ffe6bf", "#ff7a1a", "#6f0d07"], seed: 3 },
   ocean: { base: "#2f7fc4", blobs: ["#8fe3ea", "#12409c", "#e2f6ee", "#3fb0d9", "#0a1f5c"], seed: 11 },
   lilac: { base: "#a48cff", blobs: ["#ffb3ec", "#5b54e6", "#ffe4f1", "#7fb6ff", "#3a2a9c"], seed: 7 },
@@ -77,7 +77,7 @@ const BASE_FREQ = 0.01;
 
 // A speech-like level for orbs that have no real audio to follow: quick
 // syllables, grouped into phrases, with the odd short pause.
-function speechLike(t: number) {
+export function speechLike(t: number) {
   const syllable = Math.max(0, Math.sin(t * 27 + 1.7 * Math.sin(t * 1.9)));
   const phrase = 0.6 + 0.4 * Math.sin(t * 2.8 + 0.6);
   const breath = Math.sin(t * 1.95) > -0.84 ? 1 : 0.08;
@@ -192,7 +192,7 @@ function Texture({
   svgRef?: RefObject<SVGSVGElement | null>;
 }) {
   const id = useId();
-  const p = PALETTES[palette];
+  const p = ORB_PALETTES[palette];
   const [light, deep, pale, vivid, dark] = p.blobs;
   const fill = [light, deep, vivid, dark, pale, deep];
   return (
@@ -251,7 +251,7 @@ export function Orb({
   className?: string;
   style?: CSSProperties;
 }) {
-  const p = PALETTES[palette];
+  const p = ORB_PALETTES[palette];
   const svg = useRef<SVGSVGElement | null>(null);
   useLiquid(svg, active, level);
 
@@ -331,7 +331,7 @@ export function GrainSurface({
   children?: ReactNode;
 }) {
   return (
-    <div className={cn("relative overflow-hidden", className)} style={{ backgroundColor: PALETTES[palette].base }}>
+    <div className={cn("relative overflow-hidden", className)} style={{ backgroundColor: ORB_PALETTES[palette].base }}>
       <Texture palette={palette} soft className="absolute inset-0 size-full scale-125" />
       <div aria-hidden className="grain-overlay absolute inset-0" />
       <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-black/5" />

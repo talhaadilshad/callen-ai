@@ -19,6 +19,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowUpRight, Captions, Check, ChevronLeft, ChevronRight, Loader2, Pause, Play } from "lucide-react";
+import { LiveOrb } from "@/components/brand/live-orb";
 import { Orb } from "@/components/brand/orb";
 import { DEMO_CALLS, DEMO_VOICES, demoAudioUrl } from "@/lib/demo-calls";
 import { cn } from "@/lib/utils";
@@ -269,7 +270,7 @@ export function VoiceStage() {
                 exit="exit"
                 transition={{ duration: 0.45, ease: EASE }}
               >
-                <Orb palette={prev.palette} className="size-32 lg:size-40" />
+                <LiveOrb palette={prev.palette} className="size-32 lg:size-40" />
               </motion.span>
             </AnimatePresence>
           </button>
@@ -291,7 +292,7 @@ export function VoiceStage() {
                 exit="exit"
                 transition={{ duration: 0.45, ease: EASE }}
               >
-                <Orb palette={voice.palette} active={agentSpeaking} level={voiceLevel} className="size-48 sm:size-52 lg:size-60" />
+                <LiveOrb palette={voice.palette} active={agentSpeaking} level={voiceLevel} className="size-48 sm:size-52 lg:size-60" />
               </motion.span>
             </AnimatePresence>
             <span className="absolute left-1/2 top-1/2 flex size-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-[0_8px_24px_-6px_rgba(0,0,0,0.35)] transition-transform duration-200 group-hover:scale-110">
@@ -322,7 +323,7 @@ export function VoiceStage() {
                 exit="exit"
                 transition={{ duration: 0.45, ease: EASE }}
               >
-                <Orb palette={next.palette} className="size-32 lg:size-40" />
+                <LiveOrb palette={next.palette} className="size-32 lg:size-40" />
               </motion.span>
             </AnimatePresence>
           </button>
