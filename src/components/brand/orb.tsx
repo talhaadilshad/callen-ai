@@ -75,13 +75,29 @@ const BLOBS = [
 const BASE_WARP = 84;
 const BASE_FREQ = 0.01;
 
-// A speech-like level for orbs that have no real audio to follow: quick
-// syllables, grouped into phrases, with the odd short pause.
+// A made-up voice level for orbs that have no real audio to follow. It moves
+// the way speech does, because a perfectly regular pulse makes the orb's
+// rings overlap into an even blur: syllables of uneven length and loudness,
+// a short gap between some words, and a breath at the end of each phrase.
+// Pure function of time, so every caller sees the same "voice".
+const rand = (n: number) => {
+  const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+  return x - Math.floor(x);
+};
+const SLOT = 0.22; // seconds per syllable slot (about 4.5 a second)
 export function speechLike(t: number) {
-  const syllable = Math.max(0, Math.sin(t * 27 + 1.7 * Math.sin(t * 1.9)));
-  const phrase = 0.6 + 0.4 * Math.sin(t * 2.8 + 0.6);
-  const breath = Math.sin(t * 1.95) > -0.84 ? 1 : 0.08;
-  return Math.min(1, (0.22 + 0.78 * syllable) * phrase * breath);
+  const k = Math.floor(t / SLOT);
+  const phase = t / SLOT - k;
+  // a breath: the last two slots of every eleven are quiet
+  if (k % 11 >= 9) return 0;
+  // a short gap between words, now and then
+  if (rand(k + 0.5) < 0.16) return 0.04;
+  // each syllable has its own loudness; phrases start strong and tail off
+  const loud = (0.6 + 0.4 * rand(k)) * (1 - 0.2 * ((k % 11) / 8));
+  // it fills part of its slot; the voice stays partly on in between
+  const length = 0.62 + 0.33 * rand(k + 0.3);
+  const shape = phase < length ? Math.pow(Math.sin((Math.PI * phase) / length), 0.7) : 0;
+  return Math.min(1, loud * (0.35 + 0.75 * shape));
 }
 
 type Sim = {
