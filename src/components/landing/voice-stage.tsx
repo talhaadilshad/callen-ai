@@ -3,10 +3,13 @@
 // agent in its own voice and the caller in a contrasting one. While the
 // agent speaks, the liquid in its orb moves with the real volume of the
 // voice; when it stops, or the caller speaks, the liquid comes to rest.
+// Switching to another kind of call or another voice stops the call; a call
+// is only ever heard when the visitor presses play.
 //
-// The audio comes from /api/demo-audio (Uplift AI's Pakistani voices). If a line cannot be played (no credit, offline), the panel
-// falls back to showing the call as captions on a timer, so it never just
-// sits there silent. Captions can also be turned on by hand (CC).
+// The audio comes from /api/demo-audio (Uplift AI's Pakistani voices). If a
+// line cannot be played (no credit, offline), the panel falls back to
+// showing the call as captions on a timer, so it never just sits there
+// silent. Captions can also be turned on by hand (CC).
 //
 // One <audio> element is reused for every line and is first started inside
 // the click handler, which is what lets Safari and phones keep playing the
@@ -186,6 +189,8 @@ export function VoiceStage() {
   };
 
   // Stop the call and wait at the start of (call c, voice v) for play.
+  // Switching to another kind of call or another voice always does this:
+  // a call is only ever heard when the visitor presses play.
   const stopAt = (c: number, v: number) => {
     token.current++;
     audioRef.current?.pause();
@@ -194,14 +199,6 @@ export function VoiceStage() {
     setStep(0);
     setStatus("idle");
   };
-  // Changing the kind of call restarts from its first line, and keeps
-  // playing if it was playing.
-  const change = (c: number, v: number) => {
-    if (active) return start(c, v, 0);
-    stopAt(c, v);
-  };
-  // Switching voice always stops the call: a new voice is only heard when
-  // the visitor presses its play button.
   const pickVoice = (i: number, d: number) => {
     setDir(d);
     stopAt(callIdx, (i + DEMO_VOICES.length) % DEMO_VOICES.length);
@@ -235,7 +232,7 @@ export function VoiceStage() {
               role="tab"
               type="button"
               aria-selected={on}
-              onClick={() => change(i, voiceIdx)}
+              onClick={() => stopAt(i, voiceIdx)}
               className={cn(
                 "relative flex items-center justify-center gap-2 rounded-[1.1rem] px-3 py-3 text-[15px] transition-colors",
                 on ? "text-black" : "text-ink-soft hover:text-black"
