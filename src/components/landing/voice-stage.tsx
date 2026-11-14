@@ -185,10 +185,8 @@ export function VoiceStage() {
     setStatus("paused");
   };
 
-  // Changing the call or the voice restarts from the first line, and keeps
-  // playing if it was playing.
-  const change = (c: number, v: number) => {
-    if (active) return start(c, v, 0);
+  // Stop the call and wait at the start of (call c, voice v) for play.
+  const stopAt = (c: number, v: number) => {
     token.current++;
     audioRef.current?.pause();
     setCallIdx(c);
@@ -196,9 +194,17 @@ export function VoiceStage() {
     setStep(0);
     setStatus("idle");
   };
+  // Changing the kind of call restarts from its first line, and keeps
+  // playing if it was playing.
+  const change = (c: number, v: number) => {
+    if (active) return start(c, v, 0);
+    stopAt(c, v);
+  };
+  // Switching voice always stops the call: a new voice is only heard when
+  // the visitor presses its play button.
   const pickVoice = (i: number, d: number) => {
     setDir(d);
-    change(callIdx, (i + DEMO_VOICES.length) % DEMO_VOICES.length);
+    stopAt(callIdx, (i + DEMO_VOICES.length) % DEMO_VOICES.length);
   };
 
   const prev = DEMO_VOICES[(voiceIdx - 1 + DEMO_VOICES.length) % DEMO_VOICES.length];

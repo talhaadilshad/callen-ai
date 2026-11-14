@@ -8,8 +8,10 @@
 // orb, measured frame by frame against its own audio track.
 //
 //   At rest      a soft, high-key gradient (deep tones to warm cream) on a
-//                lightly lit sphere. It drifts so slowly that it reads as
-//                still.
+//                lightly lit sphere. It turns slowly, once every 26 seconds,
+//                and gently swells and settles as it goes, under light that
+//                stays put, so it reads as a ball turning in 3D. This is the
+//                same motion as the CSS orbs elsewhere on the site.
 //   Speaking     the orb behaves like liquid being stirred from the middle:
 //                - each syllable sends a soft ring rippling outward from
 //                  around the play button, like a drop landing in water
@@ -20,8 +22,8 @@
 //                - the dark tones lift and the folds catch the light, with a
 //                  lit edge and a shadowed edge, so they look raised
 //   Stopping     the rings fade, the winding springs back and settles, and
-//                the turning coasts to a stop. What is left is the same calm
-//                gradient, resting where the liquid stopped. Nothing jumps.
+//                the extra turning eases back to the slow resting turn. What
+//                is left is the same calm gradient. Nothing jumps.
 
 import { ORB_PALETTES, type OrbPalette } from "@/components/brand/orb";
 
@@ -38,6 +40,7 @@ uniform vec2 uRes;
 uniform float uTime;    // slow clock: the calm drift of the gradient
 uniform float uTwist;   // how far the middle is wound past the rim, radians
 uniform float uSpin;    // how far the whole liquid has turned, radians
+uniform float uZoom;    // the resting swell: the picture grows a little and settles
 uniform float uLevel;   // the voice right now, 0..1 (follows each syllable)
 uniform float uEnergy;  // the voice averaged over about a second
 uniform vec4 uRip[${MAX_RIPPLES}];  // ripples: radius, strength, width, unused
@@ -113,7 +116,7 @@ void main() {
   float th = atan(s.y, s.x) + uSpin + wind + (n1 - 0.5) * (0.3 + 0.85 * uLevel);
   // the rings push the liquid outward as they pass
   float rr = rs - 0.08 * ring;
-  vec2 q = rr * vec2(cos(th), sin(th));
+  vec2 q = rr * vec2(cos(th), sin(th)) * uZoom;
 
   // The calm picture, seen through the motion: one soft sweep of colour
   // across the orb, from deep on one side to cream on the other (its
@@ -246,6 +249,10 @@ export function newOrbSim(seed = 0): OrbSim {
 }
 
 const TWO_PI = Math.PI * 2;
+// the slow resting turn: once every 26 seconds, like the CSS orbs
+// (.orb-drift in globals.css)
+const IDLE_TURN_SECONDS = 26;
+const IDLE_SPIN = TWO_PI / IDLE_TURN_SECONDS;
 // how the winding answers the voice: a soft spring, slightly under-damped,
 // so the liquid sloshes a little and settles instead of snapping
 const TWIST_HZ = 1.8;
@@ -279,9 +286,10 @@ export function stepOrbSim(s: OrbSim, dt: number, target: number) {
     s.twistV += (k * (goal - s.twist) - c * s.twistV) * h;
     s.twist += s.twistV * h;
 
-    // The liquid turns while there is voice, and coasts to a stop after.
+    // The orb always turns slowly; with voice it turns faster, and after
+    // the voice the extra speed coasts away.
     s.spinV = follow(s.spinV, 0.9 * s.slow + 0.5 * s.fast, 0.4, 1.1);
-    s.spin = (s.spin + s.spinV * h) % TWO_PI;
+    s.spin = (s.spin + (IDLE_SPIN + s.spinV) * h) % TWO_PI;
 
     s.time += h;
   }
@@ -300,14 +308,10 @@ function rippleShape(r: Ripple): [number, number, number] {
   ];
 }
 
-// True once the voice has gone and the liquid has fully settled.
-export const orbAtRest = (s: OrbSim) =>
-  s.fast < 0.002 &&
-  s.slow < 0.002 &&
-  Math.abs(s.twist) < 0.003 &&
-  Math.abs(s.twistV) < 0.01 &&
-  s.spinV < 0.002 &&
-  s.ripples.length === 0;
+// The resting swell, in step with the slow turn: the picture grows by up to
+// 8% halfway round and settles back (as .orb-drift does). Returned as the
+// factor the picture's coordinates are scaled by.
+const restingZoom = (s: OrbSim) => 1 / (1 + 0.04 * (1 - Math.cos((TWO_PI * s.time) / IDLE_TURN_SECONDS)));
 
 // ---------------------------------------------------------------- drawing
 
@@ -364,7 +368,7 @@ export function createOrbGl(
   colourStops(palette).forEach((stop, i) => gl.uniform3fv(u(`uS${i}`), stop));
   gl.uniform1f(u("uSeed"), ORB_PALETTES[palette].seed * 1.37);
   gl.uniform2f(u("uWin"), toneWindow[0], toneWindow[1]);
-  const uRes = u("uRes"), uTime = u("uTime"), uTwist = u("uTwist"), uSpin = u("uSpin");
+  const uRes = u("uRes"), uTime = u("uTime"), uTwist = u("uTwist"), uSpin = u("uSpin"), uZoom = u("uZoom");
   const uLevel = u("uLevel"), uEnergy = u("uEnergy"), uRip = u("uRip");
   const rip = new Float32Array(MAX_RIPPLES * 4);
 
@@ -383,6 +387,7 @@ export function createOrbGl(
       gl.uniform1f(uTime, sim.time);
       gl.uniform1f(uTwist, sim.twist);
       gl.uniform1f(uSpin, sim.spin);
+      gl.uniform1f(uZoom, restingZoom(sim));
       gl.uniform1f(uLevel, sim.fast);
       gl.uniform1f(uEnergy, sim.slow);
       gl.uniform4fv(uRip, rip);

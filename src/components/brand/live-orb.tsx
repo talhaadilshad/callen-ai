@@ -1,7 +1,8 @@
 // The hero's voice orbs. The drawing and the motion live in orb-gl.ts
 // (see there for what the orb does and why); this component only puts
 // that on the page: it sizes the canvas, feeds in the voice level every
-// frame, and stops working when the orb is off screen.
+// frame, and stops working when the orb is off screen. With reduced motion
+// turned on, the orb is drawn once and stays still.
 //
 // If WebGL is not available the ordinary SVG orb is shown instead.
 
@@ -9,7 +10,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Orb, speechLike, type OrbPalette } from "@/components/brand/orb";
-import { createOrbGl, newOrbSim, orbAtRest, orbSeed, stepOrbSim } from "@/components/brand/orb-gl";
+import { createOrbGl, newOrbSim, orbSeed, stepOrbSim } from "@/components/brand/orb-gl";
 import { cn } from "@/lib/utils";
 
 export function LiveOrb({
@@ -51,7 +52,7 @@ export function LiveOrb({
     let raf = 0;
     let last = performance.now();
     let clock = 0;
-    let sinceDraw = Infinity;
+    let drawn = false;
 
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame);
@@ -73,12 +74,12 @@ export function LiveOrb({
         el.height = size;
       }
 
-      // At rest the picture only drifts, far too slowly to need every
-      // frame: a few redraws a second is plenty.
-      sinceDraw += dt;
-      if (orbAtRest(sim) && !resized && sinceDraw < 0.25) return;
+      // The orb is always turning, so it is drawn every frame while it is on
+      // screen. With reduced motion nothing moves: draw it once, and again
+      // only if its size changes.
+      if (still && drawn && !resized) return;
       orb.draw(sim);
-      sinceDraw = 0;
+      drawn = true;
     };
     raf = requestAnimationFrame(frame);
 
