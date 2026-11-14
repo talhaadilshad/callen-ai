@@ -354,22 +354,30 @@ export default function LandingPage() {
           />
         </Reveal>
 
-        <div className="grid grid-cols-1 items-start gap-3 lg:grid-cols-[1fr_1.35fr]">
-          <div className="rounded-3xl border border-hairline bg-shell px-6">
+        {/* The steps card and the studio are the same height: the three steps
+            share the card's height evenly, centred in their rows. */}
+        <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_1.35fr]">
+          <div className="grid grid-rows-3 rounded-3xl border border-hairline bg-shell px-6">
             {STEPS.map((s, i) => (
-              <Reveal key={s.n} delay={i * 0.1} className="flex gap-5 border-b border-hairline py-6 last:border-0">
-                <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-hairline bg-white text-sm">
-                  {s.n}
-                </span>
-                <div>
-                  <h3 className="text-[15px] text-black">{s.title}</h3>
-                  <p className="mt-1.5 text-[15px] leading-relaxed text-ink-soft">{s.body}</p>
+              <Reveal
+                key={s.n}
+                delay={i * 0.1}
+                className="flex flex-col justify-center border-b border-hairline py-6 last:border-0"
+              >
+                <div className="flex gap-5">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-hairline bg-white text-sm">
+                    {s.n}
+                  </span>
+                  <div>
+                    <h3 className="text-[15px] text-black">{s.title}</h3>
+                    <p className="mt-1.5 text-[15px] leading-relaxed text-ink-soft">{s.body}</p>
+                  </div>
                 </div>
               </Reveal>
             ))}
           </div>
-          <Reveal delay={0.1}>
-            <AgentStudioMockup />
+          <Reveal delay={0.1} className="h-full">
+            <AgentStudioMockup className="h-full" />
           </Reveal>
         </div>
 
